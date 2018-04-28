@@ -27,25 +27,26 @@ public class UserDao implements IUserDao{
 	
 	@Autowired
 	private DBManager manager;
-	@Autowired
-	private Connection connection;
+//	@Autowired
+//	private Connection connection;
 	
-	private UserDao() {
-		this.connection = manager.getConnection();
+	@Autowired
+	private UserDao(DBManager dbManager) {
+		this.manager = dbManager;
 	}
 	
 	@Override
 	public void saveUser(User u) throws DatabaseException, SQLException {
 		String sql = "INSERT INTO users(full_name,password,email,image_url) VALUES (?,?,?,?)";
 		try {
-			this.connection.setAutoCommit(false);
+			this.manager.getConnection().setAutoCommit(false);
 			String password = u.getPassword();
 			String username = u.getName();
 			String email = u.getEmail();
 			String imageUrl = u.getImageUrl();
 			String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
 
-			PreparedStatement ps = this.connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, username);
 			ps.setString(2, hashed);
 			ps.setString(3, email);
@@ -56,14 +57,14 @@ public class UserDao implements IUserDao{
 			res.next();
 			u.setIt(res.getInt(1));
 
-			this.connection.commit();
+			this.manager.getConnection().commit();
 			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			this.connection.rollback();
+			this.manager.getConnection().rollback();
 			throw new DatabaseException(MSG_INVALID_DATA);
 		} finally {
-			this.connection.setAutoCommit(true);
+			this.manager.getConnection().setAutoCommit(true);
 		}
 	}
 
@@ -71,7 +72,7 @@ public class UserDao implements IUserDao{
 	public User getUser(String email, String password) throws UserDataException, SQLException {
 		String sql = "SELECT id,email,full_name,password,image_url FROM users WHERE email = ?";
 		
-		PreparedStatement ps = this.connection.prepareStatement(sql);
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 		ps.setString(1, email);
 
 		ResultSet result = ps.executeQuery();
@@ -96,7 +97,7 @@ public class UserDao implements IUserDao{
 		String sql = "SELECT id, full_name, email, image_url FROM users";
 		List<User> users = new LinkedList<User>();
 
-		Statement st = this.connection.createStatement();
+		Statement st = this.manager.getConnection().createStatement();
 
 		ResultSet result = st.executeQuery(sql);
 
@@ -124,20 +125,20 @@ public class UserDao implements IUserDao{
 	public void changeName(String newName, int userId) throws DatabaseException, SQLException {
 		String sql = "UPDATE users SET full_name = ? WHERE id = ?";
 		try {
-			this.connection.setAutoCommit(false);
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			this.manager.getConnection().setAutoCommit(false);
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, newName);
 			ps.setInt(2, userId);
 			ps.executeUpdate();
 
-			this.connection.commit();
+			this.manager.getConnection().commit();
 			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			this.connection.rollback();
+			this.manager.getConnection().rollback();
 			throw new DatabaseException(MSG_INVALID_DATA);
 		} finally {
-			this.connection.setAutoCommit(true);
+			this.manager.getConnection().setAutoCommit(true);
 		}
 	}
 
@@ -147,19 +148,19 @@ public class UserDao implements IUserDao{
 
 		String hashed = BCrypt.hashpw(newPass, BCrypt.gensalt());
 		try {
-			this.connection.setAutoCommit(false);
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			this.manager.getConnection().setAutoCommit(false);
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, hashed);
 			ps.setInt(2, userId);
 			ps.executeUpdate();
-			this.connection.commit();
+			this.manager.getConnection().commit();
 			ps.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			this.connection.rollback();
+			this.manager.getConnection().rollback();
 			throw new DatabaseException(MSG_INVALID_DATA);
 		} finally {
-			this.connection.setAutoCommit(true);
+			this.manager.getConnection().setAutoCommit(true);
 		}
 	}
 
@@ -185,13 +186,15 @@ public class UserDao implements IUserDao{
 	@Override
 	public User getUserById(int id) throws UserDataException, SQLException {
 		String sql = "SELECT * FROM users WHERE id = ?";
-		PreparedStatement ps = this.connection.prepareStatement(sql);
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 		ps.setInt(1, id);
 
 		ResultSet result = ps.executeQuery();
 
 		if (result.next()) {
-			return User.getUser(result.getInt("id"), result.getString("full_name"), result.getString("email"),
+			return User.getUser(result.getInt("id"),
+					result.getString("full_name"),
+					result.getString("email"),
 					result.getString("image_url"));
 		}
 		ps.close();
@@ -203,21 +206,21 @@ public class UserDao implements IUserDao{
 	public void changeImageUrl(String imageUrl, User u) throws SQLException, DatabaseException {
 		String sql = "UPDATE users SET image_url = ? WHERE email = ?";
 		try {
-			this.connection.setAutoCommit(false);
-			PreparedStatement ps = this.connection.prepareStatement(sql);
+			this.manager.getConnection().setAutoCommit(false);
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, imageUrl);
 			ps.setString(2, u.getEmail());
 			ps.executeUpdate();
 
-			this.connection.commit();
+			this.manager.getConnection().commit();
 			ps.close();
 			u.changeImageUrl(imageUrl);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			this.connection.rollback();
+			this.manager.getConnection().rollback();
 			throw new DatabaseException(MSG_INVALID_DATA);
 		} finally {
-			this.connection.setAutoCommit(true);
+			this.manager.getConnection().setAutoCommit(true);
 		}
 	}
 
