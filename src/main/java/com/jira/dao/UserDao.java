@@ -27,6 +27,7 @@ public class UserDao implements IUserDao{
 	
 	@Autowired
 	private DBManager manager;
+	@Autowired
 	private Connection connection;
 	
 	private UserDao() {
