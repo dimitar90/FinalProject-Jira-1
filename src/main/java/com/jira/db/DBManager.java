@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class DBManager {
 	private static final String DB_USER = "root";
 
@@ -17,9 +20,7 @@ public class DBManager {
 
 	private static Connection connection;
 
-	private static DBManager instance;
-
-	private DBManager() {
+	public DBManager() {
 		// load driver
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -36,14 +37,6 @@ public class DBManager {
 			System.out.println("Sorry, connection failed. Maybe wrong credetials?");
 			System.out.println(e.getMessage());
 		}
-	}
-
-	public synchronized static DBManager getInstence() {
-		if (instance == null) {
-			instance = new DBManager();
-		}
-
-		return instance;
 	}
 
 	public Connection getConnection() {
