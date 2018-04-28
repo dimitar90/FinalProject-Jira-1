@@ -27,7 +27,18 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/create")
-	public String createTask(Model model) {
+	public String addTask(Model model) {
+		List<TaskPriority> priorities = taskPriorityDao.getAll();
+		List<TaskIssue> issueTypes = taskIssueDao.getAll();
+
+		model.addAttribute("priorities", priorities);
+		model.addAttribute("issueTypes", issueTypes);
+		
+		return "create-task";
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/create")
+	public String addTaskPost(Model model) {
 		List<TaskPriority> priorities = taskPriorityDao.getAll();
 		List<TaskIssue> issueTypes = taskIssueDao.getAll();
 

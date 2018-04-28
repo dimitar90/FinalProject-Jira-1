@@ -5,16 +5,18 @@ import java.time.LocalDateTime;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.stereotype.Component;
 
+import com.jira.model.User;
+
 @EntityScan
 public class CommentViewDto {
 	private String description;
 	private LocalDateTime dateTime;
-	//private User user;
+	private User user;
 
-	public CommentViewDto(String description, LocalDateTime dateTime) { //, User user) {
+	public CommentViewDto(String description, LocalDateTime dateTime, User user) {
 		this.setDescription(description);
 		this.setDateTime(dateTime);
-		//this.setUser(user);
+		this.setUser(user);
 	}
 
 	public String getDescription() {
@@ -33,11 +35,11 @@ public class CommentViewDto {
 		this.dateTime = dateTime;
 	}
 
-//	public User getUser() {
-//		return user;
-//	}
-//
-//	public void setUser(User user) {
-//		this.user = user;
-//	}
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }

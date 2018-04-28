@@ -9,9 +9,11 @@ import java.util.TreeSet;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.stereotype.Component;
 
+import com.jira.model.Project;
 import com.jira.model.TaskIssue;
 import com.jira.model.TaskPriority;
 import com.jira.model.TaskState;
+import com.jira.model.User;
 
 @EntityScan
 public class TaskViewDto {
@@ -20,30 +22,30 @@ public class TaskViewDto {
 	private LocalDate dueDate;
 	private LocalDate startDate;
 	private String description;
-	//private Project project;
+	private Project project;
 	private TaskPriority priority;
 	private TaskState state;
 	private TaskIssue issue;
-	//private User creator;
-	//private User assignee;
+	private User creator;
+	private User assignee;
 	private List<String> imageUrls;
 	private Set<CommentViewDto> comments;
 
-//	public TaskViewDto(int id, Project project, String summary, LocalDate dueDate, LocalDate startDate, String description, TaskPriority priority, TaskState state, TaskIssue issue, User creator, User assignee) {
-//		this.setId(id);
-//		this.setProject(project);
-//		this.setSummary(summary);
-//		this.setDueDate(dueDate);
-//		this.setStartDate(startDate); 
-//		this.setDescription(description);
-//		this.setPriority(priority);
-//		this.setState(state); 
-//		this.setIssue(issue);
-//		this.setCreator(creator); 
-//		this.setAssignee(assignee);
-//		this.imageUrls = new ArrayList<>();
-//		this.comments = new TreeSet<CommentViewDto>((c1, c2) -> c2.getDateTime().compareTo(c1.getDateTime()));
-//	}
+	public TaskViewDto(int id, Project project, String summary, LocalDate dueDate, LocalDate startDate, String description, TaskPriority priority, TaskState state, TaskIssue issue, User creator, User assignee) {
+		this.setId(id);
+		this.setProject(project);
+		this.setSummary(summary);
+		this.setDueDate(dueDate);
+		this.setStartDate(startDate); 
+		this.setDescription(description);
+		this.setPriority(priority);
+		this.setState(state); 
+		this.setIssue(issue);
+		this.setCreator(creator); 
+		this.setAssignee(assignee);
+		this.imageUrls = new ArrayList<>();
+		this.comments = new TreeSet<CommentViewDto>((c1, c2) -> c2.getDateTime().compareTo(c1.getDateTime()));
+	}
 
 	public int getId() {
 		return id;
@@ -85,13 +87,13 @@ public class TaskViewDto {
 		this.description = description;
 	}
 	
-//	public Project getProject() {
-//		return project;
-//	}
-//
-//	public void setProject(Project project) {
-//		this.project = project;
-//	}
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
 	public TaskPriority getPriority() {
 		return priority;
@@ -117,21 +119,21 @@ public class TaskViewDto {
 		this.issue = issue;
 	}
 
-//	public User getCreator() {
-//		return creator;
-//	}
-//
-//	public void setCreator(User creator) {
-//		this.creator = creator;
-//	}
-//
-//	public User getAssignee() {
-//		return assignee;
-//	}
-//
-//	public void setAssignee(User assignee) {
-//		this.assignee = assignee;
-//	}
+	public User getCreator() {
+		return creator;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
+	}
+
+	public User getAssignee() {
+		return assignee;
+	}
+
+	public void setAssignee(User assignee) {
+		this.assignee = assignee;
+	}
 
 	public List<String> getImageUrls() {
 		return imageUrls;

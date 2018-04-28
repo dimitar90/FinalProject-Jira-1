@@ -26,15 +26,20 @@ import com.jira.dto.CommentViewDto;
 import com.jira.dto.TaskViewDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.TaskException;
+import com.jira.exception.UserDataException;
+import com.jira.interfaces.IProjectDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.ITaskIssueDao;
 import com.jira.interfaces.ITaskPriorityDao;
 import com.jira.interfaces.ITaskStateDao;
+import com.jira.interfaces.IUserDao;
+import com.jira.model.Project;
 import com.jira.model.Task;
 import com.jira.model.TaskIssue;
 import com.jira.model.TaskPriority;
 import com.jira.model.TaskState;
 import com.jira.model.TaskStateType;
+import com.jira.model.User;
 
 @Component
 public class TaskDao implements ITaskDao{
@@ -58,18 +63,18 @@ public class TaskDao implements ITaskDao{
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskStateDao taskStateDao;
 	private final ITaskIssueDao taskIssueDao;
-	//private final IUserDao userDao;
-	//private final IProjectDao projectDao;
+	private final IUserDao userDao;
+	private final IProjectDao projectDao;
 	
 	@Autowired
 	public TaskDao(DBManager dbManager, ITaskPriorityDao taskPriorityDao, ITaskStateDao taskStateDao,
-			ITaskIssueDao taskIssueDao ) {//, IUserDao userDao, IProjectDao projectDao) {
+			ITaskIssueDao taskIssueDao, IUserDao userDao, IProjectDao projectDao) {
 		this.dbManager = dbManager;
 		this.taskPriorityDao = taskPriorityDao;
 		this.taskStateDao = taskStateDao;
 		this.taskIssueDao = taskIssueDao;
-		//this.userDao = userDao;
-		//this.projectDao = projectDao;
+		this.userDao = userDao;
+		this.projectDao = projectDao;
 	}
 	
 	public void saveTask(Task task) throws DatabaseException, SQLException {
@@ -116,375 +121,381 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-//	public TaskViewDto getById(int taskId) throws DatabaseException {
-//		try (PreparedStatement pr = dbManager.getConnection()
-//				.prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
-//			pr.setInt(1, taskId);
-//			ResultSet rs = pr.executeQuery();
-//			TaskViewDto viewTaskDto = null;
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//
-//				viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description, priority, state,
-//						issue, creator, assignee);
-//			}
-//
-//			this.addCommentsToTask(viewTaskDto);
-//			this.addImageToTask(viewTaskDto);
-//			return viewTaskDto;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	private void addCommentsToTask(TaskViewDto viewTaskDto) throws TaskException {
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
-//			pr.setInt(1, viewTaskDto.getId());
-//			ResultSet rs = pr.executeQuery();
-//			List<CommentViewDto> comments = new ArrayList<>();
-//
-//			while (rs.next()) {
-//				String description = rs.getString("description");
-//				LocalDateTime dateTime = rs.getTimestamp("date").toLocalDateTime();
-//				int userId = rs.getInt("user_id");
-//
-//				User user = userDao.getUserById(userId);
-//				CommentViewDto comment = new CommentViewDto(description, dateTime, user);
-//				comments.add(comment);
-//			}
-//
-//			viewTaskDto.setComments(comments);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new TaskException();
-//		}
-//
-//	}
-//
-//	public List<TaskViewDto> getAll() throws UserDataException, DatabaseException {
-//		List<TaskViewDto> tasks = new ArrayList<>();
-//
-//		try {
-//			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_QUERY);
-//			ResultSet rs = pr.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//				
-//				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-//						priority, state, issue, creator, assignee);
-//				tasks.add(viewTaskDto);
-//			}
-//
-//			this.addImageUrlsToTasks(tasks);
-//			return tasks;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	public void changeStateById(int taskId, int newStateId) throws DatabaseException {
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(CHANGE_STATE_TASK_QUERY)) {
-//			pr.setInt(1, newStateId);
-//			pr.setInt(2, taskId);
-//			pr.executeUpdate();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException("Database error!");
-//		}
-//	}
-//
-//	public void deleteById(Integer taskId) throws DatabaseException {
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(DELETE_TASK_QUERY)) {
-//			pr.setInt(1, taskId);
-//			pr.executeUpdate();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	public List<TaskViewDto> getAllByProjectId(int pId) throws DatabaseException, UserDataException {
-//		List<TaskViewDto> tasks = new ArrayList<>();
-//
-//		try {
-//			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PROJECT_ID_QUERY);
-//			pr.setInt(1, pId);
-//			ResultSet rs = pr.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//
-//				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-//						priority, state, issue, creator, assignee);
-//				tasks.add(viewTaskDto);
-//			}
-//
-//			return tasks;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//
-//	}
-//
-//	public List<TaskViewDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds)
-//			throws DatabaseException, UserDataException {
-//		List<TaskViewDto> tasks = new ArrayList<>();
-//		String selectTasksByIssueTypeQuery = this.createQuery(selectedIssueTypeIds);
-//
-//		try {
-//			PreparedStatement pr = dbManager.getConnection().prepareStatement(selectTasksByIssueTypeQuery);
-//			ResultSet rs = pr.executeQuery();
-//
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//
-//				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-//						priority, state, issue, creator, assignee);
-//				tasks.add(viewTaskDto);
-//			}
-//
-//			this.addImageUrlsToTasks(tasks);
-//
-//			return tasks;
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//
-//	}
-//
-//	private void addImageToTask(TaskViewDto task) throws DatabaseException {
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_IMAGE_QUERY)) {
-//			pr.setInt(1, task.getId());
-//			ResultSet rs = pr.executeQuery();
-//			List<String> imagePaths = new ArrayList<>();
-//
-//			while (rs.next()) {
-//				String imagePath = rs.getString("image_url");
-//
-//				String base64Encoded = this.convertFromLocalPathToBase64String(imagePath);
-//				// if image does not exist return empty string and continue;
-//				if (base64Encoded.isEmpty()) {
-//					continue;
-//				}
-//
-//				imagePaths.add(base64Encoded);
-//			}
-//
-//			task.setImageUrls(imagePaths);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	private String convertFromLocalPathToBase64String(String imagePath)
-//			throws FileNotFoundException, UnsupportedEncodingException {
-//		File file = new File(imagePath);
-//
-//		if (!file.exists()) {
-//			return "";
-//		}
-//
-//		FileInputStream fis = new FileInputStream(file);
-//
-//		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//		byte[] buf = new byte[1024];
-//		try {
-//			for (int readNum; (readNum = fis.read(buf)) != -1;) {
-//				bos.write(buf, 0, readNum);
-//			}
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
-//
-//		byte[] bytes = bos.toByteArray();
-//
-//		byte[] encodeBase64 = Base64.getEncoder().encode(bytes);
-//		String base64Encoded = new String(encodeBase64, "UTF-8");
-//
-//		return base64Encoded;
-//	}
-//
-//	private void addImageUrlsToTasks(List<TaskViewDto> tasks) throws SQLException, DatabaseException {
-//		try {
-//			for (TaskViewDto taskViewDto : tasks) {
-//				this.addImageToTask(taskViewDto);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	private String createQuery(List<Integer> selectedIssueTypeIds) {
-//		StringBuilder query = new StringBuilder();
-//		query.append(
-//				"SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE is_deleted = 0 AND issue_id IN (");
-//
-//		for (Integer id : selectedIssueTypeIds) {
-//			query.append(id).append(",");
-//		}
-//
-//		query.deleteCharAt(query.length() - 1);
-//		query.append(");");
-//
-//		return query.toString();
-//	}
-//
-//	public List<TaskViewDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY)) {
-//			pr.setString(1, TaskStateType.done.getValue());
-//			pr.setInt(2, userId);
-//			ResultSet rs = pr.executeQuery();
-//
-//			List<TaskViewDto> tasks = new ArrayList<>();
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//
-//				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-//						priority, state, issue, creator, assignee);
-//				tasks.add(viewTaskDto);
-//			}
-//
-//			return tasks;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//	}
-//
-//	public List<TaskViewDto> getTasksBetweenTwoDates(String firstDate, String secondDate)
-//			throws DatabaseException {
-//		String sql = this.getSqlByDates(firstDate, secondDate);
-//		
-//		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sql)){
-//			this.setParametersByDates(firstDate, secondDate, pr);
-//			
-//			ResultSet rs = pr.executeQuery();
-//			List<TaskViewDto> tasks = new ArrayList<>();
-//			while (rs.next()) {
-//				int id = rs.getInt("id");
-//				String summary = rs.getString("summary");
-//				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-//				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-//				String description = rs.getString("description");
-//				int projectId = rs.getInt("project_id");
-//				int priorityId = rs.getInt("priority_id");
-//				int stateId = rs.getInt("state_id");
-//				int issueId = rs.getInt("issue_id");
-//				int creatorId = rs.getInt("creator_id");
-//				int assigneeId = rs.getInt("assignee_id");
-//
-//				TaskPriority priority = taskPriorityDao.getById(priorityId);
-//				TaskState state = taskStateDao.getById(stateId);
-//				TaskIssue issue = taskIssueDao.getById(issueId);
-//				User creator = userDao.getUserById(creatorId);
-//				User assignee = userDao.getUserById(assigneeId);
-//				Project project = projectDao.getById(projectId);
-//
-//				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-//						priority, state, issue, creator, assignee);
-//				tasks.add(viewTaskDto);
-//			}
-//
-//			return tasks;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new DatabaseException(INVALID_DATA, e);
-//		}
-//
-//	}
+	public TaskViewDto getById(int taskId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection()
+				.prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
+			pr.setInt(1, taskId);
+			ResultSet rs = pr.executeQuery();
+			TaskViewDto viewTaskDto = null;
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+				
+				viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description, priority, state,
+						issue, creator, assignee);
+			}
+
+			this.addCommentsToTask(viewTaskDto);
+			this.addImageToTask(viewTaskDto);
+			return viewTaskDto;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	private void addCommentsToTask(TaskViewDto viewTaskDto) throws TaskException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
+			pr.setInt(1, viewTaskDto.getId());
+			ResultSet rs = pr.executeQuery();
+			List<CommentViewDto> comments = new ArrayList<>();
+
+			while (rs.next()) {
+				String description = rs.getString("description");
+				LocalDateTime dateTime = rs.getTimestamp("date").toLocalDateTime();
+				int userId = rs.getInt("user_id");
+
+				User user = userDao.getUserById(userId);
+				CommentViewDto comment = new CommentViewDto(description, dateTime, user);
+				comments.add(comment);
+			}
+
+			viewTaskDto.setComments(comments);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new TaskException();
+		}
+
+	}
+
+	public List<TaskViewDto> getAll() throws Exception {
+		List<TaskViewDto> tasks = new ArrayList<>();
+
+		try {
+			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_QUERY);
+			ResultSet rs = pr.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+				
+				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+						priority, state, issue, creator, assignee);
+				tasks.add(viewTaskDto);
+			}
+
+			this.addImageUrlsToTasks(tasks);
+			return tasks;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	public void changeStateById(int taskId, int newStateId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(CHANGE_STATE_TASK_QUERY)) {
+			pr.setInt(1, newStateId);
+			pr.setInt(2, taskId);
+			pr.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException("Database error!");
+		}
+	}
+
+	public void deleteById(Integer taskId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(DELETE_TASK_QUERY)) {
+			pr.setInt(1, taskId);
+			pr.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	public List<TaskViewDto> getAllByProjectId(int pId) throws Exception {
+		List<TaskViewDto> tasks = new ArrayList<>();
+
+		try {
+			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PROJECT_ID_QUERY);
+			pr.setInt(1, pId);
+			ResultSet rs = pr.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+
+				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+						priority, state, issue, creator, assignee);
+				tasks.add(viewTaskDto);
+			}
+
+			return tasks;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+
+	}
+
+	public List<TaskViewDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds)
+			throws Exception {
+		List<TaskViewDto> tasks = new ArrayList<>();
+		String selectTasksByIssueTypeQuery = this.createQuery(selectedIssueTypeIds);
+
+		try {
+			PreparedStatement pr = dbManager.getConnection().prepareStatement(selectTasksByIssueTypeQuery);
+			ResultSet rs = pr.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+
+				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+						priority, state, issue, creator, assignee);
+				tasks.add(viewTaskDto);
+			}
+
+			this.addImageUrlsToTasks(tasks);
+
+			return tasks;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+
+	}
+
+	private void addImageToTask(TaskViewDto task) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_IMAGE_QUERY)) {
+			pr.setInt(1, task.getId());
+			ResultSet rs = pr.executeQuery();
+			List<String> imagePaths = new ArrayList<>();
+
+			while (rs.next()) {
+				String imagePath = rs.getString("image_url");
+
+				String base64Encoded = this.convertFromLocalPathToBase64String(imagePath);
+				// if image does not exist return empty string and continue;
+				if (base64Encoded.isEmpty()) {
+					continue;
+				}
+
+				imagePaths.add(base64Encoded);
+			}
+
+			task.setImageUrls(imagePaths);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	private String convertFromLocalPathToBase64String(String imagePath)
+			throws FileNotFoundException, UnsupportedEncodingException {
+		File file = new File(imagePath);
+
+		if (!file.exists()) {
+			return "";
+		}
+
+		FileInputStream fis = new FileInputStream(file);
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		try {
+			for (int readNum; (readNum = fis.read(buf)) != -1;) {
+				bos.write(buf, 0, readNum);
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+		byte[] bytes = bos.toByteArray();
+
+		byte[] encodeBase64 = Base64.getEncoder().encode(bytes);
+		String base64Encoded = new String(encodeBase64, "UTF-8");
+
+		return base64Encoded;
+	}
+
+	private void addImageUrlsToTasks(List<TaskViewDto> tasks) throws SQLException, DatabaseException {
+		try {
+			for (TaskViewDto taskViewDto : tasks) {
+				this.addImageToTask(taskViewDto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	private String createQuery(List<Integer> selectedIssueTypeIds) {
+		StringBuilder query = new StringBuilder();
+		query.append(
+				"SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE is_deleted = 0 AND issue_id IN (");
+
+		for (Integer id : selectedIssueTypeIds) {
+			query.append(id).append(",");
+		}
+
+		query.deleteCharAt(query.length() - 1);
+		query.append(");");
+
+		return query.toString();
+	}
+
+	public List<TaskViewDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY)) {
+			pr.setString(1, TaskStateType.done.getValue());
+			pr.setInt(2, userId);
+			ResultSet rs = pr.executeQuery();
+
+			List<TaskViewDto> tasks = new ArrayList<>();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+				
+				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+						priority, state, issue, creator, assignee);
+				tasks.add(viewTaskDto);
+			}
+
+			return tasks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+
+	public List<TaskViewDto> getTasksBetweenTwoDates(String firstDate, String secondDate)
+			throws DatabaseException {
+		String sql = this.getSqlByDates(firstDate, secondDate);
+		
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sql)){
+			this.setParametersByDates(firstDate, secondDate, pr);
+			
+			ResultSet rs = pr.executeQuery();
+			List<TaskViewDto> tasks = new ArrayList<>();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				LocalDate startDate = rs.getDate("start_date").toLocalDate();
+				String description = rs.getString("description");
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int issueId = rs.getInt("issue_id");
+				int creatorId = rs.getInt("creator_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				TaskIssue issue = taskIssueDao.getById(issueId);
+				User creator = userDao.getUserById(creatorId);
+				User assignee = userDao.getUserById(assigneeId);
+				//Project project = projectDao.getById(projectId);
+				Project project = new Project();
+				
+				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+						priority, state, issue, creator, assignee);
+				tasks.add(viewTaskDto);
+			}
+
+			return tasks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+
+	}
 
 
 	private void setParametersByDates(String firstDate, String secondDate, PreparedStatement pr) throws SQLException {
