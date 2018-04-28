@@ -5,7 +5,7 @@
 <title>Sign up</title>
 </head>
 <body>
-	<form action="./register" method="post" enctype="multipart/form-data">>
+	<form action="register" method="POST" enctype="multipart/form-data">>
 				<table>
 					<tr>
 						<td>
@@ -46,7 +46,7 @@
 							Upload file
 						</td>
 						<td>
-							<input type="file" accept="image/*" name="file create"><br>
+							<input type="file" accept="image/*" name="create"><br>
 							<input type="submit" value="Sign up">
 					<br>
 						</td>

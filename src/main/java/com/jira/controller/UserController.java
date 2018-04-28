@@ -30,7 +30,7 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String register(HttpServletRequest request) {
 		try {
-			Part filePart = request.getPart("file create");
+			Part filePart = request.getPart("create");
 
 			String username = request.getParameter("username");
 			String email = request.getParameter("email");

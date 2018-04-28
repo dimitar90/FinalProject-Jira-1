@@ -26,7 +26,7 @@ public class UserDao implements IUserDao{
 	private static final String MSG_INVALID_DATA = "Wrong email or password";
 	
 	@Autowired
-	private DBManager manager;
+	private final DBManager manager;
 //	@Autowired
 //	private Connection connection;
 	

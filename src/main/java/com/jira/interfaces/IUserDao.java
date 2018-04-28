@@ -2,8 +2,10 @@ package com.jira.interfaces;
 
 import java.util.Collection;
 
-import com.jira.model.User;
+import org.springframework.stereotype.Component;
 
+import com.jira.model.User;
+@Component
 public interface IUserDao {
 	public User createUser(String username, String email, String password, String imageUrl);
 
