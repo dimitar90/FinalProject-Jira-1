@@ -8,32 +8,75 @@
 
 <body>
 	<h3>Create task</h3><br>
-	<form action="./tasks/create" method="post" enctype="multipart/form-data">
-		Project: <select name="project"> 
-		<c:forEach items= "${ projects }" var = "p">
-			<option value = "${ p.id }">${ p.name }</option>
-		</c:forEach>
-			     </select><br>
-		Summary: <input type="text" name="summary"><br>
-		Description: <input type="text" name="description"><br>
-		Due date: <input type="date" name="dueDate"><br>
-		Priority:  <select name="priority"> 
-		<c:forEach items = "${ priorities }" var = "p">
-			<option value = "${ p.id }">${ p.type }</option>
-		</c:forEach>
-			     </select><br>
-		Issue Type:  <select name="issueType"> 
-		<c:forEach items= "${ issueTypes }" var = "it">
-			<option value = "${ it.id }">${ it.type.getValue() }</option>
-		</c:forEach>
-			     </select><br>
-		Assignee:  <select name="assignee"> 
-		<c:forEach items= "${ assignees }" var = "a">
-			<option value = "${ a.id }">${ a.name }</option>
-		</c:forEach>
-			     </select><br>
-		Images: <input type="file" name="file[]" multiple="multiple"/><br>
-		<button type="submit">Create</button> 
-	</form>
+	<s:form method="POST" action="create" enctype="multipart/form-data">
+    <table>
+    	<%-- 
+    	 <tr>
+            <td>Project</td>
+            <td>
+            <select name="projectId"> 
+					<c:forEach items= "${ projects }" var = "p">
+						<option value = "${ p.id }">${ p.name }</option>
+					</c:forEach>
+			 </select>
+			 </td>
+        </tr>
+    	--%>
+        <tr>
+            <td>Summary</td>
+            <td><input type="text" name="summary" /></td>
+        </tr>
+        
+         <tr>
+            <td>Description</td>
+            <td><input type="text" name="description" /></td>
+        </tr>
+        
+         <tr>
+            <td>Due Date</td>
+            <td><input type="date" name="dueDate" /></td>
+        </tr>
+        
+         <tr>
+            <td>Priority</td>
+            <td><select name="priorityId"> 
+					<c:forEach items = "${ priorities }" var = "p">
+						<option value = "${ p.id }">${ p.type }</option>
+					</c:forEach>
+			     </select>
+			</td>
+        </tr>
+        
+         <tr>
+            <td>Issue Type</td>
+            <td>
+	            <select name="issueTypeId"> 
+					<c:forEach items= "${ issueTypes }" var = "it">
+						<option value = "${ it.id }">${ it.type.getValue() }</option>
+					</c:forEach>
+				 </select>
+			 </td>
+         </tr>
+         
+          <tr>
+            <td>Assignee</td>
+            <td>
+	            <select name="assigneeId"> 
+					<c:forEach items= "${ assignees }" var = "a">
+						<option value = "${ a.id }">${ a.name }</option>
+					</c:forEach>
+			     </select>
+			 </td>
+         </tr>
+         
+        <tr>
+            <td>Select a file to upload</td>
+            <td><input type="file" name="file" /></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
+	</s:form>
 </body>
 </html>
