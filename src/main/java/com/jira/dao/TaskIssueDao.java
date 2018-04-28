@@ -18,7 +18,6 @@ import com.jira.interfaces.ITaskIssueDao;
 import com.jira.model.TaskIssue;
 import com.jira.model.TaskIssueType;
 
-
 @Component
 public class TaskIssueDao implements ITaskIssueDao{
 	private static final String SELECT_TASK_ISSUES_QUERY = "SELECT id, type FROM issues";

@@ -1,12 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
  
  <jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <body>
 	<h3>Create task</h3><br>
-	<form action="./createTask" method="post" enctype="multipart/form-data">
+	<form action="./tasks/create" method="post" enctype="multipart/form-data">
 		Project: <select name="project"> 
 		<c:forEach items= "${ projects }" var = "p">
 			<option value = "${ p.id }">${ p.name }</option>

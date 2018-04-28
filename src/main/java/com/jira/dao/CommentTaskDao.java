@@ -17,6 +17,7 @@ public class CommentTaskDao implements ICommentTaskDao {
 
 	private static final String INSERT_QUERY = "INSERT INTO comments (description, date, user_id, task_id) VALUES (?, ?, ?, ?);";
 
+	
 	private final DBManager dbManager;
 
 	@Autowired

@@ -28,6 +28,7 @@ public class TaskPriorityDao implements ITaskPriorityDao {
 	@Autowired
 	public TaskPriorityDao(DBManager dbManager) {
 		this.dbManager = dbManager;
+		
 		try {
 			this.fillTaskIssuesFromDb();
 		} catch (TaskIssueException e) {

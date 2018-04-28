@@ -18,7 +18,7 @@ public class DBManager {
 
 	private static final String DB_NAME = "jira";
 
-	private static Connection connection;
+	private Connection connection;
 
 	public DBManager() {
 		// load driver
@@ -40,6 +40,6 @@ public class DBManager {
 	}
 
 	public Connection getConnection() {
-		return connection;
+		return this.connection;
 	}
 }
