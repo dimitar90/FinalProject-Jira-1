@@ -176,10 +176,10 @@ public class ProjectDao implements IProjectDao{
 		throw new DatabaseException(MSG_INVALID_PROJECT_NAME);
 	}
 
-	public List<String> getProjectNamesWithPrefix(String prefix) throws DatabaseException {
+	public List<String> getLimitedProjectNamesWithPrefix(String prefix) throws DatabaseException {
 		List<String> projectNames = new ArrayList<>();
 
-		String sql = "SELECT name FROM projects WHERE name LIKE ?";
+		String sql = "SELECT name FROM projects WHERE name LIKE ? LIMIT 3";
 		try {
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, prefix + "%");
@@ -193,7 +193,6 @@ public class ProjectDao implements IProjectDao{
 			e.printStackTrace();
 			throw new DatabaseException(MSG_SQL_INVALID_DATA);
 		}
-		
 	}
 
 	@Override

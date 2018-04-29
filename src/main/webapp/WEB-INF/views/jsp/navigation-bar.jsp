@@ -5,8 +5,12 @@
 
 <html>
 <head>
-	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-	<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+<!-- <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
+<!-- <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script> -->
+
+
+
 <link rel="stylesheet" type="text/css" href="navbar.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -107,8 +111,7 @@ body {
 		</button>
 		<div class="dropdown-content">
 			<a href="./submitProject"> Create a project</a> <a
-				href="./showAllSoftware">Software</a> 
-				<a href="./showAllBusiness">Business</a>
+				href="./showAllSoftware">Software</a> <a href="./showAllBusiness">Business</a>
 			<a href="./showAllProjects">View all projects</a>
 		</div>
 	</div>
@@ -143,18 +146,22 @@ body {
 			</div>
 		</div>
 	</c:if>
+
 	<div class="search-container">
+
 		<form action="searchBtn" method="post">
+			<input id="projectInput" type="text" list="projects" name="project"
+				placeholder="Search.." required>
 			<button type="submit">
 				<i class="fa fa-search"></i>
 			</button>
-			<input type="text" id="search" name="project" placeholder="Search.."
-				required>
 		</form>
+	<div id="searchResult"></div>
 	</div>
 </div>
+
 <body>
-<script>
+	<!-- <script>
 $(document).ready(function() {
     $(function() {
         $("#search").autocomplete({     
@@ -174,6 +181,25 @@ $(document).ready(function() {
      });
   });
 });
-</script>
+</script> -->
+	<script>
+		document.getElementById("projectInput").addEventListener("keyup",function() {
+						var prefix = this.value;
+						console.log(prefix);
+						var xhr = new XMLHttpRequest();
+							xhr.open("GET", "./searchProjects?prefix=" + prefix, true);
+							xhr.send(null);
+							xhr.addEventListener(
+											'load', function() {
+												var projects = JSON
+														.parse(xhr.responseText);
+												var html = '';
+												for (var index = 0; index < projects.length; index++) {
+													html += "<p> " + projects[index] + " </p>";
+												}
+												document.getElementById('searchResult').innerHTML = html;
+											});
+						});
+	</script>
 </body>
 </html>

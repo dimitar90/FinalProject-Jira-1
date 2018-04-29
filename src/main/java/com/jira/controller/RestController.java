@@ -1,7 +1,7 @@
 package com.jira.controller;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,24 +27,18 @@ public class RestController {
 	@Autowired
 	ProjectDao projectDao;
 
-	@RequestMapping(value = "/searchAutoComplete", method = RequestMethod.GET)
+	@RequestMapping(value = "/searchProjects", method = RequestMethod.GET)
 	@ResponseBody
 	public String searchAutoComplete(HttpServletRequest request, HttpServletResponse response,Model model) {
-
-		response.setContentType("application/json");
 		try {
-			String term = request.getParameter("term");
+			String prefix = request.getParameter("prefix");
 
-			System.out.println("Data from ajax call " + term);
-			ArrayList<String> list = (ArrayList<String>) projectDao.getProjectNamesWithPrefix(term);
-
-			// List<String> projects = new ArrayList<>();
-			// List<String> projectName =
-			// ProjectDao.getInstance().getProjectNamesWithPrefix(prefix);
-			// projects.addAll(projectName);
-			//
-			String searchList = new Gson().toJson(list);
-			return searchList;
+			System.out.println("Data from ajax call " + prefix);
+			List<String> list =  projectDao.getLimitedProjectNamesWithPrefix(prefix);
+			
+			String projectNames = new Gson().toJson(list);
+			response.setContentType("application/json");
+			return projectNames;
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -54,13 +48,11 @@ public class RestController {
 	
 	@RequestMapping(value = "/searchBtn", method = RequestMethod.POST)
 	public String getSearch(Model model,@RequestParam String project) {
-//		String projectName = request.getParameter("project");
 		try {
 			ProjectDto dto = projectDao.getProjectDtoByName(project);
 			
 			model.addAttribute("dto", dto);
 			return "project-view";
-//			request.getRequestDispatcher("WEB-INF/jsp/project-view.jsp").forward(request, response);
 		} catch (DatabaseException | SQLException | ProjectException | UserDataException e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
