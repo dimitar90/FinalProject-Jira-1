@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import org.omg.CORBA.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,17 +32,18 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String register(ServletRequest request,HttpSession s,@RequestParam("singleFile") MultipartFile singleFile,
-			@RequestParam String username,
-			@RequestParam String email,
-			@RequestParam String password,
+	public String register(ServletRequest request, HttpSession s, @RequestParam("singleFile") MultipartFile singleFile,
+			@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String confirmPassword) {
-		try {
+		if (!singleFile.isEmpty()) {
+			 
 			
+		}
+		try {
+
 			String imageUrl = this.manager.saveImageUrl(singleFile, email);
 
 			User user = this.manager.register(username, email, password, confirmPassword, imageUrl);
-
 
 			s.setAttribute("user", user);
 
@@ -69,15 +71,16 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(HttpServletRequest request) {
+	public String login(HttpServletRequest request, HttpSession s, @RequestParam String email,
+			@RequestParam String password) {
 		try {
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
+			// String email = request.getParameter("email");
+			// String password = request.getParameter("password");
 
 			User user = this.manager.login(email, password);
 
 			if (user != null) {
-				request.getSession().setAttribute("user", user);
+				s.setAttribute("user", user);
 				return "main";
 			}
 			throw new UserDataException(MSG_INVALID_USER_NAME_OR_PASSWORD);
@@ -93,13 +96,15 @@ public class UserController {
 		}
 	}
 
-	//logout
+	// logout
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) {
-		
+
 		request.getSession().invalidate();
-		
+
 		return "index";
-		
+
 	}
+
+	//
 }

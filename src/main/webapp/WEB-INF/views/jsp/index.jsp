@@ -6,7 +6,7 @@
 </head>
 <body>
 	<h1>Log in to your account</h1>
-	<form action="./login" method="post">
+	<form action="login" method="post">
 		<table>
 			<tr>
 				<td>Enter email</td>
@@ -19,7 +19,7 @@
 		</table>
 		<input type="submit" value="Log in">
 					<br>
-				<a href="register.jsp">Sign up for and account</a>		
+				<a href="register">Sign up for and account</a>		
 	</form>
 </body>
 </html>

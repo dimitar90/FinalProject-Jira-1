@@ -28,13 +28,15 @@ public class UserManager {
 	private static final String MSG_INVALID_EMAIL = "email missmatch";
 	private static final int MIN_NAME_LENGTH = 2;
 	private static final String MSG_INVALID_PASSWORD = "Invalid username or password";
+	private static final String MSG_NO_IMAGE_UPLOADED = "Image required";
+	private static final String PATH = "D:\\Users\\";
+	private static final String EXTENTION = "-pic.jpg";
 
 	@Autowired
 	private UserDao userDao;
 
 	public User register(String username, String email, String password, String confirmPassword, String imageUrl)
 			throws UserDataException, SQLException, DatabaseException {
-		// validate data
 		checkUsername(username);
 
 		comparePassword(password, confirmPassword);
@@ -42,7 +44,6 @@ public class UserManager {
 		checkPassword(password);
 
 		checkEmail(email);
-		// create user
 
 		User u = this.userDao.createUser(username, email, password, imageUrl);
 		this.userDao.saveUser(u);
@@ -80,8 +81,10 @@ public class UserManager {
 		return u;
 	}
 
-	public String saveImageUrl(MultipartFile file, String email) throws IOException {
-		String imgUrl = "D:\\Users\\" + email + "-pic.jpg";
+	public String saveImageUrl(MultipartFile file, String email) throws IOException, UserDataException {
+		String imgUrl = PATH + email + EXTENTION;
+		
+		if (!file.isEmpty()) {
 		File f = new File(imgUrl);
 		if (!f.exists()) {
 			f.createNewFile();
@@ -101,6 +104,8 @@ public class UserManager {
 		buffOut.close();
 
 		return imgUrl;
+		}
+		throw new UserDataException(MSG_NO_IMAGE_UPLOADED);
 
 	}
 
