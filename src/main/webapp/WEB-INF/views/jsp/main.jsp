@@ -9,7 +9,7 @@
 	
 	<h1>Welcome, ${user.name}</h1>
 	
-	<form action="./logout">
+	<form action="logout">
 	    <table>
 		       <tr>
 		        <td>			
@@ -19,7 +19,7 @@
        </table>
    </form>
 		<br>
-		<form action="./editProfile">
+		<form action="editProfile">
 	    <table>
 		       <tr>
 		        <td>			

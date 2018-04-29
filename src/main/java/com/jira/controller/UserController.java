@@ -1,5 +1,6 @@
 package com.jira.controller;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.exception.UserDataException;
 import com.jira.manager.UserManager;
@@ -28,23 +31,21 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String register(HttpServletRequest request) {
+	public String register(ServletRequest request,HttpSession s,@RequestParam("singleFile") MultipartFile singleFile,
+			@RequestParam String username,
+			@RequestParam String email,
+			@RequestParam String password,
+			@RequestParam String confirmPassword) {
 		try {
-			Part filePart = request.getPart("create");
-
-			String username = request.getParameter("username");
-			String email = request.getParameter("email");
-			String password = request.getParameter("password");
-			String confirmPassword = request.getParameter("confirm password");
-			String imageUrl = this.manager.saveImageUrl(filePart, email);
+			
+			String imageUrl = this.manager.saveImageUrl(singleFile, email);
 
 			User user = this.manager.register(username, email, password, confirmPassword, imageUrl);
 
-			HttpSession session = request.getSession();
 
-			session.setAttribute("user", user);
+			s.setAttribute("user", user);
 
-			session.setMaxInactiveInterval(EXP_TIME);
+			s.setMaxInactiveInterval(EXP_TIME);
 
 			return "main";
 

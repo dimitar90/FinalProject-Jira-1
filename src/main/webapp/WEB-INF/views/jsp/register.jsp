@@ -1,11 +1,13 @@
 	<%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
  <jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <title>Sign up</title>
 </head>
 <body>
-	<form action="register" method="POST" enctype="multipart/form-data">>
+	<form  action="register" method="post" enctype="multipart/form-data" >
 				<table>
 					<tr>
 						<td>
@@ -36,7 +38,7 @@
 							Confirm password
 						</td>
 						<td>
-							<input type="password" name="confirm password" placeholder="confirm password" required>
+							<input type="password" name="confirmPassword" placeholder="confirm password" required>
 						</td>
 					</tr>
 					</table>
@@ -46,12 +48,12 @@
 							Upload file
 						</td>
 						<td>
-							<input type="file" accept="image/*" name="create"><br>
+							<input type="file" accept="image/*" name="singleFile"><br>
 							<input type="submit" value="Sign up">
 					<br>
 						</td>
 			</form>
 			<br>
-				Already have an Jira account? <a href="index.jsp">Log in</a>	
+				Already have an Jira account? <a href="index">Log in</a>	
 	</body>
 </html>

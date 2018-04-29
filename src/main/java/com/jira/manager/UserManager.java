@@ -12,6 +12,7 @@ import javax.servlet.http.Part;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.dao.UserDao;
 import com.jira.exception.DatabaseException;
@@ -27,7 +28,7 @@ public class UserManager {
 	private static final String MSG_INVALID_EMAIL = "email missmatch";
 	private static final int MIN_NAME_LENGTH = 2;
 	private static final String MSG_INVALID_PASSWORD = "Invalid username or password";
-	
+
 	@Autowired
 	private UserDao userDao;
 
@@ -42,10 +43,10 @@ public class UserManager {
 
 		checkEmail(email);
 		// create user
-		
+
 		User u = this.userDao.createUser(username, email, password, imageUrl);
 		this.userDao.saveUser(u);
-		
+
 		return u;
 	}
 
@@ -79,15 +80,13 @@ public class UserManager {
 		return u;
 	}
 
-	public String saveImageUrl(Part filePart, String email) throws IOException {
-
+	public String saveImageUrl(MultipartFile file, String email) throws IOException {
 		String imgUrl = "D:\\Users\\" + email + "-pic.jpg";
-
 		File f = new File(imgUrl);
 		if (!f.exists()) {
 			f.createNewFile();
 		}
-		InputStream is = filePart.getInputStream();
+		InputStream is = file.getInputStream();
 
 		BufferedInputStream bufferIn = new BufferedInputStream(is);
 		BufferedOutputStream buffOut = new BufferedOutputStream(new FileOutputStream(f));
@@ -100,6 +99,7 @@ public class UserManager {
 
 		bufferIn.close();
 		buffOut.close();
+
 		return imgUrl;
 
 	}
@@ -120,7 +120,7 @@ public class UserManager {
 		if (!f.exists()) {
 			f.createNewFile();
 		}
-		
+
 		InputStream is = filePart.getInputStream();
 
 		BufferedInputStream bufferIn = new BufferedInputStream(is);

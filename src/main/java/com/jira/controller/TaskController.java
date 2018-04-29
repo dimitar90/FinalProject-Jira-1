@@ -37,7 +37,6 @@ import com.jira.interfaces.ITaskPriorityDao;
 import com.jira.interfaces.IUserDao;
 import com.jira.model.Project;
 import com.jira.model.Task;
-import com.jira.model.TaskFormDataWithFile;
 import com.jira.model.TaskIssue;
 import com.jira.model.TaskPriority;
 import com.jira.model.User;

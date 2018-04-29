@@ -7,6 +7,9 @@ public class User {
 	private String imageUrl;
 	private int id;
 
+	public User() {
+	}
+	
 	public User(int id, String name, String email, String password, String imageUrl) {
 		this(name, email, password, imageUrl);
 		this.id = id;
