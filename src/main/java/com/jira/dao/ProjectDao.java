@@ -213,4 +213,12 @@ public class ProjectDao implements IProjectDao{
 		}
 		return false;
 	} 
+	
+	@Override
+	public void isValidProjectName(String projectName) throws ProjectException {
+		if (projectName.isEmpty() && projectName.length() < 2) {
+			throw new ProjectException(MSG_INVALID_PROJECT_NAME);
+		}
+		
+	}
 }

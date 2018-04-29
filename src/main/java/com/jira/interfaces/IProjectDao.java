@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.jira.dto.ProjectDto;
 import com.jira.exception.DatabaseException;
+import com.jira.exception.ProjectException;
 import com.jira.model.Project;
 
 @Component
@@ -20,4 +21,6 @@ public interface IProjectDao {
 	public Collection<ProjectDto> getAllProjectDtos() throws Exception;
 	
 	public boolean isExistById(int projectId) throws Exception;
+	
+	public void isValidProjectName(String projectName) throws Exception;
 }

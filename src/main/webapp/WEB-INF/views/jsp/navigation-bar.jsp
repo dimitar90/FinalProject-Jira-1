@@ -106,8 +106,9 @@ body {
 			Projects <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="./createProject"> Create a project</a> <a
-				href="./showSofware">Software</a> <a href="./showBusiness">Business</a>
+			<a href="./submitProject"> Create a project</a> <a
+				href="./showAllSoftware">Software</a> 
+				<a href="./showAllBusiness">Business</a>
 			<a href="./showAllProjects">View all projects</a>
 		</div>
 	</div>
