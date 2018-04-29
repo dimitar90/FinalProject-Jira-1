@@ -2,9 +2,10 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<link rel="stylesheet" type="text/css" href="table.css">
 <jsp:include page="navigation-bar.jsp"></jsp:include>
 <c:set var="user" value="${ user }" />
- <link rel="stylesheet" type="text/css" href="table.css">
+
 <body>
 	<h3>All tasks:</h3>
 	<br>
@@ -28,12 +29,9 @@
 		<tr>
 			<th>Project</th>
 			<th>Summary</th>
-			<th>Description</th>
-			<th>Creator</th>
 			<th>Assignee</th>
 			<th>Due date</th>
 			<th>Priority</th>
-			<th>Issue type</th>
 			<th>State</th>
 			<th>Details</th>
 			<th>Add comment</th>
@@ -43,19 +41,16 @@
 		
 		<c:forEach items="${ tasks }" var="t">
 			<tr>
-				<td>${t.project.name}</td>
+				<%-- <td>${t.project.name}</td> --%>
 				<td>${t.summary}</td>
-				<td>${t.description}</td>
-				<td>${t.creator.name}</td>
 				<td>${t.assignee.name}</td>
 				<td>${t.dueDate}</td>
 				<td>${t.priority.type.value}</td>
-				<td>${t.issue.type.value}</td>
 				<td>${t.state.type.value}</td>
 				<td>
 					<a href="./viewtaskdetails?taskId=${ t.id }">Show details</a>
 				</td>
-				<c:if test="${ user != null }">
+				<c:if test="${not empty user}">
 					<td>
 						<a href="./createtaskcomment?taskId=${ t.id }">Add comment</a>
 					</td>
@@ -71,5 +66,34 @@
 			</tr> <br>
 		</c:forEach>
 	</table>
+	
+	
+	 <%--For displaying Previous link except for the 1st page --%>
+    <c:if test="${currentPage != 1}">
+    	<td><a href="all/${currentPage - 1}">Previous</a></td>
+       <%--  <td><a href="all?page=${currentPage - 1}">Previous</a></td> --%>
+    </c:if>
+ 
+    <%--For displaying Page numbers. 
+    The when condition does not display a link for the current page--%>
+    <table border="1">
+        <tr>
+            <c:forEach begin="1" end="${noOfPages}" var="i">
+                <c:choose>
+                    <c:when test="${currentPage eq i}">
+                        <td>${i}</td>
+                    </c:when>
+                    <c:otherwise>
+                        <td><a href="all/${i}">${i}</a></td>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+        </tr>
+    </table>
+     
+    <%--For displaying Next link --%>
+    <c:if test="${currentPage lt noOfPages}">
+        <td><a href="all/${currentPage + 1}">Next</a></td>
+    </c:if>
 </body>
 </html>

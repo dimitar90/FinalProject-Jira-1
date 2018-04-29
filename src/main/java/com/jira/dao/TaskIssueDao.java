@@ -88,4 +88,9 @@ public class TaskIssueDao implements ITaskIssueDao{
 		
 		return ids;
 	}
+
+	@Override
+	public boolean isExistById(Integer issueTypeId) {
+		return taskIssues.containsKey(issueTypeId);
+	}
 }

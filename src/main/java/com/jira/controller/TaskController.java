@@ -1,5 +1,7 @@
 package com.jira.controller;
 
+import static org.mockito.Matchers.booleanThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -13,6 +15,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -24,11 +27,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jira.dao.TaskDao;
+import com.jira.dto.TaskBasicViewDto;
 import com.jira.exception.DatabaseException;
 import com.jira.interfaces.IProjectDao;
 import com.jira.interfaces.ITaskDao;
@@ -44,6 +51,9 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
+	private static final int TASKS_COUNT_ON_PAGE = 5;
+	private static final int FIRST_PAGE = 0;
+	
 	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
 
 	private final ITaskPriorityDao taskPriorityDao;
@@ -61,20 +71,38 @@ public class TaskController {
 		this.userDao = userDao;
 		this.taskDao = taskDao;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/all/{pageNumber}")
+	public String showAllTasks(Model model, @PathVariable Integer pageNumber) {
+		//TODO validation for logged user
+	
+		try {
+			List<TaskBasicViewDto> tasks = this.taskDao.getAll();
+			model.addAttribute("tasks", tasks);
+			model.addAttribute("noOfPages", 5);
+			model.addAttribute("currentPage", pageNumber);
+			
+			return "show-all-tasks";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		}
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/create")
-	public String submit(ModelMap modelMap) {
+	public String submit(Model modelMap, HttpSession session) {
 		try {
 			Collection<User> users = userDao.getAll();
 			List<TaskPriority> priorities = taskPriorityDao.getAll();
 			List<TaskIssue> issueTypes = taskIssueDao.getAll();
 			//List<Project> projects = projectDao.getAllProjects();
 			
-			modelMap.addAttribute("priorities", priorities);
-			modelMap.addAttribute("issueTypes", issueTypes);
-			//request.addAttribute("projects", projects);
-			modelMap.addAttribute("assignees", users);
-			
+			session.setAttribute("priorities", priorities);
+			session.setAttribute("issueTypes", issueTypes);
+			session.setAttribute("assignees", users);
+			//session.setAttribute("projects", projects);
+
 			return "create-task";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -84,7 +112,7 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/create")
-	public String submit( 	@RequestParam MultipartFile file, 
+	public String submit(@RequestParam MultipartFile[] files, 
 							@RequestParam String summary,
 							@RequestParam String description, 
 							@RequestParam String dueDate, 
@@ -93,6 +121,9 @@ public class TaskController {
 							@RequestParam Integer issueTypeId, 
 							@RequestParam Integer assigneeId, 
 							ModelMap modelMap) {
+		if (!this.isValidData(summary, description,dueDate,priorityId,issueTypeId,assigneeId, files)) {
+			return "create-task";
+		}
 		
 		System.out.println(summary);
 		System.out.println(dueDate);
@@ -101,13 +132,40 @@ public class TaskController {
 		System.out.println(issueTypeId);
 		System.out.println(assigneeId);
 		System.out.println(description);
-		try {
-			System.out.println(file.getBytes());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		for (MultipartFile f : files) {
+			if (f.isEmpty()) {
+				continue;
+			}
+			try {
+				System.out.println(f.getInputStream().toString());
+				System.out.println("IMA FAIL");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return "show-all-tasks";
+	}
+
+	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId,
+			Integer issueTypeId, Integer assigneeId, MultipartFile[] files) {
+		boolean isValid = !summary.isEmpty() && 
+						  !description.isEmpty() &&
+						  !dueDate.isEmpty() &&
+						  taskPriorityDao.isExistById(priorityId) &&
+						  taskIssueDao.isExistById(issueTypeId);
+						  //&& userDao.isExistById(assigneeId);
+						 // && projectDao.isExistById(projectId);
+		
+		for (MultipartFile file : files) {
+			if (file.isEmpty()) {
+				continue;
+			}
+			System.out.println("proverka");
+		}
+		
+		return isValid;
 	}
 }

@@ -11,4 +11,6 @@ public interface ITaskPriorityDao {
 	public List<TaskPriority> getAll();
 	
 	public TaskPriority getById(int priorityId);
+
+	public boolean isExistById(Integer priorityId);
 }

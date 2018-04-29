@@ -73,4 +73,9 @@ public class TaskPriorityDao implements ITaskPriorityDao {
 		
 		return taskPriorities.get(priorityId);
 	}
+
+	@Override
+	public boolean isExistById(Integer priorityId) {
+		return taskPriorities.containsKey(priorityId);
+	}
 }

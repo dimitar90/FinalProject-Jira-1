@@ -23,7 +23,8 @@ import org.springframework.stereotype.Repository;
 
 import com.jira.db.DBManager;
 import com.jira.dto.CommentViewDto;
-import com.jira.dto.TaskViewDto;
+import com.jira.dto.TaskBasicViewDto;
+import com.jira.dto.TaskViewDetailsDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.TaskException;
 import com.jira.exception.UserDataException;
@@ -121,12 +122,12 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	public TaskViewDto getById(int taskId) throws DatabaseException {
+	public TaskViewDetailsDto getById(int taskId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection()
 				.prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
 			pr.setInt(1, taskId);
 			ResultSet rs = pr.executeQuery();
-			TaskViewDto viewTaskDto = null;
+			TaskViewDetailsDto viewTaskDto = null;
 
 			while (rs.next()) {
 				int id = rs.getInt("id");
@@ -149,7 +150,7 @@ public class TaskDao implements ITaskDao{
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 				
-				viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description, priority, state,
+				viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description, priority, state,
 						issue, creator, assignee);
 			}
 
@@ -162,7 +163,7 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	private void addCommentsToTask(TaskViewDto viewTaskDto) throws TaskException {
+	private void addCommentsToTask(TaskViewDetailsDto viewTaskDto) throws TaskException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
 			pr.setInt(1, viewTaskDto.getId());
 			ResultSet rs = pr.executeQuery();
@@ -186,8 +187,8 @@ public class TaskDao implements ITaskDao{
 
 	}
 
-	public List<TaskViewDto> getAll() throws Exception {
-		List<TaskViewDto> tasks = new ArrayList<>();
+	public List<TaskBasicViewDto> getAll() throws Exception {
+		List<TaskBasicViewDto> tasks = new ArrayList<>();
 
 		try {
 			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_QUERY);
@@ -197,29 +198,22 @@ public class TaskDao implements ITaskDao{
 				int id = rs.getInt("id");
 				String summary = rs.getString("summary");
 				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-				String description = rs.getString("description");
 				int projectId = rs.getInt("project_id");
 				int priorityId = rs.getInt("priority_id");
 				int stateId = rs.getInt("state_id");
-				int issueId = rs.getInt("issue_id");
-				int creatorId = rs.getInt("creator_id");
 				int assigneeId = rs.getInt("assignee_id");
 
 				TaskPriority priority = taskPriorityDao.getById(priorityId);
 				TaskState state = taskStateDao.getById(stateId);
-				TaskIssue issue = taskIssueDao.getById(issueId);
-				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 				
-				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
-						priority, state, issue, creator, assignee);
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
+				
 				tasks.add(viewTaskDto);
 			}
 
-			this.addImageUrlsToTasks(tasks);
 			return tasks;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -248,8 +242,8 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	public List<TaskViewDto> getAllByProjectId(int pId) throws Exception {
-		List<TaskViewDto> tasks = new ArrayList<>();
+	public List<TaskViewDetailsDto> getAllByProjectId(int pId) throws Exception {
+		List<TaskViewDetailsDto> tasks = new ArrayList<>();
 
 		try {
 			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PROJECT_ID_QUERY);
@@ -277,7 +271,7 @@ public class TaskDao implements ITaskDao{
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 
-				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
 				tasks.add(viewTaskDto);
 			}
@@ -290,9 +284,9 @@ public class TaskDao implements ITaskDao{
 
 	}
 
-	public List<TaskViewDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds)
+	public List<TaskViewDetailsDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds)
 			throws Exception {
-		List<TaskViewDto> tasks = new ArrayList<>();
+		List<TaskViewDetailsDto> tasks = new ArrayList<>();
 		String selectTasksByIssueTypeQuery = this.createQuery(selectedIssueTypeIds);
 
 		try {
@@ -320,7 +314,7 @@ public class TaskDao implements ITaskDao{
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 
-				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
 				tasks.add(viewTaskDto);
 			}
@@ -335,7 +329,7 @@ public class TaskDao implements ITaskDao{
 
 	}
 
-	private void addImageToTask(TaskViewDto task) throws DatabaseException {
+	private void addImageToTask(TaskViewDetailsDto task) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_IMAGE_QUERY)) {
 			pr.setInt(1, task.getId());
 			ResultSet rs = pr.executeQuery();
@@ -388,9 +382,9 @@ public class TaskDao implements ITaskDao{
 		return base64Encoded;
 	}
 
-	private void addImageUrlsToTasks(List<TaskViewDto> tasks) throws SQLException, DatabaseException {
+	private void addImageUrlsToTasks(List<TaskViewDetailsDto> tasks) throws SQLException, DatabaseException {
 		try {
-			for (TaskViewDto taskViewDto : tasks) {
+			for (TaskViewDetailsDto taskViewDto : tasks) {
 				this.addImageToTask(taskViewDto);
 			}
 		} catch (Exception e) {
@@ -414,13 +408,13 @@ public class TaskDao implements ITaskDao{
 		return query.toString();
 	}
 
-	public List<TaskViewDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
+	public List<TaskViewDetailsDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY)) {
 			pr.setString(1, TaskStateType.done.getValue());
 			pr.setInt(2, userId);
 			ResultSet rs = pr.executeQuery();
 
-			List<TaskViewDto> tasks = new ArrayList<>();
+			List<TaskViewDetailsDto> tasks = new ArrayList<>();
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String summary = rs.getString("summary");
@@ -442,7 +436,7 @@ public class TaskDao implements ITaskDao{
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 				
-				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
 				tasks.add(viewTaskDto);
 			}
@@ -454,7 +448,7 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	public List<TaskViewDto> getTasksBetweenTwoDates(String firstDate, String secondDate)
+	public List<TaskViewDetailsDto> getTasksBetweenTwoDates(String firstDate, String secondDate)
 			throws DatabaseException {
 		String sql = this.getSqlByDates(firstDate, secondDate);
 		
@@ -462,7 +456,7 @@ public class TaskDao implements ITaskDao{
 			this.setParametersByDates(firstDate, secondDate, pr);
 			
 			ResultSet rs = pr.executeQuery();
-			List<TaskViewDto> tasks = new ArrayList<>();
+			List<TaskViewDetailsDto> tasks = new ArrayList<>();
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String summary = rs.getString("summary");
@@ -484,7 +478,7 @@ public class TaskDao implements ITaskDao{
 				//Project project = projectDao.getById(projectId);
 				Project project = new Project();
 				
-				TaskViewDto viewTaskDto = new TaskViewDto(id, project, summary, dueDate, startDate, description,
+				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
 				tasks.add(viewTaskDto);
 			}

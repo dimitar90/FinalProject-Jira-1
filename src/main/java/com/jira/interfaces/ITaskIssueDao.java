@@ -13,4 +13,6 @@ public interface ITaskIssueDao {
 	public TaskIssue getById(int issueId);
 	
 	public List<Integer> getIdsByNames(String[] selectedIssueTypes);
+
+	public boolean isExistById(Integer issueTypeId);
 }

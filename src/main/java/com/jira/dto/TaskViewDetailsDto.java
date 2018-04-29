@@ -16,7 +16,7 @@ import com.jira.model.TaskState;
 import com.jira.model.User;
 
 @EntityScan
-public class TaskViewDto {
+public class TaskViewDetailsDto {
 	private int id;
 	private String summary;
 	private LocalDate dueDate;
@@ -31,7 +31,7 @@ public class TaskViewDto {
 	private List<String> imageUrls;
 	private Set<CommentViewDto> comments;
 
-	public TaskViewDto(int id, Project project, String summary, LocalDate dueDate, LocalDate startDate, String description, TaskPriority priority, TaskState state, TaskIssue issue, User creator, User assignee) {
+	public TaskViewDetailsDto(int id, Project project, String summary, LocalDate dueDate, LocalDate startDate, String description, TaskPriority priority, TaskState state, TaskIssue issue, User creator, User assignee) {
 		this.setId(id);
 		this.setProject(project);
 		this.setSummary(summary);

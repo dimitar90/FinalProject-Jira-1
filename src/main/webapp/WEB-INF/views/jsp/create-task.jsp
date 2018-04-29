@@ -67,14 +67,21 @@
 					</c:forEach>
 			     </select>
 			 </td>
-         </tr>
-         
-        <tr>
-            <td>Select a file to upload</td>
-            <td><input type="file" name="file" /></td>
-        </tr>
-        <tr>
-            <td><input type="submit" value="Submit" /></td>
+        		</tr>
+				       <tr>
+				           <td>Select a file to upload</td>
+				           <td><input type="file" name="files" /></td>
+				       </tr>
+				        <tr>
+				           <td>Select a file to upload</td>
+				           <td><input type="file" name="files" /></td>
+				       </tr>
+				        <tr>
+				           <td>Select a file to upload</td>
+				           <td><input type="file" name="files" /></td>
+				       </tr>
+                 <tr>
+            <td><input type="submit" value="Create" /></td>
         </tr>
     </table>
 	</s:form>
