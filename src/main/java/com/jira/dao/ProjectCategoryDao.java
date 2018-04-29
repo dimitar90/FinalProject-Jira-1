@@ -24,10 +24,11 @@ public class ProjectCategoryDao implements IProjectCategoryDao{
 	private static Map<Integer,ProjectCategory> projectCategories = new HashMap<>();
 	
 	@Autowired
-	private  DBManager dbManager;
-	
-	
-	private ProjectCategoryDao() throws SQLException, ProjectException {
+	private final DBManager dbManager;
+
+	@Autowired
+	private ProjectCategoryDao(DBManager manager) throws SQLException, ProjectException {
+		this.dbManager = manager;
 		this.generateProjectCategoriesFromDb();
 	}
 

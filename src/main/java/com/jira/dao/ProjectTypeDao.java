@@ -37,15 +37,16 @@ public class ProjectTypeDao implements IProjectTypeDao {
 	private static Map<Integer, ProjectType> projectTypes = new HashMap<>();
 
 	@Autowired
-	private  DBManager dbManager;
+	private  final DBManager dbManager;
 	
 	@Autowired
 	private UserDao userDao;
 	
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
-	
-	private ProjectTypeDao() throws SQLException, ProjectException {
+	@Autowired
+	private ProjectTypeDao(DBManager manager) throws SQLException, ProjectException {
+		this.dbManager = manager;
 		this.generateProjectTypesFromDb();
 	}
 
