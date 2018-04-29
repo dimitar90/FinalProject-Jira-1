@@ -144,7 +144,7 @@ body {
 		</div>
 	</c:if>
 	<div class="search-container">
-		<form action="search" method="post">
+		<form action="searchBtn" method="post">
 			<button type="submit">
 				<i class="fa fa-search"></i>
 			</button>
@@ -160,7 +160,7 @@ $(document).ready(function() {
         $("#search").autocomplete({     
             source : function(request, response) {
               $.ajax({
-                   url : "searchServlet",
+                   url : "searchAutoComplete",
                    type : "GET",
                    data : {
                           term : request.term
