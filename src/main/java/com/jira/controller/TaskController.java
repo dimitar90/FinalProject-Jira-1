@@ -51,7 +51,7 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
-	private static final int TASKS_COUNT_ON_PAGE = 5;
+	private static final int TASKS_COUNT_ON_PAGE = 3;
 	private static final int FIRST_PAGE = 0;
 	
 	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
@@ -77,11 +77,17 @@ public class TaskController {
 		//TODO validation for logged user
 	
 		try {
-			List<TaskBasicViewDto> tasks = this.taskDao.getAll();
-			model.addAttribute("tasks", tasks);
-			model.addAttribute("noOfPages", 5);
+			int countOfTasks = this.taskDao.getCountOfTasks();
+			int noOfPages = countOfTasks / TASKS_COUNT_ON_PAGE;
+			if (countOfTasks % TASKS_COUNT_ON_PAGE != 0) {
+				noOfPages++;
+			}
+			model.addAttribute("noOfPages", noOfPages);
 			model.addAttribute("currentPage", pageNumber);
 			
+			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, TASKS_COUNT_ON_PAGE);
+			model.addAttribute("tasks", tasks);
+
 			return "show-all-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,14 +100,14 @@ public class TaskController {
 	public String submit(Model modelMap, HttpSession session) {
 		try {
 			Collection<User> users = userDao.getAll();
+			Collection<Project> projects = projectDao.getAllProjects();
 			List<TaskPriority> priorities = taskPriorityDao.getAll();
 			List<TaskIssue> issueTypes = taskIssueDao.getAll();
-			//List<Project> projects = projectDao.getAllProjects();
 			
 			session.setAttribute("priorities", priorities);
 			session.setAttribute("issueTypes", issueTypes);
 			session.setAttribute("assignees", users);
-			//session.setAttribute("projects", projects);
+			session.setAttribute("projects", projects);
 
 			return "create-task";
 		} catch (Exception e) {
@@ -116,18 +122,18 @@ public class TaskController {
 							@RequestParam String summary,
 							@RequestParam String description, 
 							@RequestParam String dueDate, 
-							//@RequestParam Integer projectId, 
+							@RequestParam Integer projectId, 
 							@RequestParam Integer priorityId, 
 							@RequestParam Integer issueTypeId, 
 							@RequestParam Integer assigneeId, 
-							ModelMap modelMap) {
-		if (!this.isValidData(summary, description,dueDate,priorityId,issueTypeId,assigneeId, files)) {
+							ModelMap modelMap) throws Exception {
+		if (!this.isValidData(summary, description,dueDate,priorityId,issueTypeId,assigneeId, projectId, files)) {
 			return "create-task";
 		}
 		
 		System.out.println(summary);
 		System.out.println(dueDate);
-		//System.out.println(projectId);
+		System.out.println(projectId);
 		System.out.println(priorityId);
 		System.out.println(issueTypeId);
 		System.out.println(assigneeId);
@@ -146,18 +152,18 @@ public class TaskController {
 			}
 		}
 		
-		return "show-all-tasks";
+		return "redirect:./all/0";
 	}
 
 	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId,
-			Integer issueTypeId, Integer assigneeId, MultipartFile[] files) {
+			Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {
 		boolean isValid = !summary.isEmpty() && 
 						  !description.isEmpty() &&
 						  !dueDate.isEmpty() &&
 						  taskPriorityDao.isExistById(priorityId) &&
-						  taskIssueDao.isExistById(issueTypeId);
-						  //&& userDao.isExistById(assigneeId);
-						 // && projectDao.isExistById(projectId);
+						  taskIssueDao.isExistById(issueTypeId) && 
+						  userDao.isExistById(assigneeId) &&
+						  projectDao.isExistById(projectId);
 		
 		for (MultipartFile file : files) {
 			if (file.isEmpty()) {

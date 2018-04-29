@@ -10,7 +10,6 @@
 	<h3>Create task</h3><br>
 	<s:form method="POST" action="create" enctype="multipart/form-data">
     <table>
-    	<%-- 
     	 <tr>
             <td>Project</td>
             <td>
@@ -21,7 +20,6 @@
 			 </select>
 			 </td>
         </tr>
-    	--%>
         <tr>
             <td>Summary</td>
             <td><input type="text" name="summary" /></td>

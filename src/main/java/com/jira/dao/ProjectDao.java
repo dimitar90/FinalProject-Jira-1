@@ -198,9 +198,10 @@ public class ProjectDao implements IProjectDao{
 
 	@Override
 	public boolean isExistById(int projectId) throws DatabaseException {
-		String sql = "SELECT id FROM users WHERE id = ?";
+		String sql = "SELECT id FROM projects WHERE id = ?";
 		try {
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setInt(1, projectId);
 			ResultSet result = ps.executeQuery();
 			
 			if (result.next()) {

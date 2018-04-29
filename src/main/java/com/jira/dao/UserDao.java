@@ -227,6 +227,7 @@ public class UserDao implements IUserDao{
 		String sql = "SELECT id FROM users WHERE id = ?";
 		try {
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setInt(1, userId);
 			ResultSet result = ps.executeQuery();
 			
 			if (result.next()) {

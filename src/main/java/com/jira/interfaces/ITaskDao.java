@@ -31,4 +31,8 @@ public interface ITaskDao {
 	public List<TaskViewDetailsDto> getAllOpenTasksByUserId(int userId) throws DatabaseException;
 	
 	public List<TaskViewDetailsDto> getTasksBetweenTwoDates(String firstDate, String secondDate) throws DatabaseException;
+
+	public int getCountOfTasks() throws DatabaseException;
+
+	public List<TaskBasicViewDto> getByCurrentPageNumberAndTaskPerPage(Integer pageNumber, int tasksCountOnPage) throws DatabaseException, Exception;
 }

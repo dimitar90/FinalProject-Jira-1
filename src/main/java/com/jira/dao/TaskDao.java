@@ -59,6 +59,8 @@ public class TaskDao implements ITaskDao{
 	private static final String SELECT_TASKS_BETWEEN_TWO_DATES_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE (due_date BETWEEN ? AND ?) AND is_deleted = 0;";
 	private static final String SELECT_TASKS_AFTER_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date >= ? AND is_deleted = 0;";
 	private static final String SELECT_TASKS_BEFORE_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date <= ? AND is_deleted = 0;";
+	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
+	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id FROM tasks LIMIT ?, ?;";
 	
 	private final DBManager dbManager;
 	private final ITaskPriorityDao taskPriorityDao;
@@ -185,6 +187,42 @@ public class TaskDao implements ITaskDao{
 			throw new TaskException();
 		}
 
+	}
+	
+	@Override
+	public List<TaskBasicViewDto> getByCurrentPageNumberAndTaskPerPage(Integer pageNumber, int tasksCountOnPage) throws Exception {
+		List<TaskBasicViewDto> tasks = new ArrayList<>();
+
+		try {
+			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASK_BY_PAGE);
+			pr.setInt(1, (pageNumber * tasksCountOnPage));
+			pr.setInt(2, tasksCountOnPage);
+			ResultSet rs = pr.executeQuery();
+
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int assigneeId = rs.getInt("assignee_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				User assignee = userDao.getUserById(assigneeId);
+				Project project = projectDao.getById(projectId);
+				
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
+				
+				tasks.add(viewTaskDto);
+			}
+
+			return tasks;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
 	}
 
 	public List<TaskBasicViewDto> getAll() throws Exception {
@@ -489,6 +527,19 @@ public class TaskDao implements ITaskDao{
 			throw new DatabaseException(INVALID_DATA, e);
 		}
 
+	}
+	
+	@Override
+	public int getCountOfTasks() throws DatabaseException {
+		try (Statement st = dbManager.getConnection().createStatement()){
+			ResultSet rs = st.executeQuery(GET_COUNT_OF_TASKS);
+			rs.next();
+			int count = rs.getInt(1);
+			return count;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
 	}
 
 
