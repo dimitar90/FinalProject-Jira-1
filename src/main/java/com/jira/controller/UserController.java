@@ -1,17 +1,17 @@
 package com.jira.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Part;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.omg.CORBA.UserException;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,11 +117,38 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/editProfile", method = RequestMethod.POST)
-	public String editProfile(HttpSession s) {
+	public String editProfile(HttpSession s,HttpServletRequest req,@RequestParam String email,@RequestParam String oldPass,@RequestParam String oldConfPass,
+			@RequestParam String newName,@RequestParam String newPass) {
 		// TODO check session
+		try {
+//		String email = req.getParameter("email");
+//		String oldPass = req.getParameter("old pass");
+//		String oldConfPass = req.getParameter("old conf pass");
+//
+//		String newName = req.getParameter("new name");
+//		String newPass = req.getParameter("new pass");
+		// check old password and the email
+		manager.comparePassword(oldPass, oldConfPass);
+		manager.checkPassword(oldPass);
+		manager.checkEmail(email);
 
-		return "index";
+		// change data
+		User user = manager.changeData(newName, newPass, email, oldPass);
+		
+		s.setAttribute("user", user);
+//		req.getRequestDispatcher("WEB-INF/jsp/main.jsp").forward(req, resp);
+		return "main";
+	} catch (UserDataException e) {
+		e.printStackTrace();
+//		req.getRequestDispatcher("error.jsp").forward(req, resp);
+		return "error";
+	} catch (Exception e) {
+		e.printStackTrace();
+		req.setAttribute("exception", e);
+		return "error";
 	}
+}
+	
 
 	// shown pic
 	@RequestMapping(value = "/getPic", method = RequestMethod.GET)

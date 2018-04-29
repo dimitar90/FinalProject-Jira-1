@@ -40,25 +40,25 @@
            <div class="form-group">
             <label class="col-md-3 control-label">Password:</label>
             <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="put password.." name="old pass" required>
+              <input class="form-control" type="password" placeholder="put password.." name="oldPass" required>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Confirm password:</label required>
             <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="confirm your password.." name="old conf pass">
+              <input class="form-control" type="password" placeholder="confirm your password.." name="oldConfPass">
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">New name:</label>
             <div class="col-lg-8">
-              <input class="form-control" type="text" placeholder="new name here.." name="new name">
+              <input class="form-control" type="text" placeholder="new name here.." name="newName">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">New password:</label>
             <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="new password.." name="new pass">
+              <input class="form-control" type="password" placeholder="new password.." name="newPass">
             </div>
           </div>
           <div class="form-group">
