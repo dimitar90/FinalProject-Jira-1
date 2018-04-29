@@ -8,19 +8,19 @@
 </head>
 <body>
 	<h3>Create project</h3><br>
-	<form action="./createProject" method="post">
+	<form action="createProject" method="post">
 	<table>
 		<tr>
 		<td>
 		ProjectName
 			
-		<input type="text" name="project name" placeholder="project name" required>
+		<input type="text" name="projectName" placeholder="project name" required>
 			</td>
 		</tr>
 		
 		<tr>
 			<td><br>
-	Project type:  <select name="project type"> 
+	Project type:  <select name="projectType"> 
 		<c:forEach items = "${ projectTypes }" var = "p">
 			<option value = "${ p.id }">${ p.type.getValue() }</option>
 		</c:forEach>
@@ -30,7 +30,7 @@
 	    
 	    <tr>
 			<td>
-	Project category:  <select name="project category"> 
+	Project category:  <select name="projectCategory"> 
 		<c:forEach items = "${ projectCategories }" var = "c">
 			<option value = "${ c.id }">${ c.category.getValue() }</option>
 		</c:forEach>

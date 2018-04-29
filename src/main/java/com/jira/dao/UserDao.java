@@ -26,9 +26,7 @@ public class UserDao implements IUserDao{
 	private static final String MSG_INVALID_DATA = "Wrong email or password";
 	
 	@Autowired
-	private final DBManager manager;
-//	@Autowired
-//	private Connection connection;
+	private  DBManager manager;
 	
 	@Autowired
 	private UserDao(DBManager dbManager) {
@@ -222,6 +220,23 @@ public class UserDao implements IUserDao{
 		} finally {
 			this.manager.getConnection().setAutoCommit(true);
 		}
+	}
+
+	@Override
+	public boolean isExistById(int userId) throws DatabaseException {
+		String sql = "SELECT id FROM users WHERE id = ?";
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ResultSet result = ps.executeQuery();
+			
+			if (result.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_SQL_INVALID_DATA);
+		}
+		return false;
 	}
 
 }

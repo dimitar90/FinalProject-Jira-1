@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -19,8 +20,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jira.dao.ProjectCategoryDao;
+import com.jira.dao.ProjectTypeDao;
 import com.jira.exception.UserDataException;
 import com.jira.manager.UserManager;
+import com.jira.model.ProjectCategory;
+import com.jira.model.ProjectType;
 import com.jira.model.User;
 
 @Controller
@@ -29,8 +34,16 @@ public class UserController {
 	private static final String MSG_INVALID_USER_NAME_OR_PASSWORD = "Ivalid username or password";
 
 	@Autowired
-	private UserManager manager;
+	private UserManager userManager;
 
+
+	@Autowired
+	private ProjectCategoryDao projectCategoryDao;
+	
+
+	@Autowired
+	private ProjectTypeDao  projectTypeDao ;
+	
 	// register methods
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String getRegisterPage() {
@@ -46,9 +59,9 @@ public class UserController {
 		}
 		try {
 
-			String imageUrl = this.manager.saveImageUrl(singleFile, email);
+			String imageUrl = this.userManager.saveImageUrl(singleFile, email);
 
-			User user = this.manager.register(username, email, password, confirmPassword, imageUrl);
+			User user = this.userManager.register(username, email, password, confirmPassword, imageUrl);
 
 			s.setAttribute("user", user);
 
@@ -79,7 +92,7 @@ public class UserController {
 	public String login(HttpServletRequest request, HttpSession s, @RequestParam String email,
 			@RequestParam String password) {
 		try {
-			User user = this.manager.login(email, password);
+			User user = this.userManager.login(email, password);
 
 			if (user != null) {
 				s.setAttribute("user", user);
@@ -121,19 +134,12 @@ public class UserController {
 			@RequestParam String newName,@RequestParam String newPass) {
 		// TODO check session
 		try {
-//		String email = req.getParameter("email");
-//		String oldPass = req.getParameter("old pass");
-//		String oldConfPass = req.getParameter("old conf pass");
-//
-//		String newName = req.getParameter("new name");
-//		String newPass = req.getParameter("new pass");
-		// check old password and the email
-		manager.comparePassword(oldPass, oldConfPass);
-		manager.checkPassword(oldPass);
-		manager.checkEmail(email);
+		userManager.comparePassword(oldPass, oldConfPass);
+		userManager.checkPassword(oldPass);
+		userManager.checkEmail(email);
 
 		// change data
-		User user = manager.changeData(newName, newPass, email, oldPass);
+		User user = userManager.changeData(newName, newPass, email, oldPass);
 		
 		s.setAttribute("user", user);
 //		req.getRequestDispatcher("WEB-INF/jsp/main.jsp").forward(req, resp);
@@ -173,5 +179,25 @@ public class UserController {
 			request.setAttribute("exception", e);
 			request.getRequestDispatcher("error").forward(request, resp);
 		}
+	}
+	
+	//Create project
+	@RequestMapping(value = "/createProject", method = RequestMethod.GET)
+	public String createProject() {
+		try {
+			//get all project, categories and types
+			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
+			List<ProjectType> projectTypes = projectTypeDao.getAllProjectTypes();
+			//put them into the request
+//			request.setAttribute("projectCategories", projectCategories);
+//			request.setAttribute("projectTypes", projectTypes);
+			// forward to jsp
+//	 		request.getRequestDispatcher("WEB-INF/jsp/create-project.jsp").forward(request, response);
+			}catch (Exception e) {
+				e.printStackTrace();
+//				request.setAttribute("exception", e);
+//				request.getRequestDispatcher("error.jsp").forward(request, response);
+			}
+		return null;
 	}
 }

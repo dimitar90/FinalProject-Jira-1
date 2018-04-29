@@ -1,8 +1,24 @@
 package com.jira.interfaces;
 
-import org.springframework.stereotype.Component;
+import java.util.Collection;
+import java.util.List;
 
-@Component
+
+import com.jira.dto.ProjectTypeBusinessDto;
+import com.jira.dto.ProjectTypeSoftwareDto;
+import com.jira.model.ProjectType;
+import com.jira.model.ProjectTypeEnum;
+
 public interface IProjectTypeDao {
-	//TODO ProjectCategoryDaoI
+	void generateProjectTypesFromDb() throws Exception;
+
+	public ProjectTypeEnum getProjectTypeEnum(String type) throws Exception;
+
+	public List<ProjectType> getAllProjectTypes();
+
+	public Collection<ProjectTypeSoftwareDto> getAllSoftwareProjects() throws Exception;
+
+	public Collection<ProjectTypeBusinessDto> getAllBusinessProjects() throws Exception;
+	
+	public String getProjectTypeById(int id);
 }
