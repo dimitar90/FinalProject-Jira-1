@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	
  <jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <title>Log in</title>
@@ -19,7 +21,11 @@
 		</table>
 		<input type="submit" value="Log in">
 					<br>
-				<a href="register">Sign up for and account</a>		
+									<!-- hyper link to log in -->
+	<c:url var="URL" value="register">
+		<c:param name="param" value="${parameter}" />
+	</c:url>
+	<a href="<c:out value="${URL}"/>">Sign up for an account</a>	
 	</form>
 </body>
 </html>

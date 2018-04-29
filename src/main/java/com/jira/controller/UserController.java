@@ -1,10 +1,16 @@
 package com.jira.controller;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import org.omg.CORBA.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,8 +42,7 @@ public class UserController {
 			@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String confirmPassword) {
 		if (!singleFile.isEmpty()) {
-			 
-			
+
 		}
 		try {
 
@@ -74,9 +79,6 @@ public class UserController {
 	public String login(HttpServletRequest request, HttpSession s, @RequestParam String email,
 			@RequestParam String password) {
 		try {
-			// String email = request.getParameter("email");
-			// String password = request.getParameter("password");
-
 			User user = this.manager.login(email, password);
 
 			if (user != null) {
@@ -98,13 +100,51 @@ public class UserController {
 
 	// logout
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
-	public String logout(HttpServletRequest request) {
+	public String logout(HttpSession s) {
 
-		request.getSession().invalidate();
+		s.invalidate();
 
 		return "index";
 
 	}
 
-	//
+	// edit
+	@RequestMapping(value = "/editProfile", method = RequestMethod.GET)
+	public String editProfile() {
+
+		return "edit-profile";
+
+	}
+
+	@RequestMapping(value = "/editProfile", method = RequestMethod.POST)
+	public String editProfile(HttpSession s) {
+		// TODO check session
+
+		return "index";
+	}
+
+	// shown pic
+	@RequestMapping(value = "/getPic", method = RequestMethod.GET)
+	public void getImage(HttpSession s, HttpServletRequest request, HttpServletResponse resp)
+			throws ServletException, IOException {
+		User u = (User) s.getAttribute("user");
+		try {
+			File f = new File(UserManager.PATH + u.getEmail() + UserManager.EXTENTION);
+			if (!f.exists()) {
+				f.createNewFile();
+			}
+			InputStream is = new FileInputStream(f);
+			OutputStream os = resp.getOutputStream();
+			int b = is.read();
+			while (b != -1) {
+				os.write(b);
+				b = is.read();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("exception", e);
+			request.getRequestDispatcher("error").forward(request, resp);
+		}
+	}
 }

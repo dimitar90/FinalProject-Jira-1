@@ -19,7 +19,7 @@
        </table>
    </form>
 		<br>
-		<form action="editProfile">
+		<form action="editProfile" method="get">
 	    <table>
 		       <tr>
 		        <td>			
