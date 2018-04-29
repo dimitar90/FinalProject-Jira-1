@@ -6,8 +6,7 @@
 
 <body>
 	<h3>Edit task</h3><br>
-	<form action="./edittask" method="post">
-		<c:set var="editTaskDto" value="${ editTaskDto }" />
+	<form action="${editTaskDto.id}" method="post">
 		Project: <input type="text" value= "${task.project.name}" disabled="disabled"><br>
 		Summary: <input type="text" value= "${editTaskDto.summary}" disabled="disabled"><br>
 		Description: <input type="text" value= "${editTaskDto.description}" disabled="disabled"><br>
@@ -18,7 +17,7 @@
 		Priority: <input type="text" value= "${editTaskDto.priority.type.value}" disabled="disabled"><br>
 		Issue type: <input type="text" value= "${editTaskDto.issue.type.value}" disabled="disabled"><br>
 		<input type="hidden"name="editTaskId" value= "${ editTaskDto.id}">
-		State:  <select name="state"> 
+		State:  <select name="newStateId"> 
 				<c:forEach items = "${ states }" var = "s">
 					<option value = "${ s.id }">${ s.type.getValue() }</option>
 				</c:forEach>

@@ -101,8 +101,9 @@ body {
 			Issues <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="./createTask">Create issue</a> <a href="./getopentasks">My
-				open issues</a> <a href="./showalltasks">Show all issues</a>
+			<a href="http://localhost:8080/Jira/tasks/create">Create issue</a>
+			 <a href="./getopentasks">My open issues</a> 
+			 <a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a>
 		</div>
 	</div>
 	<div class="dropdown">

@@ -1,24 +1,19 @@
 package com.jira.model;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.jira.dto.CommentViewDto;
 
 public class Task {
 	private int id;
 	private String summary;
-	private LocalDate dueDate;
-	private LocalDate startDate;
+	private String dueDate;
+	private String startDate;
 	private String description;
 	private boolean isDeleted;
 	private int projectId;
 	private int priorityId;
-	private int stateId;
 	private int issueId;
 	private int creatorId;
 	private int assigneeId;
@@ -26,15 +21,14 @@ public class Task {
 	
 	public Task() {}
 	
-	public Task(String summary, LocalDate dueDate, LocalDate startDate, String description, int projectId,
-			int priorityId, int stateId, int issueId, int creatorId, int assigneeId) {
+	public Task(String summary, String dueDate, String startDate, String description, int projectId,
+			int priorityId,int issueId, int creatorId, int assigneeId) {
 		this.setSummary(summary);
 		this.setDueDate(dueDate);
 		this.setStartDate(startDate);
 		this.setDescription(description);
 		this.setProjectId(projectId);
 		this.setPriorityId(priorityId);
-		this.setStateId(stateId);
 		this.setIssueId(issueId);
 		this.setCreatorId(creatorId);
 		this.setAssigneeId(assigneeId);
@@ -42,9 +36,9 @@ public class Task {
 		this.imageUrls = new ArrayList<>();
 	}
 
-	public Task(int id, String summary, LocalDate dueDate, LocalDate startDate, String description,
-			int projectId, int priorityId, int stateId, int issueId, int creatorId, int assigneeId) {
-		this(summary, dueDate, startDate, description, projectId, priorityId, stateId, issueId, creatorId, assigneeId);
+	public Task(int id, String summary, String dueDate, String startDate, String description,
+			int projectId, int priorityId, int issueId, int creatorId, int assigneeId) {
+		this(summary, dueDate, startDate, description, projectId, priorityId, issueId, creatorId, assigneeId);
 		this.setId(id);
 	}
 
@@ -64,19 +58,19 @@ public class Task {
 		this.summary = summary;
 	}
 
-	public LocalDate getDueDate() {
+	public String getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(LocalDate dueDate) {
+	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
 
-	public LocalDate getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(LocalDate startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
@@ -111,15 +105,7 @@ public class Task {
 	public void setPriorityId(int priorityId) {
 		this.priorityId = priorityId;
 	}
-
-	public int getStateId() {
-		return stateId;
-	}
-
-	public void setStateId(int stateId) {
-		this.stateId = stateId;
-	}
-
+	
 	public int getIssueId() {
 		return issueId;
 	}

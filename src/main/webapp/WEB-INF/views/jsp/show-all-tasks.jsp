@@ -49,7 +49,7 @@
 				<td>${t.priority.type.value}</td>
 				<td>${t.state.type.value}</td>
 				<td>
-					<a href="./viewtaskdetails?taskId=${ t.id }">Show details</a>
+					<a href="../detail/${ t.id }">Show details</a>
 				</td>
 				<c:if test="${not empty user}">
 					<td>
@@ -57,10 +57,10 @@
 					</td>
 					<c:if test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
 						<td>
-							<a href="./edittask?taskId=${ t.id }">Edit</a>
+							<a href="../edit/${ t.id }">Edit</a>
 						</td>
 						<td>
-							<a href="./deletetask?taskId=${ t.id }">Delete</a>
+							<a href="../delete/${ t.id }">Delete</a>
 						</td>
 					</c:if>
 				</c:if>

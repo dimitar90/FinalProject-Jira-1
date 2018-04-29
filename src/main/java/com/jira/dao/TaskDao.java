@@ -60,7 +60,8 @@ public class TaskDao implements ITaskDao{
 	private static final String SELECT_TASKS_AFTER_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date >= ? AND is_deleted = 0;";
 	private static final String SELECT_TASKS_BEFORE_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date <= ? AND is_deleted = 0;";
 	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
-	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id FROM tasks LIMIT ?, ?;";
+	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 LIMIT ?, ?;";
+	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
 	
 	private final DBManager dbManager;
 	private final ITaskPriorityDao taskPriorityDao;
@@ -93,11 +94,14 @@ public class TaskDao implements ITaskDao{
 			pr.setString(4, task.getDescription());
 			pr.setInt(5, task.getProjectId());
 			pr.setInt(6, task.getPriorityId());
+			
 			// set default state - 1 (To do)
 			pr.setInt(7, 1);
+			
 			pr.setInt(8, task.getIssueId());
 			pr.setInt(9, task.getCreatorId());
 			pr.setInt(10, task.getAssigneeId());
+			
 			pr.executeUpdate();
 			ResultSet rs = pr.getGeneratedKeys();
 
@@ -125,8 +129,7 @@ public class TaskDao implements ITaskDao{
 	}
 
 	public TaskViewDetailsDto getById(int taskId) throws DatabaseException {
-		try (PreparedStatement pr = dbManager.getConnection()
-				.prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
 			pr.setInt(1, taskId);
 			ResultSet rs = pr.executeQuery();
 			TaskViewDetailsDto viewTaskDto = null;
@@ -149,15 +152,17 @@ public class TaskDao implements ITaskDao{
 				TaskIssue issue = taskIssueDao.getById(issueId);
 				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
+				Project project = projectDao.getById(projectId);
 				
 				viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description, priority, state,
 						issue, creator, assignee);
 			}
-
-			this.addCommentsToTask(viewTaskDto);
-			this.addImageToTask(viewTaskDto);
+			
+			if (viewTaskDto != null) {
+				this.addCommentsToTask(viewTaskDto);
+				this.addImageToTask(viewTaskDto);
+			}
+			
 			return viewTaskDto;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,6 +171,10 @@ public class TaskDao implements ITaskDao{
 	}
 
 	private void addCommentsToTask(TaskViewDetailsDto viewTaskDto) throws TaskException {
+		if (viewTaskDto == null) {
+			return;
+		}
+		
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
 			pr.setInt(1, viewTaskDto.getId());
 			ResultSet rs = pr.executeQuery();
@@ -207,47 +216,15 @@ public class TaskDao implements ITaskDao{
 				int priorityId = rs.getInt("priority_id");
 				int stateId = rs.getInt("state_id");
 				int assigneeId = rs.getInt("assignee_id");
+				int creatorId = rs.getInt("creator_id");
 
 				TaskPriority priority = taskPriorityDao.getById(priorityId);
 				TaskState state = taskStateDao.getById(stateId);
 				User assignee = userDao.getUserById(assigneeId);
+				User creator = userDao.getUserById(creatorId);
 				Project project = projectDao.getById(projectId);
 				
-				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
-				
-				tasks.add(viewTaskDto);
-			}
-
-			return tasks;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DatabaseException(INVALID_DATA, e);
-		}
-	}
-
-	public List<TaskBasicViewDto> getAll() throws Exception {
-		List<TaskBasicViewDto> tasks = new ArrayList<>();
-
-		try {
-			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_QUERY);
-			ResultSet rs = pr.executeQuery();
-
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String summary = rs.getString("summary");
-				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				int projectId = rs.getInt("project_id");
-				int priorityId = rs.getInt("priority_id");
-				int stateId = rs.getInt("state_id");
-				int assigneeId = rs.getInt("assignee_id");
-
-				TaskPriority priority = taskPriorityDao.getById(priorityId);
-				TaskState state = taskStateDao.getById(stateId);
-				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
-				
-				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator, dueDate, state);
 				
 				tasks.add(viewTaskDto);
 			}
@@ -306,8 +283,7 @@ public class TaskDao implements ITaskDao{
 				TaskIssue issue = taskIssueDao.getById(issueId);
 				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
+				Project project = projectDao.getById(projectId);
 
 				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
@@ -349,8 +325,7 @@ public class TaskDao implements ITaskDao{
 				TaskIssue issue = taskIssueDao.getById(issueId);
 				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
+				Project project = projectDao.getById(projectId);
 
 				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
@@ -368,6 +343,10 @@ public class TaskDao implements ITaskDao{
 	}
 
 	private void addImageToTask(TaskViewDetailsDto task) throws DatabaseException {
+		if (task == null) {
+			return;
+		}
+		
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_IMAGE_QUERY)) {
 			pr.setInt(1, task.getId());
 			ResultSet rs = pr.executeQuery();
@@ -571,5 +550,23 @@ public class TaskDao implements ITaskDao{
 		}
 		
 		return SELECT_TASKS_AFTER_DATE_QUERY;
+	}
+
+	@Override
+	public boolean isExistById(Integer taskId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(IS_EXIST_TASK_QUERY)){
+			pr.setInt(1, taskId);
+			ResultSet rs = pr.executeQuery();
+			rs.next();
+			
+			if (rs.getInt(1) == 1) {
+				return true;
+			}
+			
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
 	}
 }

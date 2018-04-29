@@ -18,8 +18,6 @@ public interface ITaskDao {
 	
 	public TaskViewDetailsDto getById(int taskId) throws DatabaseException;
 	
-	public List<TaskBasicViewDto> getAll() throws Exception;
-	
 	public void changeStateById(int taskId, int newStateId) throws DatabaseException;
 	
 	public void deleteById(Integer taskId) throws DatabaseException;
@@ -35,4 +33,6 @@ public interface ITaskDao {
 	public int getCountOfTasks() throws DatabaseException;
 
 	public List<TaskBasicViewDto> getByCurrentPageNumberAndTaskPerPage(Integer pageNumber, int tasksCountOnPage) throws DatabaseException, Exception;
+
+	public boolean isExistById(Integer taskId) throws DatabaseException;
 }
