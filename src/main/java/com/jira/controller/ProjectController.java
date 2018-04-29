@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import com.jira.dto.ProjectDto;
 import com.jira.dto.ProjectTypeBusinessDto;
 import com.jira.dto.ProjectTypeSoftwareDto;
 import com.jira.exception.DatabaseException;
+import com.jira.exception.UserDataException;
 import com.jira.model.Project;
 import com.jira.model.ProjectCategory;
 import com.jira.model.ProjectType;
@@ -125,4 +127,20 @@ public class ProjectController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
+	public String viewPatka(Model model, @PathVariable Integer id) {
+		try {
+			ProjectDto dto = projectDao.getProjectDtoById(id);
+			model.addAttribute("dto",dto);
+			
+			return "project-view";
+		} catch (DatabaseException | UserDataException e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+		
+	}
+
 }

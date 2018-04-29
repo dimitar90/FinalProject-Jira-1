@@ -23,4 +23,6 @@ public interface IProjectDao {
 	public boolean isExistById(int projectId) throws Exception;
 	
 	public void isValidProjectName(String projectName) throws Exception;
+	public ProjectDto getProjectDtoById(Integer id) throws Exception;;
+
 }

@@ -23,6 +23,7 @@ import com.jira.model.User;
 public class ProjectDao implements IProjectDao{
 	private static final String MSG_SQL_INVALID_DATA = "Invalid credentials project dao";
 	private static final String MSG_INVALID_PROJECT_NAME = "Invalid project name in roject dao";
+	private static final String MSG_INVALID_ID = "No project with such id";
 	@Autowired
 	private final DBManager manager;
 	
@@ -122,7 +123,7 @@ public class ProjectDao implements IProjectDao{
 	}
 
 	@Override
-	public Collection<ProjectDto> getAllProjectDtos() throws Exception {
+	public List<ProjectDto> getAllProjectDtos() throws Exception {
 		String sql = "SELECT id, name, project_type_id, project_category_id, project_lead_id FROM projects WHERE is_deleted = 0";
 		try {
 			PreparedStatement pr = this.manager.getConnection().prepareStatement(sql);
@@ -217,6 +218,35 @@ public class ProjectDao implements IProjectDao{
 	public void isValidProjectName(String projectName) throws ProjectException {
 		if (projectName.isEmpty() && projectName.length() < 2) {
 			throw new ProjectException(MSG_INVALID_PROJECT_NAME);
+		}
+		
+	}
+
+	public ProjectDto getProjectDtoById(Integer id) throws DatabaseException, UserDataException {
+		String sql = "SELECT * FROM projects WHERE id = ? AND is_deleted = 0";
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet result = ps.executeQuery();
+
+			result.next();
+			
+			int rsId = result.getInt("id");
+			String name = result.getString("name");
+			int projectTypeId = result.getInt("project_type_id");
+			int projectCategoryId = result.getInt("project_category_id");
+			int projectLeadId = result.getInt("project_lead_id");
+
+			String projectType = projectTypeDao.getProjectTypeById(projectTypeId);
+			String projectCategory = projectCategoryDao.getProjectCategoryById(projectCategoryId);
+			User user = userDao.getUserById(projectLeadId);
+
+			ProjectDto dto = ProjectDto.getDto(rsId, name, projectType, projectCategory, user.getName());
+			ps.close();
+			return dto;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_INVALID_ID);
 		}
 		
 	}

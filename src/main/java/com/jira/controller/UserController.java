@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.dao.ProjectCategoryDao;
+import com.jira.dao.ProjectDao;
 import com.jira.dao.ProjectTypeDao;
+import com.jira.dto.ProjectDto;
 import com.jira.exception.UserDataException;
 import com.jira.manager.UserManager;
-import com.jira.model.ProjectCategory;
-import com.jira.model.ProjectType;
 import com.jira.model.User;
 
 @Controller
@@ -36,6 +36,9 @@ public class UserController {
 	@Autowired
 	private UserManager userManager;
 
+
+	@Autowired
+	private ProjectDao projectDao;
 
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
@@ -55,17 +58,17 @@ public class UserController {
 			@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String confirmPassword) {
 		try {
-
 			String imageUrl = this.userManager.saveImageUrl(singleFile, email);
-
+			
 			User user = this.userManager.register(username, email, password, confirmPassword, imageUrl);
-
+			
 			s.setAttribute("user", user);
-
 			s.setMaxInactiveInterval(EXP_TIME);
 
+			List<ProjectDto> dtoList = projectDao.getAllProjectDtos();
+			s.setAttribute("dtoProjects", dtoList);
+			
 			return "main";
-
 		} catch (UserDataException e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -90,9 +93,11 @@ public class UserController {
 			@RequestParam String password) {
 		try {
 			User user = this.userManager.login(email, password);
-
+			List<ProjectDto> dtoList = projectDao.getAllProjectDtos();
 			if (user != null) {
 				s.setAttribute("user", user);
+				
+				s.setAttribute("dtoProjects", dtoList);
 				return "main";
 			}
 			throw new UserDataException(MSG_INVALID_USER_NAME_OR_PASSWORD);
