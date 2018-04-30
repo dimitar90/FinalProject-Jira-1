@@ -1,6 +1,8 @@
 package com.jira.controller;
 
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -80,6 +82,26 @@ public class TaskController {
 		this.taskStateDao = taskStateDao;
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/usertasks")
+	public String showTasksOnLoggedUser(HttpSession session, Model model) {
+		//TODO validation for logged user
+		User loggedUser = (User) session.getAttribute("user");
+		if (loggedUser == null) {
+			return "redirect:../../Jira/login";
+		}
+		try {
+			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
+			List<TaskBasicViewDto> tasks = this.taskDao.getAllOpenTasksByUserId(loggedUser.getId());
+			model.addAttribute("tasks", tasks);
+
+			return "filtered-tasks";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "redirect:error";
+		}
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/filter")
 	public String getFilteredTasks(Model model, HttpServletRequest request) throws DatabaseException {
 		String[] selectedIssueTypes = request.getParameterValues("selectedIssueTypeIds");
@@ -94,20 +116,6 @@ public class TaskController {
 		return "filtered-tasks";
 	}
 	
-	private List<Integer> getIssueTypeIds(String[] selectedIssueTypes) {
-		List<Integer> issueTypeIds = new ArrayList<>();
-		
-		if (selectedIssueTypes == null) {
-			issueTypeIds.addAll(this.taskIssueDao.getAllIds());
-		} else {
-			for (String issueId : selectedIssueTypes) {
-				issueTypeIds.add(Integer.parseInt(issueId));
-			}
-		}
-		
-		return issueTypeIds;
-	}
-
 	@RequestMapping(method = RequestMethod.GET, value = "/delete/{taskId}")
 	public String deleteTaskPost(Model model, @PathVariable("taskId") int taskId, HttpServletRequest request) {
 		//TODO validate for logged user
@@ -313,5 +321,19 @@ public class TaskController {
 		}
 		
 		return isValid;
+	}
+	
+	private List<Integer> getIssueTypeIds(String[] selectedIssueTypes) {
+		List<Integer> issueTypeIds = new ArrayList<>();
+		
+		if (selectedIssueTypes == null) {
+			issueTypeIds.addAll(this.taskIssueDao.getAllIds());
+		} else {
+			for (String issueId : selectedIssueTypes) {
+				issueTypeIds.add(Integer.parseInt(issueId));
+			}
+		}
+		
+		return issueTypeIds;
 	}
 }

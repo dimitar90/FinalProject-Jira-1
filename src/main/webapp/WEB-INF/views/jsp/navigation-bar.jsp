@@ -102,7 +102,7 @@ body {
 		</button>
 		<div class="dropdown-content">
 			<a href="http://localhost:8080/Jira/tasks/create">Create issue</a>
-			 <a href="./getopentasks">My open issues</a> 
+			 <a href="http://localhost:8080/Jira/tasks/usertasks">My open issues</a> 
 			 <a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a>
 		</div>
 	</div>
@@ -122,7 +122,7 @@ body {
 			Export <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="./exporttopdf">PDF export</a>
+			<a href="http://localhost:8080/Jira/export/pdf">PDF export</a>
 		</div>
 	</div>
 
