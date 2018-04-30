@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.jira.dao.ProjectCategoryDao;
 import com.jira.dao.ProjectDao;
 import com.jira.dao.ProjectTypeDao;
+import com.jira.dao.TaskDao;
 import com.jira.dao.UserDao;
 import com.jira.dto.ProjectDto;
 import com.jira.dto.ProjectTypeBusinessDto;
 import com.jira.dto.ProjectTypeSoftwareDto;
+import com.jira.dto.TaskBasicViewDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
 import com.jira.model.Project;
@@ -43,6 +45,10 @@ public class ProjectController {
 
 	@Autowired
 	private UserDao userDao;
+	
+
+	@Autowired
+	private TaskDao taskDao;
 	
 	@RequestMapping(value = "/submitProject", method = RequestMethod.GET)
 	public String create(Model model) {
@@ -136,13 +142,15 @@ public class ProjectController {
 	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
 	public String viewPatka(Model model, @PathVariable int id) {
 		try {
-			ProjectDto dto = projectDao.getProjectDtoById(id);
+			ProjectDto dtoProject = projectDao.getProjectDtoById(id);
 			
-			model.addAttribute("dto",dto);
+			model.addAttribute("dtoProject",dtoProject);
 			
-
+			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(id);
+			
+			model.addAttribute("tasksDto", tasksDto);
 			return "project-view";
-		} catch (DatabaseException | UserDataException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
 		}
