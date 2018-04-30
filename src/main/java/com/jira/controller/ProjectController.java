@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.jira.dao.ProjectCategoryDao;
 import com.jira.dao.ProjectDao;
 import com.jira.dao.ProjectTypeDao;
+import com.jira.dao.UserDao;
 import com.jira.dto.ProjectDto;
 import com.jira.dto.ProjectTypeBusinessDto;
 import com.jira.dto.ProjectTypeSoftwareDto;
@@ -39,6 +40,10 @@ public class ProjectController {
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
 
+
+	@Autowired
+	private UserDao userDao;
+	
 	@RequestMapping(value = "/submitProject", method = RequestMethod.GET)
 	public String create(Model model) {
 		try {// TODO session validate
@@ -129,11 +134,13 @@ public class ProjectController {
 	}
 	
 	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
-	public String viewPatka(Model model, @PathVariable Integer id) {
+	public String viewPatka(Model model, @PathVariable int id) {
 		try {
 			ProjectDto dto = projectDao.getProjectDtoById(id);
+			
 			model.addAttribute("dto",dto);
 			
+
 			return "project-view";
 		} catch (DatabaseException | UserDataException e) {
 			e.printStackTrace();

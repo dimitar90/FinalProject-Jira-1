@@ -2,12 +2,14 @@ package com.jira.interfaces;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import com.jira.dto.ProjectDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.ProjectException;
+import com.jira.exception.UserDataException;
 import com.jira.model.Project;
 
 @Component
@@ -19,10 +21,12 @@ public interface IProjectDao {
 	public Project getById(int projectId) throws DatabaseException;
 
 	public Collection<ProjectDto> getAllProjectDtos() throws Exception;
-	
-	public boolean isExistById(int projectId) throws Exception;
-	
-	public void isValidProjectName(String projectName) throws Exception;
-	public ProjectDto getProjectDtoById(Integer id) throws Exception;;
 
+	public boolean isExistById(int projectId) throws Exception;
+
+	public void isValidProjectName(String projectName) throws Exception;
+
+	public ProjectDto getProjectDtoById(int id) throws Exception;
+
+	public List<ProjectDto> getAllBelongingToUser(int id) throws Exception;
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.dao.UserDao;
+import com.jira.dto.UserDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
 import com.jira.model.User;
@@ -168,6 +169,11 @@ public class UserManager {
 		checkEmail(u.getEmail());
 
 		this.userDao.changeImageUrl(imageUrl, u);
+	}
+
+	public UserDto getUserDtoById(Integer id) throws DatabaseException {
+		
+		return this.userDao.getUserDtoById(id);
 	}
 
 }

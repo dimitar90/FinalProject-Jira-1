@@ -8,19 +8,24 @@
 <body>
 	
 	<h1>Welcome, ${user.name}</h1>
+	<br>
+	<br>
+	<h2>Your own projects</h2>
 	<table>
-	<tr>
-			<th>Project name</th>
-			<th>Project type</th>
-			<th class="project">Project category</th>
-			<th class="project">Project lead</th>
+		<tr>
+			<th> name of project </th>
+			<th> type of project </th>
+			<th class="project"> category of project </th>
 		</tr>
-		<c:forEach items="${ dtoProjects }" var="p">
+		<c:forEach items="${ myProjects }" var="p">
 		<tr>	
-			<td class="even"> <a href="./projectId/${p.id}"> ${p.name} </td>
+			<td class="even"> 
+			<a href="./projectId/${p.id}">${p.name}</a> 
+			 </td>
 			<td>${p.projectType}</td>
 			<td class="project"> ${p.projectCategory}</td>
-			<td class="project">${p.projectLead}</td>
+			<td class="project">
+			</td>
 		</tr>
 		</c:forEach>
 	</table>
@@ -45,5 +50,14 @@
        </table>
    </form>
    <br>
+   <form action="myProfile" method="get">
+	    <table>
+		       <tr>
+		        <td>			
+			      <input type="submit" value="My profil">
+		         </td>
+	          </tr>
+       </table>
+   </form>
 </body>
 </html>
