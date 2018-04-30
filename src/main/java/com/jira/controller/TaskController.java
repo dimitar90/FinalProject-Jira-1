@@ -1,7 +1,5 @@
 package com.jira.controller;
 
-import static org.mockito.Matchers.booleanThat;
-import static org.mockito.Mockito.doNothing;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +8,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -77,6 +78,68 @@ public class TaskController {
 		this.userDao = userDao;
 		this.taskDao = taskDao;
 		this.taskStateDao = taskStateDao;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/filter")
+	public String getFilteredTasks(Model model, HttpServletRequest request) throws DatabaseException {
+		String[] selectedIssueTypes = request.getParameterValues("selectedIssueTypeIds");
+		String firstDate = request.getParameter("firstDate");
+		String secondDate = request.getParameter("secondDate");
+		
+		List<Integer> issueTypeIds = this.getIssueTypeIds(selectedIssueTypes);
+		
+		List<TaskBasicViewDto> tasks = taskDao.getFilteredTasksByIssueTypeAndDate(issueTypeIds, firstDate, secondDate);
+		model.addAttribute("tasks", tasks);
+		model.addAttribute("issueTypes", taskIssueDao.getAll());
+		return "filtered-tasks";
+	}
+	
+	private List<Integer> getIssueTypeIds(String[] selectedIssueTypes) {
+		List<Integer> issueTypeIds = new ArrayList<>();
+		
+		if (selectedIssueTypes == null) {
+			issueTypeIds.addAll(this.taskIssueDao.getAllIds());
+		} else {
+			for (String issueId : selectedIssueTypes) {
+				issueTypeIds.add(Integer.parseInt(issueId));
+			}
+		}
+		
+		return issueTypeIds;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/delete/{taskId}")
+	public String deleteTaskPost(Model model, @PathVariable("taskId") int taskId, HttpServletRequest request) {
+		//TODO validate for logged user
+		
+		try {
+			if (!this.taskDao.isExistById(taskId)) {
+				return REDIRECT_FIRST_PAGE_ALL_TASKS;
+			}
+			
+			TaskViewDetailsDto task = this.taskDao.getById(taskId);
+		    
+			if (task == null) {
+				return REDIRECT_FIRST_PAGE_ALL_TASKS;
+			}
+			
+			HttpSession session = request.getSession();
+			User user = (User) session.getAttribute("user");
+			int loggedUserId = user.getId();
+			TaskViewDetailsDto editTaskDto = taskDao.getById(taskId);
+
+			if (editTaskDto.getAssignee().getId() != loggedUserId && editTaskDto.getCreator().getId() != loggedUserId) {
+				return REDIRECT_FIRST_PAGE_ALL_TASKS;
+			}
+			
+			taskDao.deleteById(taskId);
+			
+	        return "redirect:" + REDIRECT_FIRST_PAGE_ALL_TASKS;
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/edit/{taskId}")
@@ -159,6 +222,7 @@ public class TaskController {
 			
 			model.addAttribute("noOfPages", noOfPages);
 			model.addAttribute("currentPage", pageNumber);
+			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 			
 			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, ROWS_COUNT_OF_PAGE);
 			model.addAttribute("tasks", tasks);

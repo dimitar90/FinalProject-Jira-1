@@ -2,6 +2,7 @@ package com.jira.interfaces;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -22,17 +23,16 @@ public interface ITaskDao {
 	
 	public void deleteById(Integer taskId) throws DatabaseException;
 	
-	public List<TaskViewDetailsDto> getAllByProjectId(int pId) throws Exception;
-	
-	public List<TaskViewDetailsDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds) throws  Exception;
+	public List<TaskBasicViewDto> getAllByProjectId(int pId) throws Exception;
 	
 	public List<TaskViewDetailsDto> getAllOpenTasksByUserId(int userId) throws DatabaseException;
 	
-	public List<TaskViewDetailsDto> getTasksBetweenTwoDates(String firstDate, String secondDate) throws DatabaseException;
-
 	public int getCountOfTasks() throws DatabaseException;
 
 	public List<TaskBasicViewDto> getByCurrentPageNumberAndTaskPerPage(Integer pageNumber, int tasksCountOnPage) throws DatabaseException, Exception;
 
 	public boolean isExistById(Integer taskId) throws DatabaseException;
+
+	public List<TaskBasicViewDto> getFilteredTasksByIssueTypeAndDate(List<Integer> issueTypeIds, String firstDate,
+			String secondDate) throws DatabaseException;
 }

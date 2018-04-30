@@ -5,9 +5,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -75,22 +77,13 @@ public class TaskIssueDao implements ITaskIssueDao{
 		return taskIssues.get(issueId);
 	}
 
-	public List<Integer> getIdsByNames(String[] selectedIssueTypes) {
-		List<Integer> ids = new ArrayList<>();
-		
-		for (String name : selectedIssueTypes) {
-			for (Entry<Integer, TaskIssue> kvp : taskIssues.entrySet()) {
-				if (name.equals(kvp.getValue().getType().getValue())) {
-					ids.add(kvp.getKey());
-				}
-			}
-		}
-		
-		return ids;
-	}
-
 	@Override
 	public boolean isExistById(Integer issueTypeId) {
 		return taskIssues.containsKey(issueTypeId);
+	}
+
+	@Override
+	public Set<Integer> getAllIds() {
+		return new HashSet<>(taskIssues.keySet());
 	}
 }
