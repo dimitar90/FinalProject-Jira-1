@@ -1,6 +1,8 @@
 package com.jira.interfaces;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,7 @@ public interface ITaskIssueDao {
 	
 	public TaskIssue getById(int issueId);
 	
-	public List<Integer> getIdsByNames(String[] selectedIssueTypes);
-
 	public boolean isExistById(Integer issueTypeId);
+
+	public Set<Integer> getAllIds();
 }

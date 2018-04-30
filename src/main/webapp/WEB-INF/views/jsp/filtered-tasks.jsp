@@ -4,13 +4,11 @@
 
 <link rel="stylesheet" type="text/css" href="table.css">
 <jsp:include page="navigation-bar.jsp"></jsp:include>
-<c:set var="user" value="${ user }" />
-<c:set var="first" value= "0" />
 
 <body>
-	<h3>All tasks:</h3><br>
-	
-	<form style="display: inline-block"  action="../filter" method="post">
+	<h3>All tasks:</h3>
+	<br>
+	<form style="display: inline-block"  action="./filter" method="post">
 	 <p>Filter by issue type</p>
 	 	<c:forEach items="${ issueTypes }" var="it" >
 	 	 <input type="checkbox" name="selectedIssueTypeIds" value= "${it.id}"> ${it.type.value} <br>
@@ -32,6 +30,7 @@
 			<th>Priority</th>
 			<th>State</th>
 			<th>Details</th>
+			<th>Add comment</th>
 			<th>Edit</th>
 			<th>Delete</th>
 		</tr>
@@ -45,7 +44,7 @@
 				<td>${t.priority.type.value}</td>
 				<td>${t.state.type.value}</td>
 				<td>
-					<a href="../detail/${ t.id }">Show details</a>
+					<a href="../tasks/detail/${ t.id }">Show details</a>
 				</td>
 				<c:if test="${not empty user}">
 					<c:if test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
@@ -60,25 +59,5 @@
 			</tr> <br>
 		</c:forEach>
 	</table>
-	
-	<%--if currentPage == firstPage button for first is hidden --%>>
-	 <c:if test="${currentPage > first}">
-	 	<a href="${first}">First</a>
-     </c:if>
-     
-    <%--if currentPage == firstPage button for previous is hidden --%>>
-    <c:if test="${currentPage != first}">
-    	<td><a href="${currentPage - 1}">Previous</a></td>
-    </c:if>
-    
-    <%--if currentPage == lastPage button for next is hidden --%>>
-    <c:if test="${currentPage < noOfPages}">
-        <td><a href="${currentPage + 1}">Next</a></td>
-    </c:if>
-    
-     <%--if currentPage == lastPage button for last is hidden --%>>
-     <c:if test="${currentPage < noOfPages}">
-			<a href="${noOfPages}">Last</a>
-     </c:if>
 </body>
 </html>

@@ -11,4 +11,6 @@ public interface ITaskStateDao {
 	public TaskState getById(int stateId);
 	
 	public List<TaskState> getAll();
+
+	public boolean isExistById(Integer state);
 }

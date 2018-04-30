@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,12 @@ import com.jira.model.User;
 
 @Component
 public class TaskDao implements ITaskDao{
+	private static final String BETWEEN_TWO_DATE_PART = "(due_date BETWEEN ? AND ?)";
+
+	private static final String BEFORE_DATE_QUERY_PART = "due_date <= ?";
+
+	private static final String AFTER_DATE_QUERY_PART = "due_date >= ?";
+
 	private static final String INVALID_DATA = "Invalid credentials!";
 
 	private static final String DELETE_TASK_QUERY = "UPDATE tasks SET is_deleted = 1 WHERE id = ?";
@@ -57,10 +64,9 @@ public class TaskDao implements ITaskDao{
 	private static final String SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY = "SELECT t.id, t.summary, t.due_date, t.start_date, t.description, t.project_id, t.priority_id, t.state_id, t.issue_id, t.creator_id, t.assignee_id FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id WHERE s.type <> ? AND assignee_id = ? AND t.is_deleted = 0;";
 	private static final String SELECT_TASKS_BY_PROJECT_ID_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE project_id = ? AND is_deleted = 0;";
 	private static final String SELECT_TASKS_BETWEEN_TWO_DATES_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE (due_date BETWEEN ? AND ?) AND is_deleted = 0;";
-	private static final String SELECT_TASKS_AFTER_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date >= ? AND is_deleted = 0;";
-	private static final String SELECT_TASKS_BEFORE_DATE_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE due_date <= ? AND is_deleted = 0;";
 	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
-	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id FROM tasks LIMIT ?, ?;";
+	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 LIMIT ?, ?;";
+	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
 	
 	private final DBManager dbManager;
 	private final ITaskPriorityDao taskPriorityDao;
@@ -93,11 +99,14 @@ public class TaskDao implements ITaskDao{
 			pr.setString(4, task.getDescription());
 			pr.setInt(5, task.getProjectId());
 			pr.setInt(6, task.getPriorityId());
+			
 			// set default state - 1 (To do)
 			pr.setInt(7, 1);
+			
 			pr.setInt(8, task.getIssueId());
 			pr.setInt(9, task.getCreatorId());
 			pr.setInt(10, task.getAssigneeId());
+			
 			pr.executeUpdate();
 			ResultSet rs = pr.getGeneratedKeys();
 
@@ -125,8 +134,7 @@ public class TaskDao implements ITaskDao{
 	}
 
 	public TaskViewDetailsDto getById(int taskId) throws DatabaseException {
-		try (PreparedStatement pr = dbManager.getConnection()
-				.prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
 			pr.setInt(1, taskId);
 			ResultSet rs = pr.executeQuery();
 			TaskViewDetailsDto viewTaskDto = null;
@@ -149,15 +157,17 @@ public class TaskDao implements ITaskDao{
 				TaskIssue issue = taskIssueDao.getById(issueId);
 				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
+				Project project = projectDao.getById(projectId);
 				
 				viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description, priority, state,
 						issue, creator, assignee);
 			}
-
-			this.addCommentsToTask(viewTaskDto);
-			this.addImageToTask(viewTaskDto);
+			
+			if (viewTaskDto != null) {
+				this.addCommentsToTask(viewTaskDto);
+				this.addImageToTask(viewTaskDto);
+			}
+			
 			return viewTaskDto;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -166,6 +176,10 @@ public class TaskDao implements ITaskDao{
 	}
 
 	private void addCommentsToTask(TaskViewDetailsDto viewTaskDto) throws TaskException {
+		if (viewTaskDto == null) {
+			return;
+		}
+		
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
 			pr.setInt(1, viewTaskDto.getId());
 			ResultSet rs = pr.executeQuery();
@@ -207,47 +221,15 @@ public class TaskDao implements ITaskDao{
 				int priorityId = rs.getInt("priority_id");
 				int stateId = rs.getInt("state_id");
 				int assigneeId = rs.getInt("assignee_id");
+				int creatorId = rs.getInt("creator_id");
 
 				TaskPriority priority = taskPriorityDao.getById(priorityId);
 				TaskState state = taskStateDao.getById(stateId);
 				User assignee = userDao.getUserById(assigneeId);
+				User creator = userDao.getUserById(creatorId);
 				Project project = projectDao.getById(projectId);
 				
-				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
-				
-				tasks.add(viewTaskDto);
-			}
-
-			return tasks;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DatabaseException(INVALID_DATA, e);
-		}
-	}
-
-	public List<TaskBasicViewDto> getAll() throws Exception {
-		List<TaskBasicViewDto> tasks = new ArrayList<>();
-
-		try {
-			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_QUERY);
-			ResultSet rs = pr.executeQuery();
-
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String summary = rs.getString("summary");
-				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				int projectId = rs.getInt("project_id");
-				int priorityId = rs.getInt("priority_id");
-				int stateId = rs.getInt("state_id");
-				int assigneeId = rs.getInt("assignee_id");
-
-				TaskPriority priority = taskPriorityDao.getById(priorityId);
-				TaskState state = taskStateDao.getById(stateId);
-				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
-				
-				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, dueDate, state);
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator, dueDate, state);
 				
 				tasks.add(viewTaskDto);
 			}
@@ -280,8 +262,8 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	public List<TaskViewDetailsDto> getAllByProjectId(int pId) throws Exception {
-		List<TaskViewDetailsDto> tasks = new ArrayList<>();
+	public List<TaskBasicViewDto> getAllByProjectId(int pId) throws Exception {
+		List<TaskBasicViewDto> tasks = new ArrayList<>();
 
 		try {
 			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PROJECT_ID_QUERY);
@@ -292,25 +274,20 @@ public class TaskDao implements ITaskDao{
 				int id = rs.getInt("id");
 				String summary = rs.getString("summary");
 				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-				String description = rs.getString("description");
 				int projectId = rs.getInt("project_id");
 				int priorityId = rs.getInt("priority_id");
 				int stateId = rs.getInt("state_id");
-				int issueId = rs.getInt("issue_id");
-				int creatorId = rs.getInt("creator_id");
 				int assigneeId = rs.getInt("assignee_id");
+				int creatorId = rs.getInt("creator_id");
 
 				TaskPriority priority = taskPriorityDao.getById(priorityId);
 				TaskState state = taskStateDao.getById(stateId);
-				TaskIssue issue = taskIssueDao.getById(issueId);
-				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
-
-				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
-						priority, state, issue, creator, assignee);
+				User creator = userDao.getUserById(creatorId);
+				Project project = projectDao.getById(projectId);
+				
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator, dueDate, state);
+				
 				tasks.add(viewTaskDto);
 			}
 
@@ -319,55 +296,13 @@ public class TaskDao implements ITaskDao{
 			e.printStackTrace();
 			throw new DatabaseException(INVALID_DATA, e);
 		}
-
-	}
-
-	public List<TaskViewDetailsDto> getTasksByIssueTypeIds(List<Integer> selectedIssueTypeIds)
-			throws Exception {
-		List<TaskViewDetailsDto> tasks = new ArrayList<>();
-		String selectTasksByIssueTypeQuery = this.createQuery(selectedIssueTypeIds);
-
-		try {
-			PreparedStatement pr = dbManager.getConnection().prepareStatement(selectTasksByIssueTypeQuery);
-			ResultSet rs = pr.executeQuery();
-
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String summary = rs.getString("summary");
-				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-				String description = rs.getString("description");
-				int projectId = rs.getInt("project_id");
-				int priorityId = rs.getInt("priority_id");
-				int stateId = rs.getInt("state_id");
-				int issueId = rs.getInt("issue_id");
-				int creatorId = rs.getInt("creator_id");
-				int assigneeId = rs.getInt("assignee_id");
-
-				TaskPriority priority = taskPriorityDao.getById(priorityId);
-				TaskState state = taskStateDao.getById(stateId);
-				TaskIssue issue = taskIssueDao.getById(issueId);
-				User creator = userDao.getUserById(creatorId);
-				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
-
-				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
-						priority, state, issue, creator, assignee);
-				tasks.add(viewTaskDto);
-			}
-
-			this.addImageUrlsToTasks(tasks);
-
-			return tasks;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DatabaseException(INVALID_DATA, e);
-		}
-
 	}
 
 	private void addImageToTask(TaskViewDetailsDto task) throws DatabaseException {
+		if (task == null) {
+			return;
+		}
+		
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_IMAGE_QUERY)) {
 			pr.setInt(1, task.getId());
 			ResultSet rs = pr.executeQuery();
@@ -431,21 +366,6 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	private String createQuery(List<Integer> selectedIssueTypeIds) {
-		StringBuilder query = new StringBuilder();
-		query.append(
-				"SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE is_deleted = 0 AND issue_id IN (");
-
-		for (Integer id : selectedIssueTypeIds) {
-			query.append(id).append(",");
-		}
-
-		query.deleteCharAt(query.length() - 1);
-		query.append(");");
-
-		return query.toString();
-	}
-
 	public List<TaskViewDetailsDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY)) {
 			pr.setString(1, TaskStateType.done.getValue());
@@ -471,8 +391,7 @@ public class TaskDao implements ITaskDao{
 				TaskIssue issue = taskIssueDao.getById(issueId);
 				User creator = userDao.getUserById(creatorId);
 				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
+				Project project = projectDao.getById(projectId);
 				
 				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
 						priority, state, issue, creator, assignee);
@@ -486,49 +405,6 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
-	public List<TaskViewDetailsDto> getTasksBetweenTwoDates(String firstDate, String secondDate)
-			throws DatabaseException {
-		String sql = this.getSqlByDates(firstDate, secondDate);
-		
-		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sql)){
-			this.setParametersByDates(firstDate, secondDate, pr);
-			
-			ResultSet rs = pr.executeQuery();
-			List<TaskViewDetailsDto> tasks = new ArrayList<>();
-			while (rs.next()) {
-				int id = rs.getInt("id");
-				String summary = rs.getString("summary");
-				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-				LocalDate startDate = rs.getDate("start_date").toLocalDate();
-				String description = rs.getString("description");
-				int projectId = rs.getInt("project_id");
-				int priorityId = rs.getInt("priority_id");
-				int stateId = rs.getInt("state_id");
-				int issueId = rs.getInt("issue_id");
-				int creatorId = rs.getInt("creator_id");
-				int assigneeId = rs.getInt("assignee_id");
-
-				TaskPriority priority = taskPriorityDao.getById(priorityId);
-				TaskState state = taskStateDao.getById(stateId);
-				TaskIssue issue = taskIssueDao.getById(issueId);
-				User creator = userDao.getUserById(creatorId);
-				User assignee = userDao.getUserById(assigneeId);
-				//Project project = projectDao.getById(projectId);
-				Project project = new Project();
-				
-				TaskViewDetailsDto viewTaskDto = new TaskViewDetailsDto(id, project, summary, dueDate, startDate, description,
-						priority, state, issue, creator, assignee);
-				tasks.add(viewTaskDto);
-			}
-
-			return tasks;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new DatabaseException(INVALID_DATA, e);
-		}
-
-	}
-	
 	@Override
 	public int getCountOfTasks() throws DatabaseException {
 		try (Statement st = dbManager.getConnection().createStatement()){
@@ -542,34 +418,130 @@ public class TaskDao implements ITaskDao{
 		}
 	}
 
+	@Override
+	public boolean isExistById(Integer taskId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(IS_EXIST_TASK_QUERY)){
+			pr.setInt(1, taskId);
+			ResultSet rs = pr.executeQuery();
+			rs.next();
+			
+			if (rs.getInt(1) == 1) {
+				return true;
+			}
+			
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
 
-	private void setParametersByDates(String firstDate, String secondDate, PreparedStatement pr) throws SQLException {
+	@Override
+	public List<TaskBasicViewDto> getFilteredTasksByIssueTypeAndDate(List<Integer> issueTypeIds, String firstDate, String secondDate) throws DatabaseException {
+		List<String> allParts = new ArrayList<>();
+		this.getSqlByIssueType(issueTypeIds, allParts);
+		this.getSqlByDates(firstDate, secondDate, allParts);
+	
+		StringBuilder sqlQuery = new StringBuilder("SELECT id, project_id, summary, priority_id, assignee_id, creator_id, due_date, state_id FROM tasks WHERE ");
+		for (String sqlPart : allParts) {
+			sqlQuery.append(sqlPart).append(" AND ");
+		}
+		sqlQuery.append(" is_deleted = 0;");
+		
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sqlQuery.toString().trim())){
+			this.setParametersToFilteredPreparedStatement(issueTypeIds, firstDate, secondDate,  pr);
+			ResultSet rs = pr.executeQuery();
+			
+			List<TaskBasicViewDto> tasks = new ArrayList<>();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				String summary = rs.getString("summary");
+				LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+				int projectId = rs.getInt("project_id");
+				int priorityId = rs.getInt("priority_id");
+				int stateId = rs.getInt("state_id");
+				int assigneeId = rs.getInt("assignee_id");
+				int creatorId = rs.getInt("creator_id");
+
+				TaskPriority priority = taskPriorityDao.getById(priorityId);
+				TaskState state = taskStateDao.getById(stateId);
+				User assignee = userDao.getUserById(assigneeId);
+				User creator = userDao.getUserById(creatorId);
+				Project project = projectDao.getById(projectId);
+				
+				TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator, dueDate, state);
+				
+				tasks.add(viewTaskDto);
+			}
+			
+			return tasks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+	
+	private void setParametersToFilteredPreparedStatement(List<Integer> issueTypeIds, String firstDate,
+			String secondDate, PreparedStatement pr) throws SQLException {
+		
+		for (int index = 1; index <= issueTypeIds.size(); index++) {
+			pr.setInt(index, issueTypeIds.get(index - 1));
+		}
+		
+		int issueIdsSize = issueTypeIds.size();
+		
+		if (firstDate.isEmpty() && secondDate.isEmpty()) {
+			return;
+		}
+		
 		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {
-			pr.setDate(1, java.sql.Date.valueOf(firstDate));
-			pr.setDate(2, java.sql.Date.valueOf(secondDate));
+			pr.setDate((issueIdsSize + 1), java.sql.Date.valueOf(firstDate));
+			pr.setDate((issueIdsSize + 2), java.sql.Date.valueOf(secondDate));
 			return;
 		}
 		
 		if (firstDate.isEmpty()) {
-			pr.setDate(1, java.sql.Date.valueOf(secondDate));
+			pr.setDate((issueIdsSize + 1), java.sql.Date.valueOf(secondDate));
 			return;
 		}
 		
 		if (secondDate.isEmpty()) {
-			pr.setDate(1, java.sql.Date.valueOf(firstDate));
+			pr.setDate((issueIdsSize + 1), java.sql.Date.valueOf(firstDate));
 			return;
 		}	
 	}
 
-	private String getSqlByDates(String firstDate, String secondDate) {
+	private void getSqlByDates(String firstDate, String secondDate, List<String> allParts) {
+		if (firstDate.isEmpty() && secondDate.isEmpty()) {
+			return;
+		}
+		
 		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {
-			return SELECT_TASKS_BETWEEN_TWO_DATES_QUERY;
+			allParts.add(BETWEEN_TWO_DATE_PART);
+			return;
 		}
 		
 		if (firstDate.isEmpty()) {
-			return SELECT_TASKS_BEFORE_DATE_QUERY;
+			allParts.add(BEFORE_DATE_QUERY_PART);
+			return;
 		}
 		
-		return SELECT_TASKS_AFTER_DATE_QUERY;
+		allParts.add(AFTER_DATE_QUERY_PART);
 	}
+	
+	private void getSqlByIssueType(List<Integer> selectedIssueTypeIds, List<String> allParts) {
+		StringBuilder query = new StringBuilder();
+		query.append("issue_id IN (");
+		
+		for (int index = 0; index < selectedIssueTypeIds.size(); index++) {
+			query.append("?").append(",");
+		}
+
+		query.deleteCharAt(query.length() - 1);
+		query.append(")");
+
+		allParts.add(query.toString().trim());
+	}
+	
+	
 }

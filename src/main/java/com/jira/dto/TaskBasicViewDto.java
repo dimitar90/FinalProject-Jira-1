@@ -13,17 +13,19 @@ public class TaskBasicViewDto {
 	private String summary;
 	private TaskPriority priority;
 	private User assignee;
+	private User creator;
 	private LocalDate dueDate;
 	private TaskState state;
 
 	public TaskBasicViewDto(int id, Project project, String summary, TaskPriority priority, User assignee,
-			LocalDate dueDate, TaskState state) {
+			User creator, LocalDate dueDate, TaskState state) {
 		super();
 		this.setId(id);
 		this.setProject(project);
 		this.setSummary(summary);
 		this.setPriority(priority);
 		this.setAssignee(assignee);
+		this.setCreator(creator);
 		this.setDueDate(dueDate);
 		this.setState(state);
 	}
@@ -66,6 +68,14 @@ public class TaskBasicViewDto {
 
 	public void setAssignee(User assignee) {
 		this.assignee = assignee;
+	}
+	
+	public User getCreator() {
+		return creator;
+	}
+
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 
 	public LocalDate getDueDate() {
