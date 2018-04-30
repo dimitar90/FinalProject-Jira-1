@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,17 +17,20 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.dao.ProjectCategoryDao;
+import com.jira.dao.ProjectDao;
 import com.jira.dao.ProjectTypeDao;
+import com.jira.dto.ProjectDto;
+import com.jira.dto.UserDto;
+import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
 import com.jira.manager.UserManager;
-import com.jira.model.ProjectCategory;
-import com.jira.model.ProjectType;
 import com.jira.model.User;
 
 @Controller
@@ -36,13 +41,17 @@ public class UserController {
 	@Autowired
 	private UserManager userManager;
 
+	@Autowired
+	private ProjectDao projectDao;
 
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
-	
 
 	@Autowired
-	private ProjectTypeDao  projectTypeDao ;
+	private ProjectTypeDao projectTypeDao;
+
+	@Autowired
+	ServletContext context;
 	
 	// register methods
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -55,17 +64,20 @@ public class UserController {
 			@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String confirmPassword) {
 		try {
-
 			String imageUrl = this.userManager.saveImageUrl(singleFile, email);
 
 			User user = this.userManager.register(username, email, password, confirmPassword, imageUrl);
 
 			s.setAttribute("user", user);
-
 			s.setMaxInactiveInterval(EXP_TIME);
 
-			return "main";
+			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
 
+			s.setAttribute("user", user);
+
+			s.setAttribute("myProjects", dtoList);
+			
+			return "main";
 		} catch (UserDataException e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -80,23 +92,46 @@ public class UserController {
 	}
 
 	// login methods
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String getIndexPage() {
+		try {
+			List<ProjectDto> allDtoProjects = new ArrayList<>();
+
+			allDtoProjects.addAll(projectDao.getAllProjectDtos());
+			context.setAttribute("allDtoProjects", allDtoProjects);
+			return "index";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+	}
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String getLoginPage() {
-		return "index";
+		try {
+			List<ProjectDto> allDtoProjects = new ArrayList<>();
+
+			allDtoProjects.addAll(projectDao.getAllProjectDtos());
+			context.setAttribute("allDtoProjects", allDtoProjects);
+			return "index";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(Model model, HttpSession s, @RequestParam String email,
-			@RequestParam String password) {
+	public String login(Model model, HttpSession s, @RequestParam String email, @RequestParam String password) {
 		try {
 			User user = this.userManager.login(email, password);
+			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
 
-			if (user != null) {
-				s.setAttribute("user", user);
-				return "main";
-			}
-			throw new UserDataException(MSG_INVALID_USER_NAME_OR_PASSWORD);
+			s.setAttribute("user", user);
 
+			s.setAttribute("myProjects", dtoList);
+
+			return "main";
 		} catch (UserDataException e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -127,34 +162,32 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/editProfile", method = RequestMethod.POST)
-	public String editProfile(HttpSession s,Model model,@RequestParam String email,@RequestParam String oldPass,@RequestParam String oldConfPass,
-			@RequestParam String newName,@RequestParam String newPass) {
+	public String editProfile(HttpSession s, Model model, @RequestParam String email, @RequestParam String oldPass,
+			@RequestParam String oldConfPass, @RequestParam String newName, @RequestParam String newPass) {
 		// TODO check session
 		try {
-		userManager.comparePassword(oldPass, oldConfPass);
-		userManager.checkPassword(oldPass);
-		userManager.checkEmail(email);
+			userManager.comparePassword(oldPass, oldConfPass);
+			userManager.checkPassword(oldPass);
+			userManager.checkEmail(email);
 
-		// change data
-		User user = userManager.changeData(newName, newPass, email, oldPass);
-		
-		s.setAttribute("user", user);
-//		req.getRequestDispatcher("WEB-INF/jsp/main.jsp").forward(req, resp);
-		return "main";
-	} catch (UserDataException e) {
-		e.printStackTrace();
-		return "error";
-	} catch (Exception e) {
-		e.printStackTrace();
-		model.addAttribute("exception", e);
-		return "error";
+			// change data
+			User user = userManager.changeData(newName, newPass, email, oldPass);
+
+			s.setAttribute("user", user);
+			return "main";
+		} catch (UserDataException e) {
+			e.printStackTrace();
+			return "error";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		}
 	}
-}
-	
 
 	// shown pic
-	@RequestMapping(value = "/getPic", method = RequestMethod.GET)
-	public void getImage(HttpSession s, HttpServletRequest request, HttpServletResponse resp)
+	@RequestMapping(value = "/getPicSession", method = RequestMethod.GET)
+	public void getImageUser(HttpSession s, HttpServletRequest request, HttpServletResponse resp)
 			throws ServletException, IOException {
 		User u = (User) s.getAttribute("user");
 		try {
@@ -169,11 +202,44 @@ public class UserController {
 				os.write(b);
 				b = is.read();
 			}
-
+			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			request.setAttribute("exception", e);
 			request.getRequestDispatcher("error").forward(request, resp);
 		}
 	}
+
+	@RequestMapping(value = "/myProfile", method = RequestMethod.GET)
+	public String getMyProfileView(HttpSession s) {
+		try {
+			User u = (User) s.getAttribute("user");
+
+			UserDto dto = userManager.getUserDtoById(u.getId());
+			s.setAttribute("dto", dto);
+
+			return "my-profile";
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			return "error";
+		}
+
+	}
+
+	@RequestMapping(value = "/leadId/{id}", method = RequestMethod.GET)
+	public String viewLead(Model model, @PathVariable int id, HttpSession s) {
+		try {
+			UserDto dto = userManager.getUserDtoById(id);
+			model.addAttribute("dto", dto);
+
+			//get and project tasks here
+			
+			return "lead";
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			return "error";
+		}
+
+	}
+
 }

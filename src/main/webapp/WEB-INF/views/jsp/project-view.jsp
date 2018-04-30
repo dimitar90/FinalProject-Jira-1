@@ -16,15 +16,40 @@
 		<tr>
 			<th>Project name</th>
 			<th>Project type</th>
-			<th class="project">Project category</th>
-			<th class="project">Project lead</th>
+			<th >Project category</th>
+			<th >Project lead</th>
 		</tr>
 		<tr>	
-			<td class="even">${dto.name}</td>
-			<td>${dto.projectType}</td>
-			<td class="project">${dto.projectCategory}</td>
-			<td class="project">${dto.projectLead}</td>
+			<td class="even">${dtoProject.name}</td>
+			<td>${dtoProject.projectType}</td>
+			<td class="project">${dtoProject.projectCategory}</td>
+			<td class="project">${dtoProject.projectLead}</td>
 		</tr>
+	</table>
+	
+	<table>
+		<h3>Tasks of the current project</h3>
+	<br>
+		<tr>
+			<th>Task Summary</th>
+			<th>Due date</th>
+			<th>Project name</th>
+			<th >Priority</th>
+			<th >State</th>
+			<th >Creator</th>
+			<th >Assigne</th>
+		</tr>
+		<c:forEach items="${ tasksDto }" var="t">
+		<tr>	
+			<td >${t.summary}</td>
+			<td>${t.dueDate}</td>
+			<td >${t.project.name}</td>
+			<td >${t.priority.type.value}</td>
+			<td>${t.state.type.value}</td>
+			<td>${t.creator.name}</td>
+			<td>${t.assignee.name}</td>
+		</tr>
+		</c:forEach>
 	</table>
 	
 </body>

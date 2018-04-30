@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.jira.db.DBManager;
+import com.jira.dto.UserDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
 import com.jira.interfaces.IUserDao;
@@ -24,6 +25,8 @@ import com.jira.model.User;
 public class UserDao implements IUserDao{
 	private static final String MSG_SQL_INVALID_DATA = "Invalid credentials project dao";
 	private static final String MSG_INVALID_DATA = "Wrong email or password";
+	private static final String MSG_INVALID_USER_NAME_FOR_DB = "Invalid name for user";
+	private static final String MSG_INVALID_USER_ID_FOR_DB = "Invalid id for user";
 	
 	@Autowired
 	private  final DBManager manager;
@@ -238,6 +241,49 @@ public class UserDao implements IUserDao{
 			throw new DatabaseException(MSG_SQL_INVALID_DATA);
 		}
 		return false;
+	}
+
+	public int getuserByName(String leadName) throws DatabaseException {
+		String sql = "SELECT id FROM users WHERE full_name = ?";
+	
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setString(1, leadName);
+			
+			ResultSet result = ps.executeQuery();
+			
+			result.next();
+			int leadId = result.getInt("id");
+			ps.close();
+			return leadId;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_INVALID_USER_NAME_FOR_DB);
+		}
+		
+	}
+
+	public UserDto getUserDtoById(Integer id) throws DatabaseException {
+		String sql = "SELECT id,email,full_name,image_url FROM users WHERE id = ?";
+		try {
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+		ps.setInt(1, id);
+		ResultSet result = ps.executeQuery();
+		
+		result.next();
+		
+		int userId = result.getInt("id");
+		String email = result.getString("email");
+		String name = result.getString("full_name");
+		String imageUrl = result.getString("image_url");
+		
+		UserDto dto = UserDto.getDto(userId,email,name,imageUrl);
+		
+		ps.close();
+		return dto;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_INVALID_USER_ID_FOR_DB);		}
 	}
 
 }

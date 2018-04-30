@@ -27,5 +27,25 @@
 	</c:url>
 	<a href="<c:out value="${URL}"/>">Sign up for an account</a>	
 	</form>
+	<table>
+		<tr>
+			<th>Project name</th>
+			<th>Project type</th>
+			<th class="project">Project category</th>
+			<th class="project">Project lead</th>
+		</tr>
+		<c:forEach items="${ allDtoProjects }" var="p">
+		<tr>	
+			<td class="even"> 
+			<a href="./projectId/${p.id}">${p.name}</a> 
+			 </td>
+			<td>${p.projectType}</td>
+			<td class="project"> ${p.projectCategory}</td>
+			<td class="project">
+			<a href="./leadId/${p.projectLeadId}">${p.projectLead}</a>
+			</td>
+		</tr>
+		</c:forEach>
+	</table>
 </body>
 </html>

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.jira.dao.ProjectCategoryDao;
 import com.jira.dao.ProjectDao;
 import com.jira.dao.ProjectTypeDao;
+import com.jira.dao.TaskDao;
+import com.jira.dao.UserDao;
 import com.jira.dto.ProjectDto;
 import com.jira.dto.ProjectTypeBusinessDto;
 import com.jira.dto.ProjectTypeSoftwareDto;
+import com.jira.dto.TaskBasicViewDto;
 import com.jira.exception.DatabaseException;
+import com.jira.exception.UserDataException;
 import com.jira.model.Project;
 import com.jira.model.ProjectCategory;
 import com.jira.model.ProjectType;
@@ -37,6 +42,14 @@ public class ProjectController {
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
 
+
+	@Autowired
+	private UserDao userDao;
+	
+
+	@Autowired
+	private TaskDao taskDao;
+	
 	@RequestMapping(value = "/submitProject", method = RequestMethod.GET)
 	public String create(Model model) {
 		try {// TODO session validate
@@ -125,4 +138,24 @@ public class ProjectController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
+	public String viewPatka(Model model, @PathVariable int id) {
+		try {
+			ProjectDto dtoProject = projectDao.getProjectDtoById(id);
+			
+			model.addAttribute("dtoProject",dtoProject);
+			
+			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(id);
+			
+			model.addAttribute("tasksDto", tasksDto);
+			return "project-view";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+		
+		
+	}
+
 }

@@ -28,4 +28,7 @@ public interface IUserDao {
 	public void changeImageUrl(String imageUrl, User u) throws Exception;
 	
 	public boolean isExistById(int userId) throws Exception;
+	
+	public int getuserByName(String leadName) throws Exception;;
+
 }
