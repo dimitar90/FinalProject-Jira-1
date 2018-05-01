@@ -25,7 +25,7 @@ public interface ITaskDao {
 	
 	public List<TaskBasicViewDto> getAllByProjectId(int pId) throws Exception;
 	
-	public List<TaskViewDetailsDto> getAllOpenTasksByUserId(int userId) throws DatabaseException;
+	public List<TaskBasicViewDto> getAllOpenTasksByUserId(int userId) throws DatabaseException;
 	
 	public int getCountOfTasks() throws DatabaseException;
 

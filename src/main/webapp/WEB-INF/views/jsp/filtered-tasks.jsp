@@ -6,7 +6,6 @@
 <jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <body>
-	<h3>All tasks:</h3>
 	<br>
 	<form style="display: inline-block"  action="./filter" method="post">
 	 <p>Filter by issue type</p>
@@ -21,6 +20,7 @@
 	  	 <input type="submit" value="Filter">
 	 </form> 
 	 
+	<h3>All tasks:</h3>
 	<table>
 		<tr>
 			<th>Project</th>
@@ -30,7 +30,6 @@
 			<th>Priority</th>
 			<th>State</th>
 			<th>Details</th>
-			<th>Add comment</th>
 			<th>Edit</th>
 			<th>Delete</th>
 		</tr>
@@ -49,10 +48,10 @@
 				<c:if test="${not empty user}">
 					<c:if test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
 						<td>
-							<a href="../edit/${ t.id }">Edit</a>
+							<a href="../tasks/edit/${ t.id }">Edit</a>
 						</td>
 						<td>
-							<a href="../delete/${ t.id }">Delete</a>
+							<a href="../tasks//delete/${ t.id }">Delete</a>
 						</td>
 					</c:if>
 				</c:if>

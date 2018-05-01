@@ -7,22 +7,65 @@
 <body>
 	<h3>Edit task</h3><br>
 	<form action="${editTaskDto.id}" method="post">
-		Project: <input type="text" value= "${task.project.name}" disabled="disabled"><br>
-		Summary: <input type="text" value= "${editTaskDto.summary}" disabled="disabled"><br>
-		Description: <input type="text" value= "${editTaskDto.description}" disabled="disabled"><br>
-		Creator: <input type="text" value= "${editTaskDto.creator.name}" disabled="disabled"><br>
-		Assignee: <input type="text" value= "${editTaskDto.assignee.name}" disabled="disabled"><br>
-		Start date: <input type="text" value= "${editTaskDto.startDate}" disabled="disabled"><br>
-		Due date: <input type="text" value= "${editTaskDto.dueDate}" disabled="disabled"><br>
-		Priority: <input type="text" value= "${editTaskDto.priority.type.value}" disabled="disabled"><br>
-		Issue type: <input type="text" value= "${editTaskDto.issue.type.value}" disabled="disabled"><br>
-		<input type="hidden"name="editTaskId" value= "${ editTaskDto.id}">
-		State:  <select name="newStateId"> 
-				<c:forEach items = "${ states }" var = "s">
-					<option value = "${ s.id }">${ s.type.getValue() }</option>
-				</c:forEach>
-				  </select><br>
-		<button type="submit">Edit</button> 
+		<table>
+    	 <tr>
+            <td>Project</td>
+            <td>
+            	<input type="text" value= "${editTaskDto.project.name}" disabled="disabled">
+			 </td>
+        </tr>
+        <tr>
+            <td>Summary</td>
+            <td><input type="text" value= "${editTaskDto.summary}" disabled="disabled"></td>
+        </tr>
+        
+         <tr>
+            <td>Description</td>
+            <td><input type="text" value= "${editTaskDto.description}" disabled="disabled"></td>
+        </tr>
+        
+         <tr>
+            <td>Start Date</td>
+            <td><input type="text" value= "${editTaskDto.startDate}" disabled="disabled"></td>
+        </tr>
+        
+        <tr>
+            <td>Due Date</td>
+            <td><input type="text" value= "${editTaskDto.dueDate}" disabled="disabled"></td>
+        </tr>
+        
+         <tr>
+            <td>Creator</td>
+            <td><input type="text" value= "${editTaskDto.creator.name}" disabled="disabled"></td>
+        </tr>
+        
+          <tr>
+            <td>Assignee</td>
+            <td><input type="text" value= "${editTaskDto.assignee.name}" disabled="disabled"></td>
+        </tr>
+        
+        <tr>
+            <td>Priority</td>
+            <td><input type="text" value= "${editTaskDto.priority.type.value}" disabled="disabled"></td>
+        </tr>
+        
+        <tr>
+            <td>Issue Type</td>
+            <td><input type="text" value= "${editTaskDto.issue.type.value}" disabled="disabled"></td>
+        </tr>
+        
+        <tr>
+            <td>State</td>
+            <td><select name="newStateId"> 
+					<c:forEach items = "${ states }" var = "s">
+						<option value = "${ s.id }">${ s.type.getValue() }</option>
+					</c:forEach>
+				 </select>
+			</td>
+        </tr>
+    </table>
+		  <input type="hidden"name="editTaskId" value= "${ editTaskDto.id}">
+          <button type="submit">Edit</button>
 	</form>
 </body>
 </html>
