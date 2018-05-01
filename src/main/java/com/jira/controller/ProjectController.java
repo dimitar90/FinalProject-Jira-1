@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jira.dao.ProjectCategoryDao;
 import com.jira.dao.ProjectDao;
@@ -24,14 +26,15 @@ import com.jira.dto.ProjectDto;
 import com.jira.dto.ProjectTypeBusinessDto;
 import com.jira.dto.ProjectTypeSoftwareDto;
 import com.jira.dto.TaskBasicViewDto;
+import com.jira.dto.TaskViewDetailsDto;
 import com.jira.exception.DatabaseException;
-import com.jira.exception.UserDataException;
 import com.jira.model.Project;
 import com.jira.model.ProjectCategory;
 import com.jira.model.ProjectType;
 import com.jira.model.User;
 
 @Controller
+@RequestMapping(value = "/projects")
 public class ProjectController {
 	@Autowired
 	private ProjectDao projectDao;
@@ -42,15 +45,13 @@ public class ProjectController {
 	@Autowired
 	private ProjectCategoryDao projectCategoryDao;
 
-
 	@Autowired
 	private UserDao userDao;
-	
 
 	@Autowired
 	private TaskDao taskDao;
-	
-	@RequestMapping(value = "/submitProject", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String create(Model model) {
 		try {// TODO session validate
 				// get all project, categories and types
@@ -68,9 +69,9 @@ public class ProjectController {
 		}
 	}
 
-	@RequestMapping(value = "/createProject", method = RequestMethod.POST)
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String create(Model model, @RequestParam String projectName, @RequestParam String projectType,
-			@RequestParam String projectCategory,HttpSession session) throws ServletException, IOException {
+			@RequestParam String projectCategory, HttpSession session) throws ServletException, IOException {
 		try {
 			projectDao.isValidProjectName(projectName);
 			int projTypeId = Integer.parseInt(projectType);
@@ -106,7 +107,7 @@ public class ProjectController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/showAllSoftware", method = RequestMethod.GET)
 	public String showAllSoftware(Model model) {
 		try {
@@ -122,7 +123,7 @@ public class ProjectController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/showAllBusiness", method = RequestMethod.GET)
 	public String showAllBusiness(Model model) {
 		try {
@@ -138,24 +139,55 @@ public class ProjectController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
-	public String viewPatka(Model model, @PathVariable int id) {
+	public String viewProject(Model model, @PathVariable int id) {
 		try {
 			ProjectDto dtoProject = projectDao.getProjectDtoById(id);
-			
-			model.addAttribute("dtoProject",dtoProject);
-			
+
+			model.addAttribute("dtoProject", dtoProject);
+
 			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(id);
-			
+
 			model.addAttribute("tasksDto", tasksDto);
 			return "project-view";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
 		}
-		
-		
 	}
 
+	@RequestMapping(value = "/delete/{dtoProjectId}", method = RequestMethod.GET)
+	public String deletProject(Model model, @PathVariable("dtoProjectId") int projectId, HttpServletRequest request) {
+		try {
+			if (!this.projectDao.isExistById(projectId)) {
+				return "redirect:../showAllProjects";
+			}
+
+			Project project = this.projectDao.getById(projectId);
+
+			if (project == null) {
+				return "redirect:../showAllProjects";
+			}
+
+			HttpSession session = request.getSession();
+			User user = (User) session.getAttribute("user");
+			int loggedUserId = user.getId();
+			int leadId = projectDao.getLeadByProjectId(projectId);
+
+			if (leadId != loggedUserId) {
+				return "redirect:../showAllProjects";
+			}
+
+			projectDao.deleteProjectById(projectId);
+			session.removeAttribute("myProjects");
+			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
+
+			session.setAttribute("myProjects", dtoList);
+			return "project-view";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
 }

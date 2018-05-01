@@ -23,7 +23,7 @@ import com.jira.model.User;
 
 @Component
 public class UserDao implements IUserDao{
-	private static final String MSG_SQL_INVALID_DATA = "Invalid credentials project dao";
+	private static final String MSG_SQL_INVALID_DATA = "Invalid username or password";
 	private static final String MSG_INVALID_DATA = "Wrong email or password";
 	private static final String MSG_INVALID_USER_NAME_FOR_DB = "Invalid name for user";
 	private static final String MSG_INVALID_USER_ID_FOR_DB = "Invalid id for user";

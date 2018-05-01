@@ -29,4 +29,8 @@ public interface IProjectDao {
 	public ProjectDto getProjectDtoById(int id) throws Exception;
 
 	public List<ProjectDto> getAllBelongingToUser(int id) throws Exception;
+
+	public void deleteProjectById(int id) throws Exception;
+	
+	public int getLeadByProjectId(int projectId) throws Exception;
 }

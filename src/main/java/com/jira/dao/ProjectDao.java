@@ -22,8 +22,9 @@ import com.jira.model.User;
 @Component
 public class ProjectDao implements IProjectDao {
 	private static final String MSG_SQL_INVALID_DATA = "Invalid credentials project dao";
-	private static final String MSG_INVALID_PROJECT_NAME = "Invalid project name in roject dao";
+	private static final String MSG_INVALID_PROJECT_NAME = "Invalid project name in project dao";
 	private static final String MSG_INVALID_ID = "No project with such id";
+	private static final String MSG_INVALID_PROJECT_ID = "Invalid project id in project dao";
 	@Autowired
 	private final DBManager manager;
 
@@ -180,7 +181,7 @@ public class ProjectDao implements IProjectDao {
 	public List<String> getLimitedProjectNamesWithPrefix(String prefix) throws DatabaseException {
 		List<String> projectNames = new ArrayList<>();
 
-		String sql = "SELECT name FROM projects WHERE name LIKE ? LIMIT 3";
+		String sql = "SELECT name FROM projects WHERE is_deleted = 0 AND name LIKE ? LIMIT 3";
 		try {
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, prefix + "%");
@@ -221,6 +222,7 @@ public class ProjectDao implements IProjectDao {
 		}
 
 	}
+
 	@Override
 	public ProjectDto getProjectDtoById(int id) throws DatabaseException, UserDataException {
 		String sql = "SELECT id, name, project_type_id, project_category_id, project_lead_id FROM projects WHERE id = ? AND is_deleted = 0";
@@ -250,7 +252,7 @@ public class ProjectDao implements IProjectDao {
 		}
 
 	}
-	
+
 	@Override
 	public List<ProjectDto> getAllBelongingToUser(int id) throws UserDataException, DatabaseException {
 		String sql = "SELECT id, name, project_type_id, project_category_id FROM projects WHERE project_lead_id = ? AND is_deleted = 0";
@@ -260,27 +262,65 @@ public class ProjectDao implements IProjectDao {
 			ps.setInt(1, id);
 			ResultSet result = ps.executeQuery();
 
-			while(result.next()) {
+			// if (!result.next()) {
+			// return null;
+			// }
+			// result.beforeFirst();
+			while (result.next()) {
 				int projectId = result.getInt("id");
 				String projectName = result.getString("name");
 				int projectTypeId = result.getInt("project_type_id");
 				int projectCategoryId = result.getInt("project_category_id");
-				
+
 				String projectType = projectTypeDao.getProjectTypeById(projectTypeId);
 				String projectCategory = projectCategoryDao.getProjectCategoryById(projectCategoryId);
-				
-				User user = userDao.getUserById(id);
-				
-				ProjectDto dto = ProjectDto.getDto(projectId, projectName, projectType, projectCategory, user.getName(), id);
 
+				User user = userDao.getUserById(id);
+
+				ProjectDto dto = ProjectDto.getDto(projectId, projectName, projectType, projectCategory, user.getName(),
+						id);
 				listDto.add(dto);
 			}
+			ps.close();
+
 			return listDto;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new DatabaseException(MSG_INVALID_ID);
 		}
-		
-		
+	}
+
+	public void deleteProjectById(int id) throws DatabaseException {
+		String sql = "UPDATE projects SET is_deleted = 1 WHERE id =  ? AND is_deleted = 0";
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_INVALID_PROJECT_ID);
+		}
+
+	}
+
+	@Override
+	public int getLeadByProjectId(int id) throws DatabaseException {
+		String sql = "SELECT project_lead_id FROM projects WHERE id = ?";
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet result = ps.executeQuery();
+
+			if (result.next()) {
+				return result.getInt("project_lead_id");
+			}
+
+			return -1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException("");
+		}
+
 	}
 }

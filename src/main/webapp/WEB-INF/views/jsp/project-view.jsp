@@ -12,24 +12,32 @@
 </head>
 <body>
 	<h1>Project view</h1>
+	<c:set var="dtoProject" value="${ dtoProject }" />
+	<c:if test="${!empty dtoProject }">
 	<table>
 		<tr>
 			<th>Project name</th>
 			<th>Project type</th>
 			<th >Project category</th>
 			<th >Project lead</th>
+				
 		</tr>
 		<tr>	
 			<td class="even">${dtoProject.name}</td>
 			<td>${dtoProject.projectType}</td>
 			<td class="project">${dtoProject.projectCategory}</td>
 			<td class="project">${dtoProject.projectLead}</td>
+			<th>
+					<a href="http://localhost:8080/Jira/projects/delete/${ dtoProject.id }">Delete</a>
+				</th>
 		</tr>
 	</table>
+	</c:if>
+	<c:if test="${!empty tasksDto }">
 	
-	<table>
-		<h3>Tasks of the current project</h3>
+	<h3>Tasks of the current project</h3>
 	<br>
+	<table>
 		<tr>
 			<th>Task Summary</th>
 			<th>Due date</th>
@@ -49,8 +57,12 @@
 			<td>${t.creator.name}</td>
 			<td>${t.assignee.name}</td>
 		</tr>
+		
 		</c:forEach>
 	</table>
-	
+	</c:if>
+		<c:if test="${empty tasksDto }">
+	<h3>No tasks of this project</h3>
+	</c:if>
 </body>
 </html>

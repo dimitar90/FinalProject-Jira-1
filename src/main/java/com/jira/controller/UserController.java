@@ -60,24 +60,26 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String register(Model model, HttpSession s, @RequestParam("singleFile") MultipartFile singleFile,
+	public String register(Model model, HttpServletRequest request, @RequestParam("singleFile") MultipartFile singleFile,
 			@RequestParam String username, @RequestParam String email, @RequestParam String password,
 			@RequestParam String confirmPassword) {
 		try {
 			String imageUrl = this.userManager.saveImageUrl(singleFile, email);
-
+			HttpSession s = request.getSession();
 			User user = this.userManager.register(username, email, password, confirmPassword, imageUrl);
 
 			s.setAttribute("user", user);
 			s.setMaxInactiveInterval(EXP_TIME);
 
 			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
-
 			s.setAttribute("user", user);
-
-			s.setAttribute("myProjects", dtoList);
+			if (dtoList.isEmpty()) {
+				return "main";	
+			}
 			
+			s.setAttribute("myProjects", dtoList);
 			return "main";
+			
 		} catch (UserDataException e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -91,46 +93,27 @@ public class UserController {
 
 	}
 
-	// login methods
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	public String getIndexPage() {
-		try {
-			List<ProjectDto> allDtoProjects = new ArrayList<>();
 
-			allDtoProjects.addAll(projectDao.getAllProjectDtos());
-			context.setAttribute("allDtoProjects", allDtoProjects);
-			return "index";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "error";
-		}
-		
-	}
 	
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = {"/login", "/"}, method = RequestMethod.GET)
 	public String getLoginPage() {
-		try {
-			List<ProjectDto> allDtoProjects = new ArrayList<>();
 
-			allDtoProjects.addAll(projectDao.getAllProjectDtos());
-			context.setAttribute("allDtoProjects", allDtoProjects);
 			return "index";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "error";
 		}
-	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(Model model, HttpSession s, @RequestParam String email, @RequestParam String password) {
+	public String login(Model model, HttpServletRequest request, @RequestParam String email, @RequestParam String password) {
 		try {
+			HttpSession s = request.getSession();
 			User user = this.userManager.login(email, password);
+			s.removeAttribute("myProjects");
 			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
-
 			s.setAttribute("user", user);
-
+			if (dtoList.isEmpty()) {
+				return "main";
+			}
 			s.setAttribute("myProjects", dtoList);
-
+			
 			return "main";
 		} catch (UserDataException e) {
 			e.printStackTrace();

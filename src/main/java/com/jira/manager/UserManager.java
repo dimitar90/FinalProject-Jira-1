@@ -24,8 +24,7 @@ import com.jira.model.User;
 public class UserManager {
 	private static final int MIN_LENGTH_PASSWORD = 4;
 	private static final int MIN_LENGTH_EMAIL = 6;
-	private static final String MSG_INVALID_USERNAME = "Invalid username or password";
-	private static final String MSG_IVNALID_PASSWORD = "Invalid username or password";
+	private static final String MSG_IVNALID_CREDENTIALS = "Invalid username or password";
 	private static final String MSG_INVALID_EMAIL = "email missmatch";
 	private static final int MIN_NAME_LENGTH = 2;
 	private static final String MSG_INVALID_PASSWORD = "Invalid username or password";
@@ -54,7 +53,7 @@ public class UserManager {
 
 	public void checkUsername(String username) throws UserDataException {
 		if (username.isEmpty() || username.length() < MIN_NAME_LENGTH) {
-			throw new UserDataException(MSG_INVALID_USERNAME);
+			throw new UserDataException(MSG_IVNALID_CREDENTIALS);
 		}
 	}
 
@@ -73,7 +72,7 @@ public class UserManager {
 
 	public void comparePassword(String password, String confirmPassword) throws UserDataException {
 		if (password.compareTo(confirmPassword) != 0) {
-			throw new UserDataException(MSG_IVNALID_PASSWORD);
+			throw new UserDataException(MSG_IVNALID_CREDENTIALS);
 		}
 	}
 

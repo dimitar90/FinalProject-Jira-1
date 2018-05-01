@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h3>Create project</h3><br>
-	<form action="createProject" method="post">
+	<form action="./create" method="post">
 	<table>
 		<tr>
 		<td>

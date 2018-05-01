@@ -1,6 +1,5 @@
 package com.jira.controller;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,16 +15,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.jira.dao.ProjectDao;
+import com.jira.dao.TaskDao;
 import com.jira.dto.ProjectDto;
-import com.jira.exception.DatabaseException;
-import com.jira.exception.ProjectException;
-import com.jira.exception.UserDataException;
+import com.jira.dto.TaskBasicViewDto;
 
 @Controller
 public class RestController {
 
 	@Autowired
 	ProjectDao projectDao;
+	
+	@Autowired
+	TaskDao taskDao;
 
 	@RequestMapping(value = "/searchProjects", method = RequestMethod.GET)
 	@ResponseBody
@@ -50,10 +51,14 @@ public class RestController {
 	public String getSearch(Model model,@RequestParam String project) {
 		try {
 			ProjectDto dto = projectDao.getProjectDtoByName(project);
+			int projectId = dto.getId();
+			model.addAttribute("dtoProject", dto);
+			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(projectId);
+
+			model.addAttribute("tasksDto", tasksDto);
 			
-			model.addAttribute("dto", dto);
 			return "project-view";
-		} catch (DatabaseException | SQLException | ProjectException | UserDataException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
 			return "error";

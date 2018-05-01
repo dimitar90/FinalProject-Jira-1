@@ -20,7 +20,9 @@
 		</tr>
 		<c:forEach items="${ allProjects }" var="p">
 		<tr>	
-			<td class="even">${p.name}</td>
+			<td>
+			<a href="http://localhost:8080/Jira/projects/projectId/${p.id}">${p.name}</a>
+			</td> 
 			<td>${p.projectType}</td>
 			<td class="project">${p.projectCategory}</td>
 			<td class="project">${p.projectLead}</td>

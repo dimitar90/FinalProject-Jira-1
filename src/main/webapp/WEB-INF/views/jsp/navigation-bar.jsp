@@ -111,9 +111,10 @@ body {
 			Projects <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="./submitProject"> Create a project</a> <a
-				href="./showAllSoftware">Software</a> <a href="./showAllBusiness">Business</a>
-			<a href="./showAllProjects">View all projects</a>
+			<a href="http://localhost:8080/Jira/projects/create"> Create a project</a> <a
+				href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a> 
+				<a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a>
+			<a href="http://localhost:8080/Jira/projects/showAllProjects">View all projects</a>
 		</div>
 	</div>
 
@@ -132,7 +133,7 @@ body {
 				Your profile <i class="fa fa-caret-down"></i>
 			</button>
 			<div class="dropdown-content">
-				<a href="./editProfile"> Edit profile</a>
+				<a href="http://localhost:8080/Jira/editProfile"> Edit profile</a>
 			</div>
 		</div>
 	</c:if>
