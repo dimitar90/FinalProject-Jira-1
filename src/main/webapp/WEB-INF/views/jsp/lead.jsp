@@ -6,7 +6,20 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Project lead profile view</title>
+	
+	<br>
+	<div>
+	<img src="../getPicSession?dto=${dto.email} " height="100" width="100" class="avatar img-circle" alt="avatar">
+	</div>
+	
+	<div>
+	<ul>
+  	<li>${dto.name} </li>
+  	<li>${dto.email} </li>
+	</ul>
+	
+	</div>
 </head>
 </body>
 </html>

@@ -25,7 +25,9 @@
 			</td> 
 			<td>${p.projectType}</td>
 			<td class="project">${p.projectCategory}</td>
-			<td class="project">${p.projectLead}</td>
+			<td>
+			<a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a>
+			</td>
 		</tr>
 		</c:forEach>
 	</table>
