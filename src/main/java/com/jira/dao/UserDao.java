@@ -1,18 +1,21 @@
 package com.jira.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.Connection;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.db.DBManager;
 import com.jira.dto.UserDto;
@@ -285,5 +288,7 @@ public class UserDao implements IUserDao{
 			e.printStackTrace();
 			throw new DatabaseException(MSG_INVALID_USER_ID_FOR_DB);		}
 	}
+
+	
 
 }

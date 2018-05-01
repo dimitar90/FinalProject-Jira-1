@@ -192,6 +192,27 @@ public class UserController {
 			request.getRequestDispatcher("error").forward(request, resp);
 		}
 	}
+	
+	@RequestMapping(value = "/changePic", method = RequestMethod.POST)
+	public String changeProfilePic(Model model, HttpServletRequest request, @RequestParam("fileForChange") MultipartFile singleFile) {
+		try {
+			User u = (User) request.getSession().getAttribute("user");
+			String imageUrl = userManager.changeImageUrl(singleFile, u.getEmail());
+
+			userManager.takeData(imageUrl, u);
+			return "edit-profile";
+		} catch (UserDataException e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		}
+		
+
+	}
 
 	@RequestMapping(value = "/myProfile", method = RequestMethod.GET)
 	public String getMyProfileView(HttpSession s) {

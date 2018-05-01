@@ -109,18 +109,18 @@ public class UserManager {
 
 	}
 
-	public String changeImageUrl(Part filePart, String email) throws IOException {
-		File dir = new File("D:\\Users");
+	public String changeImageUrl(MultipartFile filePart, String email) throws IOException {
+		File dir = new File(PATH);
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing != null) {
 			for (File child : directoryListing) {
-				if (child.getName().endsWith(email + "-pic.jpg")) {
+				if (child.getName().endsWith(email + EXTENTION)) {
 					child.delete();
 					break;
 				}
 			}
 		}
-		String imgUrl = "D:\\Users\\" + email + "-pic.jpg";
+		String imgUrl = PATH + email + EXTENTION;
 		File f = new File(imgUrl);
 		if (!f.exists()) {
 			f.createNewFile();
@@ -174,5 +174,7 @@ public class UserManager {
 		
 		return this.userDao.getUserDtoById(id);
 	}
+	
+	
 
 }

@@ -3,6 +3,7 @@ package com.jira.interfaces;
 import java.util.Collection;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.model.User;
 @Component
@@ -29,6 +30,7 @@ public interface IUserDao {
 	
 	public boolean isExistById(int userId) throws Exception;
 	
-	public int getuserByName(String leadName) throws Exception;;
+	public int getuserByName(String leadName) throws Exception;
+	
 
 }

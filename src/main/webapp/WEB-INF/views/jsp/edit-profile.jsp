@@ -16,7 +16,7 @@
 			<img src="getPicSession?user=${user.email} " height="100" width="100" class="avatar img-circle" alt="avatar">
           <h6>Change your photo here</h6>
           <form action="./changePic" method="post" enctype="multipart/form-data">
-          <input type="file" accept="image/*" name="file change"><br>
+          <input type="file" accept="image/*" name="fileForChange"><br>
 		  <input type="submit" value="Save changes">
 		  </form>
         </div>
