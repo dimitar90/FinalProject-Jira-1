@@ -84,13 +84,18 @@
 	</c:if>
 	
 	<div id="addedComment"></div>
+	
+	
 	<c:if test="${ task.comments.size() > 0 }">
-	<table>
+	<table id='comments'>
+		<thead>
 			<tr>
 				<th>Author</th>
 				<th>Wrriten on</th>
 				<th>Content</th>
 			</tr>
+		</thead>
+		<tbody>
 			<c:forEach items = "${ task.comments }" var="c">
 			<tr>
 				<td>${c.user.name}</td>
@@ -98,6 +103,7 @@
 				<td>${c.description }</td>
 			</tr> <br>
 		</c:forEach>
+		</tbody>
 	</table>
 	</c:if>
 	
@@ -106,20 +112,20 @@
 		var description = document.commentForm.description.value;
 		var taskId = document.commentForm.taskId.value;
 		var request = new XMLHttpRequest();
-		
+		document.commentForm.description.value = '';
 		request.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				
 				var json = request.responseText;
 				var newComment = JSON.parse(json);
 
-				var html = "<table><tr>" +
+				var html = "<tr>" +
 					"<td>" + newComment.userId + "</td>" +
 					"<td>" + newComment.dateTime.date.year + "-" + newComment.dateTime.date.month + "-" + newComment.dateTime.date.day + "T" +
 							+ newComment.dateTime.time.hour + "-" + newComment.dateTime.time.minute + "-" + newComment.dateTime.time.second +"</td>" +
 					"<td>" + newComment["description"] + "</td>" +
-							"</tr></table><br>";
-				document.getElementById("addedComment").innerHTML = html;
+							"</tr>";
+				document.querySelector("#comments tbody").innerHTML = html + document.querySelector("#comments tbody").innerHTML;
 			}
 		}
 		
