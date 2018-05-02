@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.*")
+@ComponentScan("com.jira*")
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	
     @Override
@@ -34,6 +34,9 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
         registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");
         registry.addResourceHandler("/js/**").addResourceLocations("/static/js/");
+        registry.addResourceHandler("/pug/**").addResourceLocations("/static/pug/");
+        registry.addResourceHandler("/scss/**").addResourceLocations("/static/scss/");
+        registry.addResourceHandler("/vendor/**").addResourceLocations("/static/vendor/");
     }
 	
 	@Bean
