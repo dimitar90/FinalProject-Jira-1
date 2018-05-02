@@ -96,6 +96,7 @@ public class ProjectController {
 		try {
 			allProjects.addAll(projectDao.getAllProjectDtos());
 			model.addAttribute("allProjects", allProjects);
+			
 			return "show-all-projects";
 		} catch (DatabaseException e) {
 			e.printStackTrace();

@@ -18,7 +18,6 @@
   	<li>${dto.name} </li>
   	<li>${dto.email} </li>
 	</ul>
-	
 	</div>
 </head>
 </body>

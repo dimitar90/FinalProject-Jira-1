@@ -234,7 +234,6 @@ public class UserController {
 		try {
 			UserDto dto = userManager.getUserDtoById(id);
 			model.addAttribute("dto", dto);
-
 			//get and project tasks here
 			
 			return "lead";
