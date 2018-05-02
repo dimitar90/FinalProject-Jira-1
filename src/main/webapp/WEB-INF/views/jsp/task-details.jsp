@@ -4,6 +4,7 @@
 
 	<jsp:include page="navigation-bar.jsp"></jsp:include>
 	<c:set var="task" value="${ task }" />
+	
 <body>
 	<h3>Task details</h3><br>
 		Images:
@@ -69,11 +70,11 @@
             <td><input type="text" value= "${task.state.type.value}" disabled="disabled"></td>
         </tr>
     </table>
-		
 			<c:if test= '${not empty sessionScope.user}'>
-				<form action="../../comments/add/${ task.id }" method="post">
+				<form name="commentForm">
+					<input type="hidden" value="${ task.id }" name="taskId">
 					Add comment: <input type="text" name ="description">
-					<button type="submit">Add</button>
+					<input type="button" value="Add" onclick="addComment()">
 				</form>
 			</c:if>
 			
@@ -82,6 +83,7 @@
 		<p>No comments!</p>
 	</c:if>
 	
+	<div id="addedComment"></div>
 	<c:if test="${ task.comments.size() > 0 }">
 	<table>
 			<tr>
@@ -89,7 +91,6 @@
 				<th>Wrriten on</th>
 				<th>Content</th>
 			</tr>
-		
 			<c:forEach items = "${ task.comments }" var="c">
 			<tr>
 				<td>${c.user.name}</td>
@@ -99,5 +100,33 @@
 		</c:forEach>
 	</table>
 	</c:if>
+	
+	<script>
+	function addComment() {
+		var description = document.commentForm.description.value;
+		var taskId = document.commentForm.taskId.value;
+		var request = new XMLHttpRequest();
+		
+		request.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				
+				var json = request.responseText;
+				var newComment = JSON.parse(json);
+
+				var html = "<table><tr>" +
+					"<td>" + newComment.userId + "</td>" +
+					"<td>" + newComment.dateTime.date.year + "-" + newComment.dateTime.date.month + "-" + newComment.dateTime.date.day + "T" +
+							+ newComment.dateTime.time.hour + "-" + newComment.dateTime.time.minute + "-" + newComment.dateTime.time.second +"</td>" +
+					"<td>" + newComment["description"] + "</td>" +
+							"</tr></table><br>";
+				document.getElementById("addedComment").innerHTML = html;
+			}
+		}
+		
+		request.open("GET", "http://localhost:8080/Jira/comments/add?" + "taskId=" + taskId + "&description=" + description, true);
+		request.send();
+	};
+	</script>
+	<span id="mylocation"></span>  
 </body>
 </html>

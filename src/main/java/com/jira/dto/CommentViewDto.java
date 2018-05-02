@@ -2,12 +2,10 @@ package com.jira.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.stereotype.Component;
 
 import com.jira.model.User;
 
-@EntityScan
 public class CommentViewDto {
 	private String description;
 	private LocalDateTime dateTime;

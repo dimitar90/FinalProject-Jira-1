@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import javax.servlet.MultipartConfigElement;
 
-import org.springframework.boot.context.embedded.MultipartConfigFactory;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,6 +33,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
     	registry.addResourceHandler("/img/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
         registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");
+        registry.addResourceHandler("/js/**").addResourceLocations("/static/js/");
     }
 	
 	@Bean
