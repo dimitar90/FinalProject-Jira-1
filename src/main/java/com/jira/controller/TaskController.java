@@ -38,7 +38,7 @@ import com.jira.model.User;
 @RequestMapping(value = "/tasks")
 public class TaskController {
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
-	private static final int ROWS_COUNT_PER_PAGE = 10;
+	private static final int ROWS_COUNT_PER_PAGE = 3;
 
 	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
 
@@ -62,7 +62,6 @@ public class TaskController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/usertasks")
 	public String showTasksOnLoggedUser(HttpSession session, Model model) {
-		// TODO validation for logged user
 		User loggedUser = (User) session.getAttribute("user");
 		if (loggedUser == null) {
 			return "redirect:../../Jira/login";
@@ -72,7 +71,7 @@ public class TaskController {
 			List<TaskBasicViewDto> tasks = this.taskDao.getAllOpenTasksByUserId(loggedUser.getId());
 			model.addAttribute("tasks", tasks);
 
-			return "filtered-tasks";
+			return "my-open-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -194,18 +193,21 @@ public class TaskController {
 			return "error";
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/goToPage")
+	public String goToPage(Model model, @RequestParam Integer page) {
+		return "redirect:./all/" + (page - 1);
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/all/{pageNumber}")
 	public String showAllTasks(Model model, @PathVariable Integer pageNumber, HttpSession session) {
 		try {
-			
 			int countOfTasks = this.taskDao.getCountOfTasks();
 			int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
 			if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
 				noOfPages++;
 			}
 			
-			//model.addAttribute("allRowCounts", allRowCounts);
 			model.addAttribute("currentRowsOfPage", ROWS_COUNT_PER_PAGE);
 			model.addAttribute("countOfTasks", countOfTasks);
 			model.addAttribute("noOfPages", noOfPages);

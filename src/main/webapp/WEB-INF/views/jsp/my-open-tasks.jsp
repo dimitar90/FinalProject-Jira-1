@@ -4,7 +4,7 @@
 
 <body>
 		<div class="card-header">
-			<i class="fa fa-table">FILTERED TASKS</i> 
+			<i class="fa fa-table"></i> MY OPEN TASKS
 		</div>
 		<jsp:include page="table-for-tasks-withou-pagination.jsp"></jsp:include>
 </body>

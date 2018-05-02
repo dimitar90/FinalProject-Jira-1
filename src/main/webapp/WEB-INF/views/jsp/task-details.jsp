@@ -1,12 +1,19 @@
 	<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
-	<jsp:include page="navigation-bar.jsp"></jsp:include>
-	<c:set var="task" value="${ task }" />
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+	<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
+	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 	
+<head>
+<script src="../../js/add-comment.js"></script>
+<jsp:include page="navigation-bar.jsp"></jsp:include>
+<link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<link href="../../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+<link href="../../css/sb-admin.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="../../css/table.css">
+</head>
 <body>
-	<h3>Task details</h3><br>
 		Images:
 		<c:if test="${task.imageUrls.size() == 0 }">
 			No images. <br>
@@ -18,121 +25,153 @@
 			</c:forEach>
 		</c:if>
 	
-		<table>
-    	 <tr>
-            <td>Project</td>
-            <td>
-            	<input type="text" value= "${task.project.name}" disabled="disabled">
-			 </td>
-        </tr>
-        <tr>
-            <td>Summary</td>
-            <td><input type="text" value= "${task.summary}" disabled="disabled"></td>
-        </tr>
-        
-         <tr>
-            <td>Description</td>
-            <td><input type="text" value= "${task.description}" disabled="disabled"></td>
-        </tr>
-        
-         <tr>
-            <td>Start Date</td>
-            <td><input type="text" value= "${task.startDate}" disabled="disabled"></td>
-        </tr>
-        
-        <tr>
-            <td>Due Date</td>
-            <td><input type="text" value= "${task.dueDate}" disabled="disabled"></td>
-        </tr>
-        
-         <tr>
-            <td>Creator</td>
-            <td><input type="text" value= "${task.creator.name}" disabled="disabled"></td>
-        </tr>
-        
-          <tr>
-            <td>Assignee</td>
-            <td><input type="text" value= "${task.assignee.name}" disabled="disabled"></td>
-        </tr>
-        
-        <tr>
-            <td>Priority</td>
-            <td><input type="text" value= "${task.priority.type.value}" disabled="disabled"></td>
-        </tr>
-        
-        <tr>
-            <td>Issue Type</td>
-            <td><input type="text" value= "${task.issue.type.value}" disabled="disabled"></td>
-        </tr>
-        
-        <tr>
-            <td>State</td>
-            <td><input type="text" value= "${task.state.type.value}" disabled="disabled"></td>
-        </tr>
-    </table>
-			<c:if test= '${not empty sessionScope.user}'>
-				<form name="commentForm">
-					<input type="hidden" value="${ task.id }" name="taskId">
-					Add comment: <input type="text" name ="description">
-					<input type="button" value="Add" onclick="addComment()">
-				</form>
-			</c:if>
-			
-	<h3>Comments:</h3> <br>
-	<c:if test="${ task.comments.size() == 0 }">
-		<p>No comments!</p>
-	</c:if>
+    <div class="card mb-3">
+		<div class="card-header">
+			<i class="fa fa-table"></i> TASK DETAIL
+		</div>
+		<div class="card-body">
+			<div class="table-responsive">
+				<div id="dataTable_wrapper"
+					class="dataTables_wrapper container-fluid dt-bootstrap4">
+					<div class="row">
+						<div class="col-sm-12">
+							<table class="table table-bordered dataTable" id="dataTable"
+								role="grid" aria-describedby="dataTable_info"
+								style="width: 100%;" width="100%" cellspacing="0">
+								<thead>
+									<tr role="row">
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Project</th>
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Summary</th>
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Description</th>
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Creator</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 304px;"
+											aria-label="Position: activate to sort column ascending">Assignee</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 145px;"
+											aria-label="Office: activate to sort column ascending">Start date</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 71px;"
+											aria-label="Age: activate to sort column ascending">Due date</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 140px;"
+											aria-label="Start date: activate to sort column ascending">Priority</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;"
+											aria-label="Salary: activate to sort column ascending">State</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;"
+											aria-label="Salary: activate to sort column ascending">Issue type</th>
+										<th class="sorting" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;"
+											aria-label="Salary: activate to sort column ascending">Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr role="row" class="even">
+										<td>${task.project.name}</td>
+										<td>${task.summary}</td>
+										<td>${task.description}</td>
+										<td>${task.creator.name}</td>
+										<td>${task.assignee.name}</td>
+										<td>${task.startDate}</td>
+										<td>${task.dueDate}</td>
+										<td>${task.priority.type.value}</td>
+										<td>${task.state.type.value}</td>
+										<td>${task.issue.type.value}</td>
+										<td>
+											<c:if test="${not empty user}">
+												<c:if test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
+													<a href="../edit/${ t.id }">[Edit]</a>
+													<a href="../delete/${ t.id }">[Delete]</a>
+												</c:if>
+											</c:if>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	
-	<div id="addedComment"></div>
-	
-	
-	<c:if test="${ task.comments.size() > 0 }">
-	<table id='comments'>
-		<thead>
-			<tr>
-				<th>Author</th>
-				<th>Wrriten on</th>
-				<th>Content</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items = "${ task.comments }" var="c">
-			<tr>
-				<td>${c.user.name}</td>
-				<td>${ c.dateTime }</td>
-				<td>${c.description }</td>
-			</tr> <br>
-		</c:forEach>
-		</tbody>
-	</table>
-	</c:if>
-	
-	<script>
-	function addComment() {
-		var description = document.commentForm.description.value;
-		var taskId = document.commentForm.taskId.value;
-		var request = new XMLHttpRequest();
-		document.commentForm.description.value = '';
-		request.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				
-				var json = request.responseText;
-				var newComment = JSON.parse(json);
-
-				var html = "<tr>" +
-					"<td>" + newComment.userId + "</td>" +
-					"<td>" + newComment.dateTime.date.year + "-" + newComment.dateTime.date.month + "-" + newComment.dateTime.date.day + "T" +
-							+ newComment.dateTime.time.hour + "-" + newComment.dateTime.time.minute + "-" + newComment.dateTime.time.second +"</td>" +
-					"<td>" + newComment["description"] + "</td>" +
-							"</tr>";
-				document.querySelector("#comments tbody").innerHTML = html + document.querySelector("#comments tbody").innerHTML;
-			}
-		}
-		
-		request.open("GET", "http://localhost:8080/Jira/comments/add?" + "taskId=" + taskId + "&description=" + description, true);
-		request.send();
-	};
-	</script>
-	<span id="mylocation"></span>  
+	 <div class="card mb-3">
+		<div class="card-body">
+			<div class="table-responsive">
+			<div class="card-header">
+				<c:if test= '${not empty sessionScope.user}'>
+						<form name="commentForm">
+							<input type="hidden" value="${ task.id }" name="taskId">
+								<input type="text" name ="description" value ="Add a new comment">
+							<input type="button" value="Add" onclick="addComment()">
+						</form>
+				</c:if>
+			</div>
+				<div id="dataTable_wrapper"
+					class="dataTables_wrapper container-fluid dt-bootstrap4">
+					<div class="row">
+						<div class="col-sm-12">
+							<table id="comments" class="table table-bordered dataTable" id="dataTable"
+								role="grid" aria-describedby="dataTable_info"
+								style="width: 100%;" width="100%" cellspacing="0">
+								<thead>
+									<tr role="row">
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Author</th>
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Written on</th>
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">Content</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${ task.comments }" var="c" varStatus="loop">
+										<c:if test="${ loop.index % 2 == 0 }">
+											<tr role="row" class="even">
+												<td>${c.user.name}</td>
+												 <td>
+												 	${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
+												</td>
+												<td>${c.description}</td>
+											</tr>
+										</c:if>
+										<c:if test="${ loop.index % 2 == 1 }">
+											<tr role="row" class="odd">
+												<td>${c.user.name}</td>
+												 <td>
+												 	${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
+												</td>
+												<td>${c.description}</td>
+											</tr>
+										</c:if>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.jira.dto.CommentViewDto;
 import com.jira.exception.CommentException;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
 import com.jira.interfaces.ICommentTaskDao;
 import com.jira.interfaces.ITaskDao;
+import com.jira.interfaces.IUserDao;
 import com.jira.model.CommentTask;
 import com.jira.model.User;
 
@@ -31,41 +33,21 @@ public class CommentController {
 
 	private final ITaskDao taskDao;
 	private final ICommentTaskDao commentTaskDao;
+	private final IUserDao userDao;
 
 	@Autowired
-	public CommentController(ITaskDao taskDao, ICommentTaskDao commentTaskDao) {
+	public CommentController(ITaskDao taskDao, ICommentTaskDao commentTaskDao, IUserDao userDao) {
 		this.taskDao = taskDao;
 		this.commentTaskDao = commentTaskDao;
+		this.userDao = userDao;
 	}
 
-//	@RequestMapping(method = RequestMethod.POST, value = "/add/{taskId}")
-//	public String add(@PathVariable("taskId") Integer taskId, 
-//					 @RequestParam String description, HttpSession session) throws DatabaseException, CommentException {
-//		if (!this.taskDao.isExistById(taskId)) {
-//			return "redirect:../../tasks/all/0";
-//		}
-//		
-//		User loggedUser = (User) session.getAttribute("user");
-//		if (loggedUser == null) {
-//			return REDIRECT_TO_TASK_DETAIL + taskId;
-//		}
-//		
-//		if (description.isEmpty()) {
-//			return REDIRECT_TO_TASK_DETAIL + taskId;
-//		}
-//		
-//		CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
-//		this.commentTaskDao.save(comment);
-//		
-//
-//		return REDIRECT_TO_TASK_DETAIL + taskId;
-//	}
-	
+
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/add")
 	public String add(@RequestParam String description,
 					  @RequestParam Integer taskId,
-					  HttpSession session) throws DatabaseException, CommentException, UserDataException {
+					  HttpSession session) throws Exception {
 		
 		if (!this.taskDao.isExistById(taskId)) {
 			throw new CommentException(NOT_EXIST_TASK_MESSAGE);
@@ -82,7 +64,8 @@ public class CommentController {
 		
 		CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
 		this.commentTaskDao.save(comment);
+		CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), this.userDao.getUserById(comment.getUserId()));
 		
-		return new Gson().toJson(comment);
+		return new Gson().toJson(commentViewDto);
 	}
 }

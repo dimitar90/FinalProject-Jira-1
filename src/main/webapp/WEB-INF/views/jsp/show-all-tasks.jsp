@@ -3,23 +3,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <head>
-<!-- Bootstrap core CSS-->
 <link href="../../vendor/bootstrap/css/bootstrap.min.css"
 	rel="stylesheet">
-<!-- Custom fonts for this template-->
 <link href="../../vendor/font-awesome/css/font-awesome.min.css"
 	rel="stylesheet" type="text/css">
-<!-- Page level plugin CSS-->
 <link href="../../vendor/datatables/dataTables.bootstrap4.css"
 	rel="stylesheet">
-<!-- Custom styles for this template-->
 <link href="../../css/sb-admin.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="../../css/table.css">
 </head>
 
 <jsp:include page="navigation-bar.jsp"></jsp:include>
-<c:set var="first" value="0" />
-
+  
 <body>
 	<form style="display: inline-block" action="../filter" method="post">
 		<p>Filter by issue type</p>
@@ -41,11 +36,15 @@
 				<div id="dataTable_wrapper"
 					class="dataTables_wrapper container-fluid dt-bootstrap4">
 					
-					<%-- <div class="row">
+					<div class="row">
 						<div class="col-sm-12 col-md-6">
 							<div class="dataTables_length" id="dataTable_length">
 								
-								<label>Show <select id="dataTable_length" name="dataTable_length"
+								<form action="../../tasks/goToPage" method="POST">
+								Go to page: <input type="number" name="page">
+											<input type="submit" value="Go" />
+								</form>
+								<%-- <label>Show <select id="dataTable_length" name="dataTable_length"
 									aria-controls="dataTable" class="form-control form-control-sm">
 									<c:forEach items="${ allRowCounts }" var="rowCount">
 										<c:if test="${rowCount == currentRowsOfPage}">
@@ -56,7 +55,7 @@
 										</c:if>
 									</c:forEach>
 									</select> entries
-								</label>
+								</label> --%>
 								
 							</div>
 						</div>
@@ -67,7 +66,7 @@
 									aria-controls="dataTable" type="search"></label>
 							</div>
 						</div>
-					</div> --%>
+					</div>
 					
 					<div class="row">
 						<div class="col-sm-12">
@@ -76,6 +75,10 @@
 								style="width: 100%;" width="100%" cellspacing="0">
 								<thead>
 									<tr role="row">
+										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;"
+											aria-sort="ascending"
+											aria-label="Name: activate to sort column descending">#</th>
 										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
 											rowspan="1" colspan="1" style="width: 202px;"
 											aria-sort="ascending"
@@ -106,6 +109,7 @@
 								</thead>
 								<tfoot>
 									<tr>
+										<th rowspan="1" colspan="1">#</th>
 										<th rowspan="1" colspan="1">Project</th>
 										<th rowspan="1" colspan="1">Summary</th>
 										<th rowspan="1" colspan="1">Assignee</th>
@@ -120,6 +124,7 @@
 									<c:forEach items="${ tasks }" var="t" varStatus="loop">
 									<c:if test="${loop.index % 2 == 0}">
 									<tr role="row" class="even">
+										<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
 										<td>${t.project.name}</td>
 										<td>${t.summary}</td>
 										<td>${t.assignee.name}</td>
@@ -140,6 +145,7 @@
 									</c:if>
 									<c:if test="${loop.index % 2 == 1}">
 									<tr role="row" class="odd">
+										<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
 										<td>${t.project.name}</td>
 										<td>${t.summary}</td>
 										<td>${t.assignee.name}</td>
@@ -166,7 +172,7 @@
 					<div class="row">
 						<div class="col-sm-12 col-md-5">
 							<div class="dataTables_info" id="dataTable_info" role="status"
-								aria-live="polite">Showing ${ (currentRowsOfPage * currentPage) + 1 } to ${ (currentRowsOfPage * currentPage) + currentRowsOfPage } of ${ countOfTasks } tasks</div>
+								aria-live="polite">Showing ${ (currentRowsOfPage * currentPage) + 1 } to ${ (currentRowsOfPage * currentPage) + currentRowsOfPage } of ${ countOfTasks } tasks in ${ noOfPages } pages</div>
 						</div>
 						<div class="col-sm-12 col-md-7">
 							<div class="dataTables_paginate paging_simple_numbers"
@@ -184,27 +190,83 @@
 										aria-controls="dataTable" data-dt-idx="0" tabindex="0"
 										class="page-link">Previous</a></li>
 									</c:if>
+									
+									<c:if test="${ currentPage <= noOfPages }">
 									<li class="paginate_button page-item active"><a href="../../tasks/all/${currentPage}"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 1 }</a></li>
+									</c:if>
+									<c:if test="${ currentPage  > noOfPages }">
+									<li class="paginate_button page-item active disabled"><a href="../../tasks/all/${currentPage}"
+										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+										class="page-link">${ currentPage + 1 }</a></li>
+									</c:if>
+									
+									<c:if test="${ currentPage + 1  <= noOfPages }">
 									<li class="paginate_button page-item "><a href="../../tasks/all/${currentPage + 1}"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 2 }</a></li>
+									</c:if>
+									<c:if test="${ currentPage + 1  > noOfPages }">
+									<li class="paginate_button page-item disabled"><a href="../../tasks/all/${currentPage + 1}"
+										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+										class="page-link">${ currentPage + 2 }</a></li>
+									</c:if>
+									
+									<c:if test="${ currentPage + 2 <= noOfPages }">
 									<li class="paginate_button page-item "><a href="../../tasks/all/${currentPage + 2 }"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 3 }</a></li>
-									<li class="paginate_button page-item "><a href="../../tasks/all/${currentPage + 3 }"
+									</c:if>
+										<c:if test="${ currentPage + 2 > noOfPages }">
+									<li class="paginate_button page-item disabled"><a href="../../tasks/all/${currentPage + 2 }"
+										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+										class="page-link">${ currentPage + 3 }</a></li>
+									</c:if>
+									
+									<c:if test="${ currentPage + 3 <= noOfPages }">
+									<li class="paginate_button page-item"><a href="../../tasks/all/${currentPage + 3 }"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 4 }</a></li>
-									<li class="paginate_button page-item "><a href="../../tasks/all/${currentPage + 4 }"
+									</c:if>
+										<c:if test="${ currentPage + 3 > noOfPages }">
+									<li class="paginate_button page-item disabled"><a href="../../tasks/all/${currentPage + 3 }"
+										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+										class="page-link">${ currentPage + 4 }</a></li>
+									</c:if>
+									
+									<c:if test="${ currentPage + 4 <= noOfPages }">
+									<li class="paginate_button page-item"><a href="../../tasks/all/${currentPage + 4 }"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 5 }</a></li>
-									<li class="paginate_button page-item "><a href="../../tasks/all/${currentPage + 5 }"
+									</c:if>
+									<c:if test="${ currentPage +4 > noOfPages }">
+									<li class="paginate_button page-item disabled"><a href="../../tasks/all/${currentPage + 4 }"
+										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
+										class="page-link">${ currentPage + 5 }</a></li>
+									</c:if>
+									
+									<c:if test="${ currentPage + 5 <= noOfPages }">
+									<li class="paginate_button page-item"><a href="../../tasks/all/${currentPage + 5 }"
 										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
 										class="page-link">${ currentPage + 6 }</a></li>
+									</c:if>
+									<c:if test="${ currentPage + 5 > noOfPages }">
+									<li class="paginate_button page-item disabled"><a href="../../tasks/all/${currentPage + 5 }"
+										aria-controls="dataTable" data-dt-idx="3" tabindex="0"
+										class="page-link">${ currentPage + 6 }</a></li>
+									</c:if>
+									
+									<c:if test="${currentPage + 1 <= noOfPages}">
 									<li class="paginate_button page-item next" id="dataTable_next"><a
 										href="../../tasks/all/${ currentPage + 1 }" aria-controls="dataTable" data-dt-idx="7"
 										tabindex="0" class="page-link">Next</a></li>
+									</c:if>
+									<c:if test="${currentPage + 1 > noOfPages}">
+									<li class="paginate_button page-item next disabled" id="dataTable_next"><a
+										href="../../tasks/all/${ currentPage + 1 }" aria-controls="dataTable" data-dt-idx="7"
+										tabindex="0" class="page-link">Next</a></li>
+									</c:if>
 								</ul>
 							</div>
 						</div>
@@ -213,6 +275,5 @@
 			</div>
 		</div>
 	</div>
-
 </body>
 </html>
