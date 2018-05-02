@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.stereotype.Component;
 
 import com.jira.model.Project;
@@ -15,7 +14,6 @@ import com.jira.model.TaskPriority;
 import com.jira.model.TaskState;
 import com.jira.model.User;
 
-@EntityScan
 public class TaskViewDetailsDto {
 	private int id;
 	private String summary;
