@@ -15,17 +15,8 @@
 <jsp:include page="navigation-bar.jsp"></jsp:include>
   
 <body>
-	<form style="display: inline-block" action="../filter" method="post">
-		<p>Filter by issue type</p>
-		<c:forEach items="${ issueTypes }" var="it">
-			<input type="checkbox" name="selectedIssueTypeIds" value="${it.id}"> ${it.type.value} <br>
-		</c:forEach>
-		<p>Show tasks between</p>
-		<input type="date" name="firstDate"> <br> and <br> <input
-			type="date" name="secondDate"><br> due date <input
-			type="submit" value="Filter">
-	</form>
-
+	<jsp:include page="filter-form.jsp"></jsp:include>
+			
 	<div class="card mb-3">
 		<div class="card-header">
 			<i class="fa fa-table"></i> ALL TASKS
@@ -38,24 +29,10 @@
 					<div class="row">
 						<div class="col-sm-12 col-md-6">
 							<div class="dataTables_length" id="dataTable_length">
-								
 								<form action="../../tasks/goToPage" method="POST">
 								Go to page: <input type="number" name="page">
 											<input type="submit" value="Go" />
 								</form>
-								<%-- <label>Show <select id="dataTable_length" name="dataTable_length"
-									aria-controls="dataTable" class="form-control form-control-sm">
-									<c:forEach items="${ allRowCounts }" var="rowCount">
-										<c:if test="${rowCount == currentRowsOfPage}">
-											<option value="${rowCount}" selected="selected">${ rowCount }</option>
-										</c:if>
-										<c:if test="${rowCount != currentRowsOfPage}">
-											<option value="${rowCount}">${ rowCount }</option>
-										</c:if>
-									</c:forEach>
-									</select> entries
-								</label> --%>
-								
 							</div>
 						</div>
 						<div class="col-sm-12 col-md-6">

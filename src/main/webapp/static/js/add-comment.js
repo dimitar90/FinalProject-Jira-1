@@ -11,7 +11,7 @@ function addComment() {
 
 				var html = "<tr>" +
 					"<td>" + newComment.user.name + "</td>" +
-					"<td>" 
+					"<td>"  + "<br>" +
 							+ newComment.dateTime.date.year + "/" + newComment.dateTime.date.month + "/" + newComment.dateTime.date.day + " " +
 							+ newComment.dateTime.time.hour + ":" + newComment.dateTime.time.minute + ":" + newComment.dateTime.time.second +"</td>" +
 					"<td>" + newComment["description"] + "</td>" +
