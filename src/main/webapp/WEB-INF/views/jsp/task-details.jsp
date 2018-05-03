@@ -1,5 +1,5 @@
-	<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+	<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 	<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -97,15 +97,16 @@
 		</div>
 	</div>
 	
-	 <div class="card mb-3">
+		
+  <div class="card mb-3">
 		<div class="card-body">
 			<div class="table-responsive">
-			<div class="card-header">
+		<div class="card-header">
 				<c:if test= '${not empty sessionScope.user}'>
 						<form name="commentForm">
 							<input type="hidden" value="${ task.id }" name="taskId">
-								<input type="text" name ="description" value ="Add a new comment">
-							<input type="button" value="Add" onclick="addComment()">
+								<input type="text" name ="description" >
+							<input type="button" value="Add comment" onclick="addComment()">
 						</form>
 				</c:if>
 			</div>
@@ -119,10 +120,10 @@
 								<thead>
 									<tr role="row">
 										<th tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 202px;">Author</th>
+											rowspan="1" colspan="1" style="max-width: 202px;">Author</th>
 										<th  tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 202px;">Written on</th>
-										<th tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="max-width: 202px;">Written on</th>
+										<th tabindex="0" style="max-width: 202px;"
 											rowspan="1" colspan="1" style="width: 202px;">Content</th>
 									</tr>
 								</thead>
@@ -134,6 +135,7 @@
 												 <td>
 												 	${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
 												</td>
+												
 												<td>${c.description}</td>
 											</tr>
 										</c:if>

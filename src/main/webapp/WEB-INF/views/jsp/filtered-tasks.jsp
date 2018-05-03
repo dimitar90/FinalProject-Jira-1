@@ -3,6 +3,9 @@
 <jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <body>
+		<jsp:include page="filter-form.jsp"></jsp:include>
+
+		<br>
 		<div class="card-header">
 			<i class="fa fa-table">FILTERED TASKS</i> 
 		</div>
