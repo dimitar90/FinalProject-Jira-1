@@ -36,6 +36,8 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectController {
+	private static final int RECORDS_PER_PAGE = 3;
+
 	@Autowired
 	private ProjectDao projectDao;
 
@@ -81,7 +83,7 @@ public class ProjectController {
 			Project p = projectDao.getProject(projectName, projCategoryId, projTypeId, user.getId());
 
 			projectDao.saveProject(p);
-			return "redirect:./showAllProjects";
+			return "redirect:./all/0";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -89,25 +91,25 @@ public class ProjectController {
 		}
 	}
 
-	@RequestMapping(value = "/showAllProjects", method = RequestMethod.GET)
-	public String showAllProjects(Model model) {
-		List<ProjectDto> allProjects = new ArrayList<>();
-
-		try {
-			allProjects.addAll(projectDao.getAllProjectDtos());
-			model.addAttribute("allProjects", allProjects);
-			
-			return "show-all-projects";
-		} catch (DatabaseException e) {
-			e.printStackTrace();
-			model.addAttribute("exception", e);
-			return "error";
-		} catch (Exception e) {
-			model.addAttribute("exception", e);
-			return "error";
-		}
-
-	}
+//	@RequestMapping(value = "/showAllProjects", method = RequestMethod.GET)
+//	public String showAllProjects(Model model) {
+//		List<ProjectDto> allProjects = new ArrayList<>();
+//
+//		try {
+//			allProjects.addAll(projectDao.getAllProjectDtos());
+//			model.addAttribute("allProjects", allProjects);
+//
+//			return "show-all-projects";
+//		} catch (DatabaseException e) {
+//			e.printStackTrace();
+//			model.addAttribute("exception", e);
+//			return "error";
+//		} catch (Exception e) {
+//			model.addAttribute("exception", e);
+//			return "error";
+//		}
+//
+//	}
 
 	@RequestMapping(value = "/showAllSoftware", method = RequestMethod.GET)
 	public String showAllSoftware(Model model) {
@@ -162,13 +164,13 @@ public class ProjectController {
 	public String deletProject(Model model, @PathVariable("dtoProjectId") int projectId, HttpServletRequest request) {
 		try {
 			if (!this.projectDao.isExistById(projectId)) {
-				return "redirect:../showAllProjects";
+				return "redirect:../all/0";
 			}
 
 			Project project = this.projectDao.getById(projectId);
 
 			if (project == null) {
-				return "redirect:../showAllProjects";
+				return "redirect:../all/0";
 			}
 
 			HttpSession session = request.getSession();
@@ -189,6 +191,64 @@ public class ProjectController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
+		}
+	}
+/*
+ * @RequestMapping(method = RequestMethod.GET, value = "/all/{pageNumber}")
+	public String showAllTasks(Model model, @PathVariable Integer pageNumber, HttpSession session) {
+		try {
+			int countOfTasks = this.taskDao.getCountOfTasks();
+			int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
+			if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
+				noOfPages++;
+			}
+			
+			model.addAttribute("currentRowsOfPage", ROWS_COUNT_PER_PAGE);
+			model.addAttribute("countOfTasks", countOfTasks);
+			model.addAttribute("noOfPages", noOfPages);
+			model.addAttribute("currentPage", pageNumber);
+			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
+
+			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, ROWS_COUNT_PER_PAGE);
+			model.addAttribute("tasks", tasks);
+
+			return "show-all-tasks";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "redirect:error";
+		}
+	}
+ */
+	@RequestMapping(method = RequestMethod.GET, value = "/all/{currPage}")
+	public String showAllProjectPages(Model model, @PathVariable Integer currPage) {
+		// TODO validation for logged user
+
+		try {
+			int projectCount = this.projectDao.getCount();
+			int noOfPages = (projectCount / RECORDS_PER_PAGE) - 1;
+			if (projectCount % RECORDS_PER_PAGE != 0) {
+				noOfPages++;
+			}
+
+			model.addAttribute("currRecordPage", RECORDS_PER_PAGE);
+			model.addAttribute("projectCount", projectCount);
+			model.addAttribute("noOfPages", noOfPages);
+			model.addAttribute("currentPage", currPage);
+
+			List<ProjectDto> projects = this.projectDao.getProjectPerPage(currPage, RECORDS_PER_PAGE);
+			model.addAttribute("projects", projects);
+
+			List<ProjectDto> allProjects = new ArrayList<>();
+
+//			allProjects.addAll(projectDao.getAllProjectDtos());
+//			model.addAttribute("allProjects", allProjects);
+
+			return "show-all-projects";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "redirect:error";
 		}
 	}
 }

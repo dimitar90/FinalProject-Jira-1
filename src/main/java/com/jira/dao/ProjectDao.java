@@ -3,8 +3,8 @@ package com.jira.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.jira.db.DBManager;
 import com.jira.dto.ProjectDto;
+import com.jira.dto.TaskBasicViewDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.ProjectException;
 import com.jira.exception.UserDataException;
@@ -25,6 +26,8 @@ public class ProjectDao implements IProjectDao {
 	private static final String MSG_INVALID_PROJECT_NAME = "Invalid project name in project dao";
 	private static final String MSG_INVALID_ID = "No project with such id";
 	private static final String MSG_INVALID_PROJECT_ID = "Invalid project id in project dao";
+	private static final String SELECT_PROJECTS_BY_PAGE = "SELECT id, name, project_type_id, project_category_id, project_lead_id FROM projects WHERE is_deleted = 0 LIMIT ?, ?;";
+
 	@Autowired
 	private final DBManager manager;
 
@@ -322,5 +325,60 @@ public class ProjectDao implements IProjectDao {
 			throw new DatabaseException("");
 		}
 
+	}
+
+	@Override
+	public int getCount() throws Exception {
+		String sql = "SELECT COUNT(*) FROM projects WHERE is_deleted = 0";
+		try {
+		Statement stmt = this.manager.getConnection().createStatement();
+		
+		ResultSet result = stmt.executeQuery(sql);
+		result.next();
+		int count = result.getInt(1);
+		return count;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_SQL_INVALID_DATA);
+		}
+	}
+
+	@Override
+	public List<ProjectDto> getProjectPerPage(int numPage, int projectOnPage) throws Exception {
+		try {
+			PreparedStatement ps =this.manager.getConnection().prepareStatement(SELECT_PROJECTS_BY_PAGE);
+			ps.setInt(1, (numPage * projectOnPage));
+			ps.setInt(2, projectOnPage);
+			ResultSet result = ps.executeQuery();
+			List<ProjectDto> projects = this.getProjectsDtoFromResult(result);
+			
+			ps.close();
+			return projects;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_SQL_INVALID_DATA, e);
+		}
+	}
+
+	private List<ProjectDto> getProjectsDtoFromResult(ResultSet result) throws SQLException, UserDataException {
+		List<ProjectDto> resultList = new ArrayList<>();
+		
+		while (result.next()) {
+			int rsId = result.getInt("id");
+			String name = result.getString("name");
+			int projectTypeId = result.getInt("project_type_id");
+			int projectCategoryId = result.getInt("project_category_id");
+			int projectLeadId = result.getInt("project_lead_id");
+
+			String projectType = projectTypeDao.getProjectTypeById(projectTypeId);
+			String projectCategory = projectCategoryDao.getProjectCategoryById(projectCategoryId);
+			User user = userDao.getUserById(projectLeadId);
+
+			ProjectDto dto = ProjectDto.getDto(rsId, name, projectType, projectCategory, user.getName(), projectLeadId);
+			
+			resultList.add(dto);
+		}
+		
+		return resultList;
 	}
 }

@@ -33,4 +33,8 @@ public interface IProjectDao {
 	public void deleteProjectById(int id) throws Exception;
 	
 	public int getLeadByProjectId(int projectId) throws Exception;
+	
+	public int getCount() throws Exception;
+	
+	public List<ProjectDto> getProjectPerPage(int numPage,int projectOnPage) throws Exception;
 }

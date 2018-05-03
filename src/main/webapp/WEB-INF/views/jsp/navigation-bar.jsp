@@ -114,7 +114,7 @@ body {
 			<a href="http://localhost:8080/Jira/projects/create"> Create a project</a> <a
 				href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a> 
 				<a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a>
-			<a href="http://localhost:8080/Jira/projects/showAllProjects">View all projects</a>
+			<a href="http://localhost:8080/Jira/projects/all/0">View all projects</a>
 		</div>
 	</div>
 

@@ -11,6 +11,10 @@ th, td {
 	padding: 7px 10px 10px 10px;
 }
 
+#searchResult {
+	position: fixed;
+}
+
 th {
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
