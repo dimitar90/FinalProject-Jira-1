@@ -1,10 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <head>
-<link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<link href="../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-<link href="../css/sb-admin.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="../css/table.css">
+
+<link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
+<link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
+<link href="<c:url value="/vendor/datatables/dataTables.bootstrap4.css" />" rel="stylesheet">
+<link href="<c:url value="/css/sb-admin.css" />" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
+<link rel="stylesheet" href="<c:url value="/css/style.css" />">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 </head>
 
 <div class="card mb-3">
@@ -19,36 +22,24 @@
 								style="width: 100%;" width="100%" cellspacing="0">
 								<thead>
 									<tr role="row">
-										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 202px;"
-											aria-sort="ascending"
-											aria-label="Name: activate to sort column descending">#</th>
-										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 202px;"
-											aria-sort="ascending"
-											aria-label="Name: activate to sort column descending">Project</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 304px;"
-											aria-label="Position: activate to sort column ascending">Summary</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 145px;"
-											aria-label="Office: activate to sort column ascending">Assignee</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 71px;"
-											aria-label="Age: activate to sort column ascending">Due
-											date</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 140px;"
-											aria-label="Start date: activate to sort column ascending">Priority</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">State</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">Details</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">Actions</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;">#</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 202px;">Project</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 304px;">Summary</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 145px;">Assignee</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 71px;">Due date</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 140px;">Priority</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;">State</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;">Details</th>
+										<th  tabindex="0" aria-controls="dataTable"
+											rowspan="1" colspan="1" style="width: 114px;">Actions</th>
 									</tr>
 								</thead>
 								<tfoot>

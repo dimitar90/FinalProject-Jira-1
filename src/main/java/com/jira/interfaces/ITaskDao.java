@@ -1,10 +1,12 @@
 package com.jira.interfaces;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jira.dto.TaskBasicViewDto;
 import com.jira.dto.TaskViewDetailsDto;
@@ -35,4 +37,6 @@ public interface ITaskDao {
 
 	public List<TaskBasicViewDto> getFilteredTasksByIssueTypeAndDate(List<Integer> issueTypeIds, String firstDate,
 			String secondDate) throws DatabaseException;
+
+	public void saveFileToDisk(Task task, MultipartFile f, String randomUUIDString) throws IOException;
 }

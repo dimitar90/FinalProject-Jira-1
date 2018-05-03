@@ -1,10 +1,12 @@
 package com.jira.controller;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +30,7 @@ import com.jira.interfaces.ITaskIssueDao;
 import com.jira.interfaces.ITaskPriorityDao;
 import com.jira.interfaces.ITaskStateDao;
 import com.jira.interfaces.IUserDao;
+import com.jira.manager.UserManager;
 import com.jira.model.Project;
 import com.jira.model.Task;
 import com.jira.model.TaskIssue;
@@ -39,8 +42,7 @@ import com.jira.model.User;
 public class TaskController {
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
 	private static final int ROWS_COUNT_PER_PAGE = 3;
-
-	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
+	private static final String ALLOWED_FILE_EXTENSIONS = ".png .jpeg .jpg .bmp";
 
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskIssueDao taskIssueDao;
@@ -48,24 +50,27 @@ public class TaskController {
 	private final IUserDao userDao;
 	private final ITaskDao taskDao;
 	private final ITaskStateDao taskStateDao;
-
+	private final UserManager userManager;
+	
 	@Autowired
 	public TaskController(ITaskPriorityDao taskPriorityDao, ITaskIssueDao taskIssueDao, IProjectDao projectDao,
-			IUserDao userDao, ITaskDao taskDao, ITaskStateDao taskStateDao) {
+			IUserDao userDao, ITaskDao taskDao, ITaskStateDao taskStateDao, UserManager userManager) {
 		this.taskPriorityDao = taskPriorityDao;
 		this.taskIssueDao = taskIssueDao;
 		this.projectDao = projectDao;
 		this.userDao = userDao;
 		this.taskDao = taskDao;
 		this.taskStateDao = taskStateDao;
+		this.userManager = userManager;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/usertasks")
 	public String showTasksOnLoggedUser(HttpSession session, Model model) {
-		User loggedUser = (User) session.getAttribute("user");
+		User loggedUser = this.userManager.getLoggedUser(session);
 		if (loggedUser == null) {
 			return "redirect:../../Jira/login";
 		}
+		
 		try {
 			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 			List<TaskBasicViewDto> tasks = this.taskDao.getAllOpenTasksByUserId(loggedUser.getId());
@@ -94,9 +99,13 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/delete/{taskId}")
-	public String deleteTaskPost(Model model, @PathVariable("taskId") int taskId, HttpServletRequest request) {
-		// TODO validate for logged user
-
+	public String deleteTaskPost(Model model, @PathVariable("taskId") int taskId, HttpServletRequest request, HttpSession session) {
+		User user = this.userManager.getLoggedUser(session);
+		
+		if (user == null) {
+			return "redirect:../../login";
+		}
+		
 		try {
 			if (!this.taskDao.isExistById(taskId)) {
 				return REDIRECT_FIRST_PAGE_ALL_TASKS;
@@ -108,18 +117,13 @@ public class TaskController {
 				return REDIRECT_FIRST_PAGE_ALL_TASKS;
 			}
 
-			HttpSession session = request.getSession();
-			User user = (User) session.getAttribute("user");
 			int loggedUserId = user.getId();
-			TaskViewDetailsDto editTaskDto = taskDao.getById(taskId);
-
-			if (editTaskDto.getAssignee().getId() != loggedUserId && editTaskDto.getCreator().getId() != loggedUserId) {
+			if (task.getAssignee().getId() != loggedUserId && task.getCreator().getId() != loggedUserId) {
 				return REDIRECT_FIRST_PAGE_ALL_TASKS;
 			}
 
 			taskDao.deleteById(taskId);
-
-			return "redirect:" + REDIRECT_FIRST_PAGE_ALL_TASKS;
+			return  REDIRECT_FIRST_PAGE_ALL_TASKS;
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
@@ -128,13 +132,14 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/edit/{taskId}")
-	public String editTask(Model model, @PathVariable Integer taskId, HttpServletRequest request) {
-		// TODO validate for logged user
-
+	public String editTask(Model model, @PathVariable Integer taskId, HttpServletRequest request, HttpSession session) {
+		User loggedUser = this.userManager.getLoggedUser(session);
+		
+		if (loggedUser == null) {
+			return "redirect:../../login";
+		}
 		try {
-			HttpSession session = request.getSession();
-			User user = (User) session.getAttribute("user");
-			int loggedUserId = user.getId();
+			int loggedUserId = loggedUser.getId();
 			TaskViewDetailsDto editTaskDto = taskDao.getById(taskId);
 
 			if (editTaskDto.getAssignee().getId() != loggedUserId && editTaskDto.getCreator().getId() != loggedUserId) {
@@ -157,9 +162,12 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/edit/{taskId}")
-	public String editTaskPost(Model model, @PathVariable Integer taskId, HttpServletRequest request) {
-		// TODO validate for logged user
-
+	public String editTaskPost(Model model, @PathVariable Integer taskId, HttpServletRequest request, HttpSession session) {
+		User loggedUser = this.userManager.getLoggedUser(session);
+		if (loggedUser == null) {
+			return "redirect:../../login";
+		}
+		
 		try {
 			TaskViewDetailsDto task = this.taskDao.getById(taskId);
 			int newStateId = Integer.parseInt(request.getParameter("newStateId"));
@@ -193,7 +201,7 @@ public class TaskController {
 			return "error";
 		}
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST, value = "/goToPage")
 	public String goToPage(Model model, @RequestParam Integer page) {
 		return "redirect:./all/" + (page - 1);
@@ -207,14 +215,15 @@ public class TaskController {
 			if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
 				noOfPages++;
 			}
-			
+
 			model.addAttribute("currentRowsOfPage", ROWS_COUNT_PER_PAGE);
 			model.addAttribute("countOfTasks", countOfTasks);
 			model.addAttribute("noOfPages", noOfPages);
 			model.addAttribute("currentPage", pageNumber);
 			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 
-			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, ROWS_COUNT_PER_PAGE);
+			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber,
+					ROWS_COUNT_PER_PAGE);
 			model.addAttribute("tasks", tasks);
 
 			return "show-all-tasks";
@@ -227,6 +236,11 @@ public class TaskController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/create")
 	public String submit(Model modelMap, HttpSession session) {
+		User loggedUser = this.userManager.getLoggedUser(session);
+		if (loggedUser == null) {
+			return "redirect:../login";
+		}
+		
 		try {
 			Collection<User> users = userDao.getAll();
 			Collection<Project> projects = projectDao.getAllProjects();
@@ -250,32 +264,36 @@ public class TaskController {
 	public String submit(@RequestParam MultipartFile[] files, @RequestParam String summary,
 			@RequestParam String description, @RequestParam String dueDate, @RequestParam Integer projectId,
 			@RequestParam Integer priorityId, @RequestParam Integer issueTypeId, @RequestParam Integer assigneeId,
-			ModelMap modelMap, HttpServletRequest request) throws Exception {
+			ModelMap modelMap, HttpServletRequest request, HttpSession session) throws Exception {
+		
+		User loggedUser = this.userManager.getLoggedUser(session);
+		if (loggedUser == null) {
+			return "redirect:../../login";
+		}
+		
 		if (!this.isValidData(summary, description, dueDate, priorityId, issueTypeId, assigneeId, projectId, files)) {
 			return "create-task";
 		}
 
 		String startDate = LocalDate.now().toString();
-		HttpSession session = request.getSession();
-		User user = (User) session.getAttribute("user");
-
-		Task task = new Task(summary, dueDate, startDate, description, projectId, priorityId, issueTypeId, user.getId(),
+		Task task = new Task(summary, dueDate, startDate, description, projectId, priorityId, issueTypeId, loggedUser.getId(),
 				assigneeId);
+
+		UUID uuid = UUID.randomUUID();
+		String randomUUIDString = uuid.toString();
+		for (MultipartFile f : files) {
+			if (f.isEmpty()) {
+				continue;
+			}
+			try {
+				this.taskDao.saveFileToDisk(task, f, randomUUIDString);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "redirect:error";
+			}
+		}
+
 		this.taskDao.saveTask(task);
-
-		// for (MultipartFile f : files) {
-		// if (f.isEmpty()) {
-		// continue;
-		// }
-		// try {
-		// System.out.println(f.getInputStream().toString());
-		// System.out.println("IMA FAIL");
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-
 		return "redirect:./all/0";
 	}
 
@@ -289,8 +307,13 @@ public class TaskController {
 			if (file.isEmpty()) {
 				continue;
 			}
-
-			System.out.println("proverka");
+			
+	        String[] fileParts = file.getOriginalFilename().split("\\.");
+			String fileExtension = fileParts[fileParts.length - 1];
+			
+			if (!ALLOWED_FILE_EXTENSIONS.contains(fileExtension)) {
+				return false;
+			}
 		}
 
 		return isValid;

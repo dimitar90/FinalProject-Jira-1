@@ -21,6 +21,7 @@ import com.jira.exception.UserDataException;
 import com.jira.interfaces.ICommentTaskDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.IUserDao;
+import com.jira.manager.UserManager;
 import com.jira.model.CommentTask;
 import com.jira.model.User;
 
@@ -34,12 +35,13 @@ public class CommentController {
 	private final ITaskDao taskDao;
 	private final ICommentTaskDao commentTaskDao;
 	private final IUserDao userDao;
-
+	private final UserManager userManager;
 	@Autowired
-	public CommentController(ITaskDao taskDao, ICommentTaskDao commentTaskDao, IUserDao userDao) {
+	public CommentController(ITaskDao taskDao, ICommentTaskDao commentTaskDao, IUserDao userDao, UserManager userManager) {
 		this.taskDao = taskDao;
 		this.commentTaskDao = commentTaskDao;
 		this.userDao = userDao;
+		this.userManager = userManager;
 	}
 
 
@@ -48,14 +50,13 @@ public class CommentController {
 	public String add(@RequestParam String description,
 					  @RequestParam Integer taskId,
 					  HttpSession session) throws Exception {
+		User loggedUser = this.userManager.getLoggedUser(session);
+		if (loggedUser == null) {
+			throw new UserDataException(NOT_LOGGED_USER);
+		}
 		
 		if (!this.taskDao.isExistById(taskId)) {
 			throw new CommentException(NOT_EXIST_TASK_MESSAGE);
-		}
-		
-		User loggedUser = (User) session.getAttribute("user");
-		if (loggedUser == null) {
-			throw new UserDataException(NOT_LOGGED_USER);
 		}
 		
 		if (description.isEmpty()) {

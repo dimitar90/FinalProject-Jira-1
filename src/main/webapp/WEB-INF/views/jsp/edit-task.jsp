@@ -1,8 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     
- <jsp:include page="navigation-bar.jsp"></jsp:include>
+<head>
+   <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+</head>
+
+<jsp:include page="navigation-bar.jsp"></jsp:include>
 
 <body>
 	<h3>Edit task</h3><br>
