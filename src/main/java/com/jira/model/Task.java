@@ -134,7 +134,7 @@ public class Task {
 		return Collections.unmodifiableList(this.imageUrls);
 	}
 
-	public void setImageUrls(List<String> imageUrls) {
-		this.imageUrls = new ArrayList<String> (imageUrls);
+	public void addImageUrl(String imageUrl) {
+		this.imageUrls.add(imageUrl);
 	}
 }

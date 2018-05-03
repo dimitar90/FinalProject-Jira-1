@@ -23,10 +23,9 @@
           <li><a href="http://localhost:8080/Jira/">Jira</a></li>
           <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="">HTML</a></li>
-              <li><a href="">CSS</a></li>
-              <li><a href="">Javascript</a></li>
-              <li><a href="">JQuery</a></li>
+              <li><a href="http://localhost:8080/Jira/tasks/create">Create issue</a></li>
+              <li><a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a></li>
+              <li><a href="http://localhost:8080/Jira/tasks/usertasks">My open issues</a> </li>
             </ul>
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
@@ -37,7 +36,13 @@
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
+<<<<<<< HEAD
           <li><a href="">PDF Export</a></li>
+=======
+          <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
+       <!--    <li><a href="">Advertising</a></li>
+          <li><a href="">Business</a></li> -->
+>>>>>>> 760299c7ced9a3b94512be833cb17f78a8dacd63
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
@@ -69,9 +74,9 @@
 			Issues <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="http://localhost:8080/Jira/tasks/create">Create issue</a>
-			 <a href="http://localhost:8080/Jira/tasks/usertasks">My open issues</a> 
-			 <a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a>
+			
+			 
+			 
 		</div>
 	</div>
 	<div class="dropdown">
@@ -79,7 +84,7 @@
 			Projects <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="http://localhost:8080/Jira/projects/create"> Create a project</a> <a
+			 <a
 				href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a> 
 				<a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a>
 			<a href="http://localhost:8080/Jira/projects/all/0">View all projects</a>
@@ -91,7 +96,6 @@
 			Export <i class="fa fa-caret-down"></i>
 		</button>
 		<div class="dropdown-content">
-			<a href="http://localhost:8080/Jira/export/pdf">PDF export</a>
 		</div>
 	</div>
 
