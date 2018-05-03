@@ -11,9 +11,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   
 </head>
-
-
-
   
 <div id="main">
   <div class="container">
@@ -61,60 +58,7 @@
  
 </head>
 <body>
-<%-- <div class="navbar">
-	<a href="./login">Jira</a>
-	<div class="dropdown">
-		<button class="dropbtn">
-			Issues <i class="fa fa-caret-down"></i>
-		</button>
-		<div class="dropdown-content">
-			
-			 
-			 
-		</div>
-	</div>
-	<div class="dropdown">
-		<button class="dropbtn">
-			Projects <i class="fa fa-caret-down"></i>
-		</button>
-		<div class="dropdown-content">
-			 <a
-				href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a> 
-				<a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a>
-			<a href="http://localhost:8080/Jira/projects/all/0">View all projects</a>
-		</div>
-	</div>
 
-	<div class="dropdown">
-		<button class="dropbtn">
-			Export <i class="fa fa-caret-down"></i>
-		</button>
-		<div class="dropdown-content">
-		</div>
-	</div>
-
-	<c:if test="${not empty sessionScope.user}">
-		<div class="dropdown">
-			<button class="dropbtn">
-				Your profile <i class="fa fa-caret-down"></i>
-			</button>
-			<div class="dropdown-content">
-				<a href="http://localhost:8080/Jira/editProfile"> Edit profile</a>
-			</div>
-		</div>
-	</c:if>
-
-	<c:if test="${empty sessionScope.user}">
-		<div class="dropdown">
-			<button class="dropbtn">
-				Log in <i class="fa fa-caret-down"></i>
-			</button>
-			<div class="dropdown-content">
-				<a href="./"> Login</a>
-			</div>
-		</div>
-	</c:if>
- --%>
 <!-- 	<div class="search-container">
 
 		<form action="searchBtn" method="post">
