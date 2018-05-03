@@ -20,10 +20,10 @@
 <div id="main">
   <div class="container">
     <nav>
-      <div class="nav-fostrap ml-auto">
+      <div class="nav-fostrap">
         <ul>
-          <li><a href="">Home</a></li>
-          <li><a href="javascript:void(0)">Web Design<span class="arrow-down"></span></a>
+          <li><a href="">Jira</a></li>
+          <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="">HTML</a></li>
               <li><a href="">CSS</a></li>
@@ -31,23 +31,24 @@
               <li><a href="">JQuery</a></li>
             </ul>
           </li>
-          <li><a href="javascript:void(0)" >Blogger<span class="arrow-down"></span></a>
+          <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="">Widget</a></li>
               <li><a href="">Tips</a></li>
             </ul>
           </li>
-          <li><a href="javascript:void(0)" >SEO<span class="arrow-down"></span></a>
-            <ul class="dropdown" >
-              <li><a href="">Tools</a></li>
-              <li><a href="">Backlink</a></li>
+          <li><a href="">PDF Export</a></li>
+       <!--    <li><a href="">Advertising</a></li>
+          <li><a href="">Business</a></li> -->
+           <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+              <li><a href="">Login</a></li>
+              <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
-          
-          <li><a href="">Google Adsense</a></li>
-          <li><a href="">Advertising</a></li>
-          <li><a href="">Business</a></li>
+		</div>
         </ul>
+       
       </div>
       <div class="nav-bg-fostrap">
         <div class="navbar-fostrap"> <span></span> <span></span> <span></span> </div>

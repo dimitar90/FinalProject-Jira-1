@@ -1,100 +1,69 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" >
 
-<html>
 <head>
 
-<!-- <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
-<!-- <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script> -->
-
-
-
-<link rel="stylesheet" type="text/css" href="navbar.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-* {
-	box-sizing: border-box;
-}
-
-body {
-	margin: 0;
-	font-family: Arial, Helvetica, sans-serif;
-}
-
-.navbar {
-	overflow: hidden;
-	background-color: #808080;
-}
-
-.navbar a {
-	float: left;
-	display: block;
-	color: black;
-	text-align: center;
-	padding: 14px 16px;
-	text-decoration: none;
-	font-size: 17px;
-}
-
-.navbar a:hover {
-	background-color: #ddd;
-	color: black;
-}
-
-.navbar a.active {
-	background-color: #2196F3;
-	color: white;
-}
-
-.navbar .search-container {
-	float: right;
-}
-
-.navbar input[type=text] {
-	padding: 6px;
-	margin-top: 8px;
-	font-size: 17px;
-	border: none;
-}
-
-.navbar .search-container button {
-	float: right;
-	padding: 6px 10px;
-	margin-top: 8px;
-	margin-right: 16px;
-	background: #ddd;
-	font-size: 17px;
-	border: none;
-	cursor: pointer;
-}
-
-.navbar .search-container button:hover {
-	background: #ccc;
-}
-
-@media screen and (max-width: 600px) {
-	.navbar .search-container {
-		float: none;
-	}
-	.navbar a, .navbar input[type=text], .navbar .search-container button {
-		float: none;
-		display: block;
-		text-align: left;
-		width: 100%;
-		margin: 0;
-		padding: 14px;
-	}
-	.navbar input[type=text] {
-		border: 1px solid #ccc;
-	}
-}
-</style>
+ <title>IT Talents</title>
+  
+  
+  
+<link rel="stylesheet" href="css/style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  
 </head>
 
-<div class="navbar">
+<body>
+
+  
+<div id="main">
+  <div class="container">
+    <nav>
+      <div class="nav-fostrap">
+        <ul>
+          <li><a href="">Jira</a></li>
+          <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+              <li><a href="">HTML</a></li>
+              <li><a href="">CSS</a></li>
+              <li><a href="">Javascript</a></li>
+              <li><a href="">JQuery</a></li>
+            </ul>
+          </li>
+          <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+              <li><a href="">Widget</a></li>
+              <li><a href="">Tips</a></li>
+            </ul>
+          </li>
+          <li><a href="">PDF Export</a></li>
+       <!--    <li><a href="">Advertising</a></li>
+          <li><a href="">Business</a></li> -->
+           <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+              <li><a href="">Login</a></li>
+              <!-- <li><a href="">Tips</a></li> -->
+            </ul>
+          </li>
+		</div>
+        </ul>
+       
+      </div>
+      <div class="nav-bg-fostrap">
+        <div class="navbar-fostrap"> <span></span> <span></span> <span></span> </div>
+        <a href="" class="title-mobile">Fostrap</a>
+      </div>
+    </nav>
+    <div class='content'>
+    </div>
+</div>
+</div>
+
+  
+</head>
+
+<%-- <div class="navbar">
 	<a href="./login">Jira</a>
 	<div class="dropdown">
 		<button class="dropbtn">
@@ -148,7 +117,7 @@ body {
 			</div>
 		</div>
 	</c:if>
-
+ --%>
 	<div class="search-container">
 
 		<form action="searchBtn" method="post">

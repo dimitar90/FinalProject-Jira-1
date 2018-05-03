@@ -64,9 +64,8 @@ public class UserManager {
 		}
 	}
 
-	public boolean isLoggedIn(HttpSession session) {
-		return session.isNew();
-		
+	public User getLoggedUser(HttpSession session) {
+		return (User)session.getAttribute("user");
 	}
 	
 	public void checkPassword(String password) throws UserDataException {
