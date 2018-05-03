@@ -22,7 +22,7 @@
     <nav>
       <div class="nav-fostrap">
         <ul>
-          <li><a href="">Jira</a></li>
+          <li><a href="http://localhost:8080/Jira/">Jira</a></li>
           <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="">HTML</a></li>
@@ -33,8 +33,10 @@
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="">Widget</a></li>
-              <li><a href="">Tips</a></li>
+              <li><a href="">Create project</a></li>
+              <li><a href="">Software</a></li>
+              <li><a href="">Business</a></li>
+              <li><a href="">View all projects</a></li>
             </ul>
           </li>
           <li><a href="">PDF Export</a></li>
@@ -42,7 +44,7 @@
           <li><a href="">Business</a></li> -->
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="">Login</a></li>
+              <li><a href="http://localhost:8080/Jira/register">Register</a></li>
               <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
