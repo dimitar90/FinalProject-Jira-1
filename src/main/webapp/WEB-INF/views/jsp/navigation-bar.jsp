@@ -36,13 +36,7 @@
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
-<<<<<<< HEAD
-          <li><a href="">PDF Export</a></li>
-=======
           <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
-       <!--    <li><a href="">Advertising</a></li>
-          <li><a href="">Business</a></li> -->
->>>>>>> 760299c7ced9a3b94512be833cb17f78a8dacd63
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
