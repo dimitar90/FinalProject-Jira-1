@@ -1,11 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <jsp:include page="navigation-bar.jsp"></jsp:include>
+    <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
     
     <%-- <%@ page import="com.jira.model.pojo.User" %>  --%>
- 
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
- <jsp:include page="navigation-bar.jsp"></jsp:include>
-
+ <head>
+ <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">	  
+	 </head>
 <body>
 <div class="container">
     <h1>Edit Profile</h1>

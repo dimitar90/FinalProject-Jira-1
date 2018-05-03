@@ -14,11 +14,12 @@
 	rel="stylesheet">
 <!-- Custom styles for this template-->
 <link href="../../css/sb-admin.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="../../css/table.css">
+ <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
+
 <title>View all projects</title>
 </head>
-<jsp:include page="navigation-bar.jsp"></jsp:include>
-<c:set var="first" value="0" />
+	  <jsp:include page="navigation-bar.jsp"></jsp:include><c:set var="first" value="0" />
 <body>
 	<%-- <h1>All projects</h1>
 	<table>

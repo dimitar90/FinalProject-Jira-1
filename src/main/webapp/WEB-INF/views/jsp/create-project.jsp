@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    	  <jsp:include page="navigation-bar.jsp"></jsp:include>
     
- <jsp:include page="navigation-bar.jsp"></jsp:include>
-
+  <head>
+	  <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
 <title>Create your project here</title>
 </head>
 <body>

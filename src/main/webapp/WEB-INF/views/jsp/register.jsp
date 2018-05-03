@@ -4,8 +4,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
 <jsp:include page="navigation-bar.jsp"></jsp:include>
-
+<head>
 <title>Sign up</title>
+    <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
+
 </head>
 <body>
 	<form action="register" method="post" enctype="multipart/form-data">

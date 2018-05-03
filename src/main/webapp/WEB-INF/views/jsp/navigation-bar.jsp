@@ -7,14 +7,12 @@
 
  <title>IT Talents</title>
   
-  
-  
-<link rel="stylesheet" href="css/style.css">
+<link href="<c:url value="css/style.css" />" rel="stylesheet">  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   
 </head>
 
-<body>
+
 
   
 <div id="main">
@@ -33,24 +31,23 @@
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="">Create project</a></li>
-              <li><a href="">Software</a></li>
-              <li><a href="">Business</a></li>
-              <li><a href="">View all projects</a></li>
+              <li><a href="http://localhost:8080/Jira/projects/create"">Create project</a></li>
+              <li><a href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a></li>
+              <li><a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a></li>
+              <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
           <li><a href="">PDF Export</a></li>
-       <!--    <li><a href="">Advertising</a></li>
-          <li><a href="">Business</a></li> -->
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
+              <li><a href="http://localhost:8080/Jira/register">Login</a></li>
               <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
 		</div>
         </ul>
-       
+       </nav>
       </div>
       <div class="nav-bg-fostrap">
         <div class="navbar-fostrap"> <span></span> <span></span> <span></span> </div>
@@ -62,9 +59,9 @@
 </div>
 </div>
 
-  
+ 
 </head>
-
+<body>
 <%-- <div class="navbar">
 	<a href="./login">Jira</a>
 	<div class="dropdown">
@@ -120,7 +117,7 @@
 		</div>
 	</c:if>
  --%>
-	<div class="search-container">
+<!-- 	<div class="search-container">
 
 		<form action="searchBtn" method="post">
 			<input id="projectInput" type="text" list="projects" name="project"
@@ -131,7 +128,7 @@
 		</form>
 	<div id="searchResult"></div>
 	</div>
-</div>
+</div> -->
 
 <body>
 	<!-- <script>

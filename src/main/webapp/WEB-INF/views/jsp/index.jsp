@@ -1,31 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-	
+<head>	
  <jsp:include page="navigation-bar.jsp"></jsp:include>
+ <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/index.css" />">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/bashIndex.css" />">
 
-<title>Log in</title>
-</head>
-<body>
-	<h1>Log in to your account</h1>
-	<form action="login" method="post">
-		<table>
-			<tr>
-				<td>Enter email</td>
-				<td><input type="email" name="email" required></td>
-			</tr>
-			<tr>
-				<td>Enter password</td>
-				<td><input type="password" name="password" required></td>
-			</tr>
-		</table>
-		<input type="submit" value="Log in">
-					<br>
-									<!-- hyper link to log in -->
-	<c:url var="URL" value="register">
-		<c:param name="param" value="${parameter}" />
-	</c:url>
-	<a href="<c:out value="${URL}"/>">Sign up for an account</a>	
-	</form>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+ </head>
+
+<!------ Include the above in your HEAD tag ---------->
+
+    <div class="container">
+        <div class="card card-container">
+            <!-- <img class="profile-img-card" src="//lh3.googleusercontent.com/-6V8xOA6M7BA/AAAAAAAAAAI/AAAAAAAAAAA/rzlHcD0KYwo/photo.jpg?sz=120" alt="" /> -->
+            <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" action = "login" method="post">
+                <span id="reauth-email" class="reauth-email"></span>
+                <input type="email" name = "email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                <input type="password" name = "password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <div id="remember" class="checkbox">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Remember me
+                    </label>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+            </form><!-- /form -->
+            <a href="http://localhost:8080/Jira/register"> Sign up for an account</a>
+        </div><!-- /card-container -->
+    </div><!-- /container -->
+
 </body>
 </html>
