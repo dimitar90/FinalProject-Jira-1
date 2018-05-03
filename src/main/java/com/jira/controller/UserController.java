@@ -35,7 +35,6 @@ import com.jira.model.User;
 @Controller
 public class UserController {
 	private static final int EXP_TIME = 2 * 60;
-	private static final String MSG_INVALID_USER_NAME_OR_PASSWORD = "Ivalid username or password";
 
 	@Autowired
 	private UserManager userManager;
@@ -65,6 +64,7 @@ public class UserController {
 		try {
 			String imageUrl = this.userManager.saveImageUrl(singleFile, email);
 			HttpSession s = request.getSession();
+			
 			User user = this.userManager.register(username, email, password, confirmPassword, imageUrl);
 
 			s.setAttribute("user", user);
@@ -72,6 +72,7 @@ public class UserController {
 
 			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
 			s.setAttribute("user", user);
+			
 			if (dtoList.isEmpty()) {
 				return "main";	
 			}
@@ -103,13 +104,20 @@ public class UserController {
 	public String login(Model model, HttpServletRequest request, @RequestParam String email, @RequestParam String password) {
 		try {
 			HttpSession s = request.getSession();
+			
 			User user = this.userManager.login(email, password);
+			
 			s.removeAttribute("myProjects");
+			
 			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
+			
 			s.setAttribute("user", user);
+			s.setMaxInactiveInterval(EXP_TIME);
+			
 			if (dtoList.isEmpty()) {
 				return "main";
 			}
+			
 			s.setAttribute("myProjects", dtoList);
 			
 			return "main";
@@ -127,9 +135,7 @@ public class UserController {
 	// logout
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout(HttpSession s) {
-
 		s.invalidate();
-
 		return "index";
 
 	}

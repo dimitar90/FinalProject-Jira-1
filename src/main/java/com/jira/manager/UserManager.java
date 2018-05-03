@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpSession;
 
+import org.omg.CORBA.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,11 +45,17 @@ public class UserManager {
 		checkPassword(password);
 
 		checkEmail(email);
-
+		
+		isEmailExist(email);
+		
 		User u = this.userDao.createUser(username, email, password, imageUrl);
 		this.userDao.saveUser(u);
 
 		return u;
+	}
+
+	private void isEmailExist(String email) throws SQLException, UserDataException {
+		this.userDao.chechEmail(email); 
 	}
 
 	public void checkUsername(String username) throws UserDataException {

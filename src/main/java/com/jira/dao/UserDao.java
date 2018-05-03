@@ -288,6 +288,20 @@ public class UserDao implements IUserDao{
 			e.printStackTrace();
 			throw new DatabaseException(MSG_INVALID_USER_ID_FOR_DB);		}
 	}
+	
+	@Override
+	public boolean chechEmail(String email) throws SQLException, UserDataException {
+		String sql = "SELECT id FROM users WHERE email = ?";
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+		ps.setString(1, email);
+		ResultSet result = ps.executeQuery();
+		
+		ps.close();
+		if (result.next()) {
+			return true;
+		}
+		throw new UserDataException("No email available");
+	}
 
 
 

@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
     
     <%-- <%@ page import="com.jira.model.pojo.User" %>  --%>
- <jsp:include page="navigation-bar.jsp"></jsp:include>
+<jsp:include page="nav-bar-main.jsp"></jsp:include>
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
  <head>
  <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
