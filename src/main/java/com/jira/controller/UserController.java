@@ -142,6 +142,13 @@ public class UserController {
 
 	}
 
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String test() {
+
+		return "testIndex";
+
+	}
 	@RequestMapping(value = "/editProfile", method = RequestMethod.POST)
 	public String editProfile(HttpSession s, Model model, @RequestParam String email, @RequestParam String oldPass,
 			@RequestParam String oldConfPass, @RequestParam String newName, @RequestParam String newPass) {

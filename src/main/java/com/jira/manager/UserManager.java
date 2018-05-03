@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 
-import javax.servlet.http.Part;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,6 +64,11 @@ public class UserManager {
 		}
 	}
 
+	public boolean isLoggedIn(HttpSession session) {
+		return session.isNew();
+		
+	}
+	
 	public void checkPassword(String password) throws UserDataException {
 		if (password.isEmpty() || password.length() < MIN_LENGTH_PASSWORD) {
 			throw new UserDataException(MSG_INVALID_PASSWORD);
