@@ -37,7 +37,7 @@
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
-              <li><a href="http://localhost:8080/Jira/register">Login</a></li>
+              <li><a href="http://localhost:8080/Jira/">Login</a></li>
               <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
@@ -94,7 +94,7 @@ $(document).ready(function() {
   });
 });
 </script> -->
-	<script>
+	<!-- <script>
 		document.getElementById("projectInput").addEventListener("keyup",function() {
 						var prefix = this.value;
 						console.log(prefix);
@@ -113,5 +113,5 @@ $(document).ready(function() {
 											});
 						});
 	</script>
-</body>
+ --></body>
 </html>

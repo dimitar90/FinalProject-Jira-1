@@ -2,8 +2,8 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<head>
-<!-- Bootstrap core CSS-->	
+
+<%-- !-- Bootstrap core CSS-->	
 <link href="../../vendor/bootstrap/css/bootstrap.min.css"
 	rel="stylesheet">
 <!-- Custom fonts for this template-->
@@ -15,11 +15,20 @@
 <!-- Custom styles for this template-->
 <link href="../../css/sb-admin.css" rel="stylesheet">
  <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />"> --%>
+<head>
+<link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
+<link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
+<link href="<c:url value="/vendor/datatables/dataTables.bootstrap4.css" />" rel="stylesheet">
+<link href="<c:url value="/css/sb-admin.css" />" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
+<link rel="stylesheet" type="text/css" href="<c:url value="/css/navbar.css" />">
+<link rel="stylesheet" href="<c:url value="/css/style.css" />">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
 <title>View all projects</title>
 </head>
-	  <jsp:include page="navigation-bar.jsp"></jsp:include><c:set var="first" value="0" />
+	  <jsp:include page="nav-bar-main.jsp"></jsp:include><c:set var="first" value="0" />
 <body>
 	<%-- <h1>All projects</h1>
 	<table>
@@ -59,34 +68,18 @@
 				<div id="dataTable_wrapper"
 					class="dataTables_wrapper container-fluid dt-bootstrap4">
 					
-					<%-- <div class="row">
-						<div class="col-sm-12 col-md-6">
-							<div class="dataTables_length" id="dataTable_length">
-							<!-- 	
-								<form action="../../tasks/goToPage" method="POST">
-								Go to page: <input type="number" name="page">
-											<input type="submit" value="Go" />
-								</form> -->
-								<label>Show <select id="dataTable_length" name="dataTable_length"
-									aria-controls="dataTable" class="form-control form-control-sm">
-									<c:forEach items="${ allRowCounts }" var="rowCount">
-										<c:if test="${rowCount == currentRowsOfPage}">
-											<option value="${rowCount}" selected="selected">${ rowCount }</option>
-										</c:if>
-										<c:if test="${rowCount != currentRowsOfPage}">
-											<option value="${rowCount}">${ rowCount }</option>
-										</c:if>
-									</c:forEach>
-									</select> entries
-								</label>
-								
-							</div>
-						</div> --%>
-						<div class="col-sm-12 col-md-6">
-							<div id="dataTable_filter" class="dataTables_filter">
-								<label>Search:<input
-									class="form-control form-control-sm" placeholder=""
-									aria-controls="dataTable" type="search"></label>
+			<div class="search-container">
+
+		<form action="searchBtn" method="post">
+			<input id="projectInput" type="text" list="projects" name="project"
+				placeholder="Search.." required>
+			<button type="submit">
+				<i class="fa fa-search"></i>
+			</button>
+		</form>
+	<div id="searchResult"></div>
+	</div>
+</div> 
 							</div>
 						</div>
 					</div>
