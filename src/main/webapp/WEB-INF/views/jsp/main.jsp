@@ -55,8 +55,8 @@
 				<th> User email </th>
 	       </tr>
 	       <tr>	
-				<td class="even">${dto.name}</td>
-				<td>${dto.email}</td>
+				<td class="even">${user.name}</td>
+				<td>${user.email}</td>
 		  </tr>
 		</table>
       </div>
