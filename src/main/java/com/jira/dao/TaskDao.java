@@ -48,7 +48,7 @@ import com.jira.model.User;
 
 @Component
 public class TaskDao implements ITaskDao {
-	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
+	private static final String PATH_IMAGE_PREFFIX = "C:\\images\\tasks";
 	private static final String INVALID_DATA = "Invalid credentials!";
 
 	private static final String BETWEEN_TWO_DATE_PART = "(due_date BETWEEN ? AND ?)";
