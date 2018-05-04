@@ -203,7 +203,13 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/goToPage")
-	public String goToPage(Model model, @RequestParam Integer page) {
+	public String goToPage(Model model, @RequestParam Integer page) throws DatabaseException {
+		int countOfTasks = this.taskDao.getCountOfTasks();
+
+		if (page <= 0 || page > this.getNumberOfPages(countOfTasks)) {
+			page = 1;
+		}
+		
 		return "redirect:./all/" + (page - 1);
 	}
 
@@ -211,10 +217,8 @@ public class TaskController {
 	public String showAllTasks(Model model, @PathVariable Integer pageNumber, HttpSession session) {
 		try {
 			int countOfTasks = this.taskDao.getCountOfTasks();
-			int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
-			if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
-				noOfPages++;
-			}
+			int noOfPages = this.getNumberOfPages(countOfTasks);
+			
 
 			model.addAttribute("currentRowsOfPage", ROWS_COUNT_PER_PAGE);
 			model.addAttribute("countOfTasks", countOfTasks);
@@ -232,6 +236,15 @@ public class TaskController {
 			model.addAttribute("exception", e);
 			return "redirect:error";
 		}
+	}
+	
+	private int getNumberOfPages(int countOfTasks) {
+		int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
+		if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
+			noOfPages++;
+		}
+		
+		return noOfPages;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/create")
