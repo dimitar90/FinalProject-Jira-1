@@ -30,7 +30,7 @@ public class UserManager {
 	private static final int MIN_NAME_LENGTH = 2;
 	private static final String MSG_INVALID_PASSWORD = "Invalid username or password";
 	private static final String MSG_NO_IMAGE_UPLOADED = "Image required";
-	public static final String PATH = "D:\\Users\\";
+	public static final String PATH = "C:\\images\\Users\\";
 	public static final String EXTENTION = "-pic.jpg";
 
 	@Autowired

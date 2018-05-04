@@ -295,16 +295,11 @@ public class UserDao implements IUserDao{
 		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 		ps.setString(1, email);
 		ResultSet result = ps.executeQuery();
-		
-		ps.close();
+	
 		if (result.next()) {
 			return true;
 		}
-		throw new UserDataException("No email available");
+		
+		return false;
 	}
-
-
-
-	
-
 }
