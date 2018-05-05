@@ -39,4 +39,6 @@ public interface ITaskDao {
 			String secondDate) throws DatabaseException;
 
 	public void saveFileToDisk(Task task, MultipartFile f, String randomUUIDString) throws IOException;
+
+	public List<TaskBasicViewDto> getTasksWhichIncludePartOfSearchStringInName(String searchPart) throws DatabaseException;
 }

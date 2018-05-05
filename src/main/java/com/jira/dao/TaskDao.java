@@ -48,7 +48,7 @@ import com.jira.model.User;
 
 @Component
 public class TaskDao implements ITaskDao {
-	private static final String PATH_IMAGE_PREFFIX = "C:\\images\\tasks";
+	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
 	private static final String INVALID_DATA = "Invalid credentials!";
 
 	private static final String BETWEEN_TWO_DATE_PART = "(due_date BETWEEN ? AND ?)";
@@ -61,12 +61,13 @@ public class TaskDao implements ITaskDao {
 	private static final String SELECT_IMAGE_QUERY = "SELECT image_url FROM task_images WHERE task_id = ?";
 	private static final String INSERT_TASK_QUERY = "INSERT INTO tasks (summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String INSERT_IMAGE_TASK_QUERY = "INSERT INTO task_images (image_url, task_id) VALUES (?, ?)";
-	private static final String SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY = "SELECT t.id, t.summary, t.due_date, t.start_date, t.description, t.project_id, t.priority_id, t.state_id, t.issue_id, t.creator_id, t.assignee_id FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id WHERE s.type <> ? AND assignee_id = ? AND t.is_deleted = 0;";
-	private static final String SELECT_TASKS_BY_PROJECT_ID_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE project_id = ? AND is_deleted = 0 ORDER BY start_date DESC;";
+	private static final String SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY = "SELECT t.id, t.summary, t.due_date, t.start_date, t.description, t.project_id, t.priority_id, t.state_id, t.issue_id, t.creator_id, t.assignee_id FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id WHERE s.type <> ? AND assignee_id = ? AND t.is_deleted = 0 ORDER BY due_date;";
+	private static final String SELECT_TASKS_BY_PROJECT_ID_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE project_id = ? AND is_deleted = 0 ORDER BY due_date;";
 	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
-	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 ORDER BY start_date DESC LIMIT ?, ? ;";
+	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 ORDER BY id DESC LIMIT ?, ? ;";
 	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
-
+	private static final String SELECT_TASKS_BY_PART_OF_NAME_QEURY = "SELECT * FROM tasks WHERE (summary LIKE ?) AND is_deleted = 0 ORDER BY id DESC;";
+	
 	private final DBManager dbManager;
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskStateDao taskStateDao;
@@ -87,6 +88,7 @@ public class TaskDao implements ITaskDao {
 		this.commentDao = commentDao;
 	}
 
+	@Override
 	public void saveTask(Task task) throws DatabaseException, SQLException {
 		Connection conn = dbManager.getConnection();
 
@@ -134,6 +136,7 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
+	@Override
 	public TaskViewDetailsDto getById(int taskId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_ID_QUERY)) {
 			pr.setInt(1, taskId);
@@ -193,6 +196,7 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
+	@Override
 	public List<TaskBasicViewDto> getAllByProjectId(int pId) throws Exception {
 		try {
 			PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PROJECT_ID_QUERY);
@@ -207,6 +211,7 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
+	@Override
 	public List<TaskBasicViewDto> getAllOpenTasksByUserId(int userId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection()
 				.prepareStatement(SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY)) {
@@ -223,8 +228,7 @@ public class TaskDao implements ITaskDao {
 	}
 
 	@Override
-	public List<TaskBasicViewDto> getFilteredTasksByIssueTypeAndDate(List<Integer> issueTypeIds, String firstDate,
-			String secondDate) throws DatabaseException {
+	public List<TaskBasicViewDto> getFilteredTasksByIssueTypeAndDate(List<Integer> issueTypeIds, String firstDate, String secondDate) throws DatabaseException {
 		List<String> allParts = new ArrayList<>();
 		this.getSqlByIssueType(issueTypeIds, allParts);
 		this.getSqlByDates(firstDate, secondDate, allParts);
@@ -248,35 +252,21 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
-	private List<TaskBasicViewDto> fillListWithTaskBasicViewDtoFromResultSet(ResultSet rs)
-			throws SQLException, DatabaseException, Exception {
-		List<TaskBasicViewDto> tasks = new ArrayList<>();
+	@Override
+	public List<TaskBasicViewDto> getTasksWhichIncludePartOfSearchStringInName(String searchPart) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_TASKS_BY_PART_OF_NAME_QEURY)) {
+			pr.setString(1, "%" + searchPart + "%");
+			ResultSet rs = pr.executeQuery();
+			List<TaskBasicViewDto> tasks = this.fillListWithTaskBasicViewDtoFromResultSet(rs);
 
-		while (rs.next()) {
-			int id = rs.getInt("id");
-			String summary = rs.getString("summary");
-			LocalDate dueDate = rs.getDate("due_date").toLocalDate();
-			int projectId = rs.getInt("project_id");
-			int priorityId = rs.getInt("priority_id");
-			int stateId = rs.getInt("state_id");
-			int assigneeId = rs.getInt("assignee_id");
-			int creatorId = rs.getInt("creator_id");
-
-			TaskPriority priority = taskPriorityDao.getById(priorityId);
-			TaskState state = taskStateDao.getById(stateId);
-			User assignee = userDao.getUserById(assigneeId);
-			User creator = userDao.getUserById(creatorId);
-			Project project = projectDao.getById(projectId);
-
-			TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator,
-					dueDate, state);
-
-			tasks.add(viewTaskDto);
+			return tasks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
 		}
-
-		return tasks;
 	}
 
+	@Override
 	public void changeStateById(int taskId, int newStateId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(CHANGE_STATE_TASK_QUERY)) {
 			pr.setInt(1, newStateId);
@@ -288,6 +278,7 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
+	@Override
 	public void deleteById(Integer taskId) throws DatabaseException {
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(DELETE_TASK_QUERY)) {
 			pr.setInt(1, taskId);
@@ -327,6 +318,35 @@ public class TaskDao implements ITaskDao {
 			e.printStackTrace();
 			throw new DatabaseException(INVALID_DATA, e);
 		}
+	}
+	
+	private List<TaskBasicViewDto> fillListWithTaskBasicViewDtoFromResultSet(ResultSet rs)
+			throws SQLException, DatabaseException, Exception {
+		List<TaskBasicViewDto> tasks = new ArrayList<>();
+
+		while (rs.next()) {
+			int id = rs.getInt("id");
+			String summary = rs.getString("summary");
+			LocalDate dueDate = rs.getDate("due_date").toLocalDate();
+			int projectId = rs.getInt("project_id");
+			int priorityId = rs.getInt("priority_id");
+			int stateId = rs.getInt("state_id");
+			int assigneeId = rs.getInt("assignee_id");
+			int creatorId = rs.getInt("creator_id");
+
+			TaskPriority priority = taskPriorityDao.getById(priorityId);
+			TaskState state = taskStateDao.getById(stateId);
+			User assignee = userDao.getUserById(assigneeId);
+			User creator = userDao.getUserById(creatorId);
+			Project project = projectDao.getById(projectId);
+
+			TaskBasicViewDto viewTaskDto = new TaskBasicViewDto(id, project, summary, priority, assignee, creator,
+					dueDate, state);
+
+			tasks.add(viewTaskDto);
+		}
+
+		return tasks;
 	}
 
 	private void setParametersToFilteredPreparedStatement(List<Integer> issueTypeIds, String firstDate,

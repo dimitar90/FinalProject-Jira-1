@@ -26,6 +26,7 @@ public class CommentTaskDao implements ICommentTaskDao {
 	
 	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ;";
 	private static final String INSERT_QUERY = "INSERT INTO comments (description, date, user_id, task_id) VALUES (?, ?, ?, ?);";
+	private static final String SELECT_COUNT_OF_COMMENTS_BY_TASK_ID_QUERY = "SELECT COUNT(*) FROM comments WHERE task_id = ?";
 
 	
 	private final DBManager dbManager;
@@ -52,7 +53,6 @@ public class CommentTaskDao implements ICommentTaskDao {
 	}
 	
 	public List<CommentViewDto> getCommentsByTaskId(int taskId) throws DatabaseException {
-		
 		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COMMENTS_BY_TASK_ID)) {
 			pr.setInt(1, taskId);
 			ResultSet rs = pr.executeQuery();
@@ -69,6 +69,20 @@ public class CommentTaskDao implements ICommentTaskDao {
 			}
 			
 			return comments;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+	
+	public int getCommentsCountByTaskId(int taskId) throws DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(SELECT_COUNT_OF_COMMENTS_BY_TASK_ID_QUERY)) {
+			pr.setInt(1, taskId);
+			ResultSet rs = pr.executeQuery();
+			
+			rs.next();
+			return rs.getInt(1);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new DatabaseException(INVALID_DATA, e);

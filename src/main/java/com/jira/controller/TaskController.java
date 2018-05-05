@@ -2,8 +2,8 @@ package com.jira.controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jira.configuration.SpringWebConfig;
+import com.jira.configuration.WebInitializer;
 import com.jira.dto.TaskBasicViewDto;
 import com.jira.dto.TaskViewDetailsDto;
 import com.jira.exception.DatabaseException;
@@ -40,6 +43,8 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
 	private static final int ROWS_COUNT_PER_PAGE = 3;
 	private static final String ALLOWED_FILE_EXTENSIONS = ".png .jpeg .jpg .bmp";
@@ -86,16 +91,38 @@ public class TaskController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/filter")
 	public String getFilteredTasks(Model model, HttpServletRequest request) throws DatabaseException {
-		String[] selectedIssueTypes = request.getParameterValues("selectedIssueTypeIds");
-		String firstDate = request.getParameter("firstDate");
-		String secondDate = request.getParameter("secondDate");
+		try {
+			String[] selectedIssueTypes = request.getParameterValues("selectedIssueTypeIds");
+			String firstDate = request.getParameter("firstDate");
+			String secondDate = request.getParameter("secondDate");
 
-		List<Integer> issueTypeIds = this.getIssueTypeIds(selectedIssueTypes);
+			List<Integer> issueTypeIds = this.getIssueTypeIds(selectedIssueTypes);
 
-		List<TaskBasicViewDto> tasks = taskDao.getFilteredTasksByIssueTypeAndDate(issueTypeIds, firstDate, secondDate);
-		model.addAttribute("tasks", tasks);
-		model.addAttribute("issueTypes", taskIssueDao.getAll());
-		return "filtered-tasks";
+			List<TaskBasicViewDto> tasks = taskDao.getFilteredTasksByIssueTypeAndDate(issueTypeIds, firstDate, secondDate);
+			model.addAttribute("tasks", tasks);
+			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			return "filtered-tasks";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "redirect:error";
+		}
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value="/searchByName")
+	public String searchByName(Model model, HttpServletRequest request) {
+		try {
+			String searchPart = request.getParameter("search");
+			List<TaskBasicViewDto> tasks = this.taskDao.getTasksWhichIncludePartOfSearchStringInName(searchPart);
+			model.addAttribute("tasks", tasks);
+			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			return "filtered-tasks";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "redirect:error";
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/delete/{taskId}")
@@ -274,10 +301,17 @@ public class TaskController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/create")
-	public String submit(@RequestParam MultipartFile[] files, @RequestParam String summary,
-			@RequestParam String description, @RequestParam String dueDate, @RequestParam Integer projectId,
-			@RequestParam Integer priorityId, @RequestParam Integer issueTypeId, @RequestParam Integer assigneeId,
-			ModelMap modelMap, HttpServletRequest request, HttpSession session) throws Exception {
+	public String submit(@RequestParam MultipartFile[] files, 
+						 @RequestParam String summary,
+						 @RequestParam String description, 
+						 @RequestParam String dueDate, 
+						 @RequestParam Integer projectId,
+						 @RequestParam Integer priorityId, 
+						 @RequestParam Integer issueTypeId, 
+						 @RequestParam Integer assigneeId,
+						 ModelMap modelMap, 
+						 HttpServletRequest request, 
+						 HttpSession session) throws Exception {
 		
 		User loggedUser = this.userManager.getLoggedUser(session);
 		if (loggedUser == null) {
@@ -302,7 +336,7 @@ public class TaskController {
 				this.taskDao.saveFileToDisk(task, f, randomUUIDString);
 			} catch (IOException e) {
 				e.printStackTrace();
-				return "redirect:error";
+				return "redirect:../../error";
 			}
 		}
 
@@ -310,20 +344,26 @@ public class TaskController {
 		return "redirect:./all/0";
 	}
 
-	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId,
-			Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {
-		boolean isValid = !summary.isEmpty() && !description.isEmpty() && !dueDate.isEmpty()
-				&& taskPriorityDao.isExistById(priorityId) && taskIssueDao.isExistById(issueTypeId)
-				&& userDao.isExistById(assigneeId) && projectDao.isExistById(projectId);
-
+	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId, Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {
+		boolean isValid = !summary.isEmpty() && 
+						  !description.isEmpty() && 
+						  !dueDate.isEmpty() && (LocalDate.parse(dueDate, DATE_FORMATTER).compareTo(LocalDate.now()) >= 0) &&
+						  projectId != null && projectDao.isExistById(projectId) &&
+						  priorityId != null && taskPriorityDao.isExistById(priorityId) && 
+						  issueTypeId != null && taskIssueDao.isExistById(issueTypeId) && 
+						  assigneeId != null && userDao.isExistById(assigneeId) && projectDao.isExistById(projectId);
+		
 		for (MultipartFile file : files) {
 			if (file.isEmpty()) {
 				continue;
 			}
 			
-	        String[] fileParts = file.getOriginalFilename().split("\\.");
-			String fileExtension = fileParts[fileParts.length - 1];
+			if (file.getSize() > SpringWebConfig.MAX_FILE_SIZE_IN_BYTES) {
+				return false;
+			}
 			
+			String[] fileParts = file.getOriginalFilename().split("\\.");
+			String fileExtension = fileParts[fileParts.length - 1];
 			if (!ALLOWED_FILE_EXTENSIONS.contains(fileExtension)) {
 				return false;
 			}

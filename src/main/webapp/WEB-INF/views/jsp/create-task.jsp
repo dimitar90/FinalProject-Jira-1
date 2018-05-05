@@ -1,21 +1,20 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-    
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
-
 <head>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
  	<meta charset="UTF-8">
     <title>Create task</title>
 	<link rel="stylesheet" href="<c:url value="/css/style.css" />">
 	<link rel="stylesheet" href="<c:url value="/css/create-task-form.css" />">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<c:set var="maxImageCount" value="2"/>
 </head>
 </head>
 
  <jsp:include page="navigation-bar.jsp"></jsp:include>
  
 <body>
-
 <s:form method="POST" action="create" enctype="multipart/form-data">
     <h3>Create task</h3>
     <label>
@@ -37,7 +36,7 @@
 
     <label>
         <span>Description :</span>
-        <textarea id="message" name="description" placeholder="Add a descripion"></textarea>
+        <textarea id="message" name="description" placeholder="Add a descripion" required></textarea>
     </label>
    
     <label>
@@ -81,10 +80,10 @@
         <span>
            	Select images:
         </span>
-        
-       	 <input class="selected-images" type="file" name="files" />
-       	 <input class="selected-images" type="file" name="files" />
-       	 <input class="selected-images" type="file" name="files" />
+        	<c:forEach begin="0" end="${ maxImageCount }">
+        		<input type="hidden" name="MAX_FILE_SIZE" value="5242880" /> 
+        	    <input class="selected-images" type="file" name="files" accept="image/jpeg, image/png, image/jpg, image/bmp" />
+        	</c:forEach>
     </label>
     <input id="createButton" type="submit" class="button" value="Create" />
 </s:form>
