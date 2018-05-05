@@ -1,5 +1,4 @@
-	<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 	<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
 	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -17,24 +16,24 @@
 
 <jsp:include page="navigation-bar.jsp"></jsp:include>
 <body>
-		Images:
+		<h4><b>Images:</b></h4>
 		<c:if test="${task.imageUrls.size() == 0 }">
-			No images. <br>
+			<h5><b>No images. </b></h5><br>
 		</c:if>
 		
-	<c:if test="${task.imageUrls.size() > 0 }">
-	<div class="et_pb_gallery_items et_post_gallery" data-per_page="3">
-			<c:forEach items= "${task.imageUrls }" var="url">
-			<span class="et_pb_gallery_item et_pb_grid_item et_pb_bg_layout_light">
-				<span class="et_pb_gallery_image landscape">
-					<a href="data:image/jpeg;base64,${url}" title="27747975_2074584502761278_1171650822192642176_o"> 
-						<img width=300px src="data:image/jpeg;base64,${url}" data-lazy-src="data:image/jpeg;base64,${url}" alt="27747975_2074584502761278_1171650822192642176_o" class="lazyloaded">
-					</a>
-				</span>
-			</span>
-			</c:forEach>
-	</div>
-	</c:if>
+		<c:if test="${task.imageUrls.size() > 0 }">
+			<div class="et_pb_gallery_items et_post_gallery" data-per_page="3">
+					<c:forEach items= "${task.imageUrls }" var="url">
+						<span class="et_pb_gallery_item et_pb_grid_item et_pb_bg_layout_light">
+							<span  class="et_pb_gallery_image landscape">
+								<a href="data:image/jpeg;base64,${url}" title="27747975_2074584502761278_1171650822192642176_o"> 
+									<img width=300px src="data:image/jpeg;base64,${url}" data-lazy-src="data:image/jpeg;base64,${url}" alt="27747975_2074584502761278_1171650822192642176_o" class="lazyloaded">
+								</a>
+							</span>
+						</span>
+					</c:forEach>
+			</div>
+		</c:if>
 	
     <div class="card mb-3">
 		<div class="card-header">
@@ -137,25 +136,20 @@
 								</thead>
 								<tbody>
 									<c:forEach items="${ task.comments }" var="c" varStatus="loop">
-										<c:if test="${ loop.index % 2 == 0 }">
-											<tr role="row" class="even">
-												<td>${c.user.name}</td>
-												 <td>
-												 	${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
-												</td>
-												
-												<td>${c.description}</td>
-											</tr>
-										</c:if>
-										<c:if test="${ loop.index % 2 == 1 }">
-											<tr role="row" class="odd">
+										<c:choose>
+											<c:when test="${ loop.index % 2 == 0 }">
+												<tr id="trColor" role="row" class="even">
+											</c:when>
+											<c:otherwise>
+												<tr id="trColor" role="row" class="odd">
+											</c:otherwise>
+										</c:choose>
 												<td>${c.user.name}</td>
 												 <td>
 												 	${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
 												</td>
 												<td>${c.description}</td>
-											</tr>
-										</c:if>
+										</tr>
 									</c:forEach>
 								</tbody>
 							</table>

@@ -44,7 +44,6 @@ public class CommentController {
 		this.userManager = userManager;
 	}
 
-
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/add")
 	public String add(@RequestParam String description,
@@ -65,8 +64,9 @@ public class CommentController {
 		
 		CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
 		this.commentTaskDao.save(comment);
+		
 		CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), this.userDao.getUserById(comment.getUserId()));
 		
-		return new Gson().toJson(commentViewDto);
+		return  new Gson().toJson(commentViewDto);
 	}
 }

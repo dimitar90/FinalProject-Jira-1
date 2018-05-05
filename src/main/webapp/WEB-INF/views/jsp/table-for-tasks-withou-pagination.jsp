@@ -1,13 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <head>
-
-<link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
-<link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
-<link href="<c:url value="/vendor/datatables/dataTables.bootstrap4.css" />" rel="stylesheet">
-<link href="<c:url value="/css/sb-admin.css" />" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
-<link rel="stylesheet" href="<c:url value="/css/style.css" />">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
+	<link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
+	<link href="<c:url value="/vendor/datatables/dataTables.bootstrap4.css" />" rel="stylesheet">
+	<link href="<c:url value="/css/sb-admin.css" />" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
+	<link rel="stylesheet" href="<c:url value="/css/style.css" />">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 </head>
 
 <div class="card mb-3">
@@ -56,50 +55,57 @@
 									</tr>
 								</tfoot>
 								<tbody>
-									<c:forEach items="${ tasks }" var="t" varStatus="loop">
-									<c:if test="${loop.index % 2 == 0}">
-									<tr role="row" class="even">
-										<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
-										<td>${t.project.name}</td>
-										<td>${t.summary}</td>
-										<td>${t.assignee.name}</td>
-										<td>${t.dueDate}</td>
-										<td>${t.priority.type.value}</td>
-										<td>${t.state.type.value}</td>
-										<td><a href="./detail/${ t.id }">Show details</a></td>
-										<td>
-											<c:if test="${not empty user}">
-												<c:if
-													test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-													<a href="./edit/${ t.id }">[Edit]</a>
-													<a href="./delete/${ t.id }">[Delete]</a>
-												</c:if>
-											</c:if>
-										</td>
-									</tr>
-									</c:if>
-									<c:if test="${loop.index % 2 == 1}">
-									<tr role="row" class="odd">
-										<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
-										<td>${t.project.name}</td>
-										<td>${t.summary}</td>
-										<td>${t.assignee.name}</td>
-										<td>${t.dueDate}</td>
-										<td>${t.priority.type.value}</td>
-										<td>${t.state.type.value}</td>
-										<td><a href="./detail/${ t.id }">Show details</a></td>
-										<td>
-											<c:if test="${not empty user}">
-												<c:if
-													test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-													<a href="./edit/${ t.id }">[Edit]</a>
-													<a href="./delete/${ t.id }">[Delete]</a>
-												</c:if>
-											</c:if>
-										</td>
-									</tr>
-									</c:if>
-									</c:forEach>
+									<c:choose>
+										<c:when test="${tasks.size() > 0}">
+												<c:forEach items="${ tasks }" var="t" varStatus="loop">
+													<c:if test="${loop.index % 2 == 0}">
+													<tr role="row" class="even">
+														<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
+														<td>${t.project.name}</td>
+														<td>${t.summary}</td>
+														<td>${t.assignee.name}</td>
+														<td>${t.dueDate}</td>
+														<td>${t.priority.type.value}</td>
+														<td>${t.state.type.value}</td>
+														<td><a href="./detail/${ t.id }">Show details</a></td>
+														<td>
+															<c:if test="${not empty user}">
+																<c:if
+																	test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
+																	<a href="./edit/${ t.id }">[Edit]</a>
+																	<a href="./delete/${ t.id }">[Delete]</a>
+																</c:if>
+															</c:if>
+														</td>
+													</tr>
+													</c:if>
+													<c:if test="${loop.index % 2 == 1}">
+													<tr role="row" class="odd">
+														<td>${(currentRowsOfPage * currentPage) + (loop.index + 1)}</td>
+														<td>${t.project.name}</td>
+														<td>${t.summary}</td>
+														<td>${t.assignee.name}</td>
+														<td>${t.dueDate}</td>
+														<td>${t.priority.type.value}</td>
+														<td>${t.state.type.value}</td>
+														<td><a href="./detail/${ t.id }">Show details</a></td>
+														<td>
+															<c:if test="${not empty user}">
+																<c:if
+																	test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
+																	<a href="./edit/${ t.id }">[Edit]</a>
+																	<a href="./delete/${ t.id }">[Delete]</a>
+																</c:if>
+															</c:if>
+														</td>
+													</tr>
+													</c:if>
+											</c:forEach>
+										</c:when>
+										<c:otherwise>
+										 	<td colspan="10"><h3><b>No results found!</b></h3></td>
+										</c:otherwise>
+									</c:choose>
 								</tbody>
 							</table>
 						</div>

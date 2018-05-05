@@ -14,4 +14,6 @@ public interface ICommentTaskDao {
 	public void save(CommentTask comment) throws CommentException;
 	
 	public List<CommentViewDto> getCommentsByTaskId(int taskId) throws DatabaseException;
+	
+	public int getCommentsCountByTaskId(int taskId) throws DatabaseException;
 }
