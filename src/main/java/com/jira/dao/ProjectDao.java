@@ -178,13 +178,10 @@ public class ProjectDao implements IProjectDao {
 			ProjectDto dto = ProjectDto.getDto(id, name, projectType, projectCategory, user.getName(), projectLeadId);
 			
 			ps.close();
-			if (dto == null) {
-				return null;
-			}
+			
 			return dto;
 		}
-
-		throw new DatabaseException(MSG_INVALID_PROJECT_NAME);
+		return null;
 	}
 
 	public List<String> getLimitedProjectNamesWithPrefix(String prefix) throws DatabaseException {

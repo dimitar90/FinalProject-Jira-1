@@ -52,7 +52,7 @@ public class RestController {
 		try {
 			ProjectDto dto = projectDao.getProjectDtoByName(project);
 			if (dto == null) {
-				return "redurect:/projects/userProjects/0";
+				return "redirect:/projects/userProjects/0";
 			}
 			int projectId = dto.getId();
 			model.addAttribute("dtoProject", dto);
@@ -68,6 +68,4 @@ public class RestController {
 			return "error";
 		}
 	}
-
-
 }
