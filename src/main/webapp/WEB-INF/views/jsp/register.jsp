@@ -4,8 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
 <jsp:include page="navigation-bar.jsp"></jsp:include>
-<%-- <head>
-<title>Sign up</title>
+ <%-- <head>
+
     <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
 <link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
 <link rel="stylesheet" type="text/css" href="<c:url value="/css/register.css"/>">
@@ -13,8 +13,8 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-</head> --%>
-
+</head>
+ --%>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,34 +33,34 @@
 <body class="bg-dark">
   <div class="container">
     <div class="card card-register mx-auto mt-5">
-      <div class="card-header">Sign up for Jira<small>It's free!</small></div>
+      <div class="card-header">Sign up for Jira <small>It's free!</small></div>
       <div class="card-body">
         <form action = "register" method="post" enctype="multipart/form-data">
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
                 <label for="exampleInputName">Full name</label>
-                <input class="form-control" id="exampleInputName" type="text" name ="username" aria-describedby="nameHelp" placeholder="Enter full name">
+                <input class="form-control" id="exampleInputName" type="text" name ="username" aria-describedby="nameHelp" placeholder="Enter full name"
+                required = "required" pattern =".{4,}" title="minimum 4 characters" required autocomplete ="off">
               </div>
-              <!-- <div class="col-md-6">
-                <label for="exampleInputLastName">Last name</label>
-                <input class="form-control" id="exampleInputLastName" type="text" aria-describedby="nameHelp" placeholder="Enter last name">
-              </div> -->
             </div>
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Email address</label>
-            <input class="form-control" id="exampleInputEmail1" name="email" type="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input class="form-control" id="exampleInputEmail1" name="email" type="email" aria-describedby="emailHelp" placeholder="Enter email"
+            required= "required" pattern="([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?" autocomplete = "off">
           </div>
           <div class="form-group">
             <div class="form-row">
               <div class="col-md-6">
                 <label for="exampleInputPassword1">Password</label>
-                <input class="form-control" id="exampleInputPassword1" name="password" type="password" placeholder="Password">
+                <input class="form-control" id="exampleInputPassword1" name="password" type="password" placeholder="Password"
+                required = "required" pattern =".{4,}" title="Minimum 4 characters required" autocomplete ="off">
               </div>
               <div class="col-md-6">
                 <label for="exampleConfirmPassword">Confirm password</label>
-                <input class="form-control" id="exampleConfirmPassword" name="confirmPassword" type="password" placeholder="Confirm password">
+                <input class="form-control" id="exampleConfirmPassword" name="confirmPassword" type="password" placeholder="Confirm password" 
+                 required = "required" pattern =".{4,}" title="Minimum 4 characters required" autocomplete ="off">
               </div>
             </div>
           </div>
@@ -68,7 +68,7 @@
             <label for="exampleInputEmail1">Upload image</label>
             <input type="file" accept="image/*" name="singleFile">
           </div>
-          <input class="btn btn-primary btn-block" type="submit" value="Sign up"/>     
+          <input class="btn btn-primary btn-block" type="submit" required="" value="Sign up"/>     
         </form>
         <div class="text-center">
           <a class="d-block small mt-3" href="http://localhost:8080/Jira/">Already have an account? Log in</a>

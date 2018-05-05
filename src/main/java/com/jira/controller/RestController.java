@@ -47,14 +47,18 @@ public class RestController {
 		}
 	}
 	
-	@RequestMapping(value = "/searchBtn", method = RequestMethod.POST)
-	public String getSearch(Model model,@RequestParam String project) {
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public String getSearch(Model model,@RequestParam("search") String project) {
 		try {
 			ProjectDto dto = projectDao.getProjectDtoByName(project);
+			if (dto == null) {
+				return "redurect:/projects/userProjects/0";
+			}
 			int projectId = dto.getId();
 			model.addAttribute("dtoProject", dto);
 			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(projectId);
 
+			
 			model.addAttribute("tasksDto", tasksDto);
 			
 			return "project-view";

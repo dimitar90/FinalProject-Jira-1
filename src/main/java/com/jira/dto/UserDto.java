@@ -5,7 +5,8 @@ public class UserDto {
 	private String email;
 	private String name;
 	private String imageUrl;
-
+	private int dtoProjectsCount;
+	
 	public UserDto(int id, String email, String name, String imageUrl) {
 		this.setId(id);
 		this.setEmail(email);
@@ -47,5 +48,13 @@ public class UserDto {
 
 	public static UserDto getDto(int id, String email, String name, String imageUrl) {
 		return new UserDto(id, email, name, imageUrl);
+	}
+	
+	public int getDtoProjectsCount() {
+		return dtoProjectsCount;
+	}
+
+	public void setDtoProjectsCount(int projectsCount) {
+		this.dtoProjectsCount = projectsCount;
 	}
 }

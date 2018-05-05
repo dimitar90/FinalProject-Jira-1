@@ -4,9 +4,13 @@
 
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="nav-bar-main.jsp"></jsp:include>
+<!--  <link rel="shortcut icon" href="http://designshack.net/favicon.ico">
+  <link rel="icon" href="http://designshack.net/favicon.ico">
+  <link rel="stylesheet" type="text/css" media="all" href="css/test1.css">
+  <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script> -->
 
 <body>
-	<h1>Welcome, ${user.name}</h1>
+<h1>Welcome, ${user.name}</h1>
 	<br>
 	<br>
 	 <!--  <div class="col-sm-2"><a href="/users" class="pull-right"><img title="profile image" class="img-circle img-responsive" src="http://www.rlsandbox.com/img/profile.jpg"></a></div> -->
@@ -62,36 +66,9 @@
       </div>
   </div>
 </div>
-	<!-- <form action="logout">
-	    <table>
-		       <tr>
-		        <td>			
-			      <input type="submit" value="Logout">
-		         </td>
-	          </tr>
-       </table>
-   </form>
-		<br>
-		<form action="editProfile" method="get">
-	    <table>
-		       <tr>
-		        <td>			
-			      <input type="submit" value="Edit profil">
-		         </td>
-	          </tr>
-       </table>
-   </form>
-   <br>
-   <form action="myProfile" method="get">
-	    <table>
-		       <tr>
-		        <td>			
-			      <input type="submit" value="My profil">
-		         </td>
-	          </tr>
-       </table>
-   </form>-->
-</body>
+	 </body>
+	
+	 
  
 
 </html>

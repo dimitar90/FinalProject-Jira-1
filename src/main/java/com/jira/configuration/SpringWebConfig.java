@@ -29,7 +29,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    	registry.addResourceHandler("/uploaded/**").addResourceLocations("file:///C:\\uploaded\\");
+    	registry.addResourceHandler("/uploaded/**").addResourceLocations("file:///D:\\uploaded\\");
     	registry.addResourceHandler("/img/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
         registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");
@@ -37,6 +37,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/pug/**").addResourceLocations("/static/pug/");
         registry.addResourceHandler("/scss/**").addResourceLocations("/static/scss/");
         registry.addResourceHandler("/vendor/**").addResourceLocations("/static/vendor/");
+        registry.addResourceHandler("/bootstrap/**").addResourceLocations("/static/bootstrap/");
     }
 	
 	@Bean

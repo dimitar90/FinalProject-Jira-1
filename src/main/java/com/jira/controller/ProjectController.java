@@ -91,25 +91,47 @@ public class ProjectController {
 		}
 	}
 
-//	@RequestMapping(value = "/showAllProjects", method = RequestMethod.GET)
-//	public String showAllProjects(Model model) {
-//		List<ProjectDto> allProjects = new ArrayList<>();
-//
-//		try {
-//			allProjects.addAll(projectDao.getAllProjectDtos());
-//			model.addAttribute("allProjects", allProjects);
-//
-//			return "show-all-projects";
-//		} catch (DatabaseException e) {
-//			e.printStackTrace();
-//			model.addAttribute("exception", e);
-//			return "error";
-//		} catch (Exception e) {
-//			model.addAttribute("exception", e);
-//			return "error";
-//		}
-//
-//	}
+	
+
+	@RequestMapping(value = "/userProjects/{currPage}", method = RequestMethod.GET)
+	public String showAllProjects(Model model, HttpSession session,@PathVariable int currPage) {
+		List<ProjectDto> userProjects = new ArrayList<>();
+		
+		//TODO you can check the view of project, only if have a session
+
+		int userId = ((User) session.getAttribute("user")).getId();
+		try {
+			int projectCount = this.projectDao.getCountOfUserProjects(userId);
+			int noOfPages = (projectCount / RECORDS_PER_PAGE) - 1;
+			
+			if (projectCount % RECORDS_PER_PAGE != 0) {
+				noOfPages++;
+			}
+			
+			model.addAttribute("currRecordPage", RECORDS_PER_PAGE);
+			model.addAttribute("projectCount", projectCount);
+			model.addAttribute("noOfPages", noOfPages);
+			model.addAttribute("currentPage", currPage);
+
+			
+			List<ProjectDto> projects = this.projectDao.getProjectPerPageAndUserId(userId,currPage, RECORDS_PER_PAGE);
+
+			userProjects.addAll(projectDao.getAllBelongingToUser(userId));
+
+			model.addAttribute("userProjects", userProjects);
+
+			return "user-projects-view";
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
+		} catch (Exception e) {
+			model.addAttribute("exception", e);
+			return "error";
+		}
+
+	}
+
 
 	@RequestMapping(value = "/showAllSoftware", method = RequestMethod.GET)
 	public String showAllSoftware(Model model) {
@@ -193,33 +215,8 @@ public class ProjectController {
 			return "error";
 		}
 	}
-/*
- * @RequestMapping(method = RequestMethod.GET, value = "/all/{pageNumber}")
-	public String showAllTasks(Model model, @PathVariable Integer pageNumber, HttpSession session) {
-		try {
-			int countOfTasks = this.taskDao.getCountOfTasks();
-			int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
-			if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
-				noOfPages++;
-			}
-			
-			model.addAttribute("currentRowsOfPage", ROWS_COUNT_PER_PAGE);
-			model.addAttribute("countOfTasks", countOfTasks);
-			model.addAttribute("noOfPages", noOfPages);
-			model.addAttribute("currentPage", pageNumber);
-			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 
-			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, ROWS_COUNT_PER_PAGE);
-			model.addAttribute("tasks", tasks);
-
-			return "show-all-tasks";
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.addAttribute("exception", e);
-			return "redirect:error";
-		}
-	}
- */
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/all/{currPage}")
 	public String showAllProjectPages(Model model, @PathVariable Integer currPage) {
 		// TODO validation for logged user
@@ -241,8 +238,8 @@ public class ProjectController {
 
 			List<ProjectDto> allProjects = new ArrayList<>();
 
-//			allProjects.addAll(projectDao.getAllProjectDtos());
-//			model.addAttribute("allProjects", allProjects);
+			// allProjects.addAll(projectDao.getAllProjectDtos());
+			// model.addAttribute("allProjects", allProjects);
 
 			return "show-all-projects";
 		} catch (Exception e) {

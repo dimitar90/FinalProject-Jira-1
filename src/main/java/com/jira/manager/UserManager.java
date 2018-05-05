@@ -27,10 +27,10 @@ public class UserManager {
 	private static final int MIN_LENGTH_EMAIL = 6;
 	private static final String MSG_IVNALID_CREDENTIALS = "Invalid username or password";
 	private static final String MSG_INVALID_EMAIL = "email missmatch";
-	private static final int MIN_NAME_LENGTH = 2;
+	private static final int MIN_FULL_NAME_LENGTH = 5;
 	private static final String MSG_INVALID_PASSWORD = "Invalid username or password";
 	private static final String MSG_NO_IMAGE_UPLOADED = "Image required";
-	public static final String PATH = "C:\\images\\Users\\";
+	public static final String PATH = "D:\\images\\Users\\";
 	public static final String EXTENTION = "-pic.jpg";
 
 	@Autowired
@@ -59,7 +59,7 @@ public class UserManager {
 	}
 
 	public void checkUsername(String username) throws UserDataException {
-		if (username.isEmpty() || username.length() < MIN_NAME_LENGTH) {
+		if (username.isEmpty() || username.length() < MIN_FULL_NAME_LENGTH) {
 			throw new UserDataException(MSG_IVNALID_CREDENTIALS);
 		}
 	}
@@ -169,7 +169,7 @@ public class UserManager {
 	}
 
 	private boolean isValidParam(String parm) {
-		if (parm.isEmpty() || parm.length() < MIN_NAME_LENGTH) {
+		if (parm.isEmpty() || parm.length() < MIN_FULL_NAME_LENGTH) {
 			return false;
 		}
 		return true;

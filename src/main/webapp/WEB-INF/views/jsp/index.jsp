@@ -28,12 +28,15 @@
       <div class="card-body">
         <form action = "login" method="post">
           <div class="form-group">
+        
             <label for="exampleInputEmail1">Email address</label>
-            <input class="form-control" id="exampleInputEmail1" name = "email" type="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input class="form-control" id="exampleInputEmail1" name = "email" type="email" aria-describedby="emailHelp" placeholder="Enter email"
+            required = "required" pattern="([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?" autocomplete = "off">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">Password</label>
-            <input class="form-control" id="exampleInputPassword1" name = "password" type="password" placeholder="Password">
+            <input class="form-control" id="exampleInputPassword1" name = "password" type="password" placeholder="Password"
+            required="required" pattern=".{4,}" title="Minimum 4 characters required" autocomplete="off">
           </div>
           <div class="form-group">
             <div class="form-check">

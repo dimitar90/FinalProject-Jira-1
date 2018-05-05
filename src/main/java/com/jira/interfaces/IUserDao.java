@@ -33,5 +33,6 @@ public interface IUserDao {
 	public int getuserByName(String leadName) throws Exception;
 	
 	public boolean chechEmail(String email)  throws Exception;
-
+	
+	
 }

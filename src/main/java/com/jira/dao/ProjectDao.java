@@ -27,6 +27,8 @@ public class ProjectDao implements IProjectDao {
 	private static final String MSG_INVALID_ID = "No project with such id";
 	private static final String MSG_INVALID_PROJECT_ID = "Invalid project id in project dao";
 	private static final String SELECT_PROJECTS_BY_PAGE = "SELECT id, name, project_type_id, project_category_id, project_lead_id FROM projects WHERE is_deleted = 0 LIMIT ?, ?;";
+	private static final int MIN_LENGTH_PROJECT_NAME = 2;
+	private static final String SELECT_PROJECTS_BY_PAGE_AND_USER_ID = "SELECT id, name, project_type_id, project_category_id, project_lead_id FROM projects WHERE is_deleted = 0 AND project_lead_id = ? LIMIT ?, ?";
 
 	@Autowired
 	private final DBManager manager;
@@ -174,7 +176,11 @@ public class ProjectDao implements IProjectDao {
 			User user = userDao.getUserById(projectLeadId);
 
 			ProjectDto dto = ProjectDto.getDto(id, name, projectType, projectCategory, user.getName(), projectLeadId);
+			
 			ps.close();
+			if (dto == null) {
+				return null;
+			}
 			return dto;
 		}
 
@@ -220,7 +226,7 @@ public class ProjectDao implements IProjectDao {
 
 	@Override
 	public void isValidProjectName(String projectName) throws ProjectException {
-		if (projectName.isEmpty() && projectName.length() < 2) {
+		if (projectName.isEmpty() && projectName.length() < MIN_LENGTH_PROJECT_NAME) {
 			throw new ProjectException(MSG_INVALID_PROJECT_NAME);
 		}
 
@@ -265,10 +271,6 @@ public class ProjectDao implements IProjectDao {
 			ps.setInt(1, id);
 			ResultSet result = ps.executeQuery();
 
-			// if (!result.next()) {
-			// return null;
-			// }
-			// result.beforeFirst();
 			while (result.next()) {
 				int projectId = result.getInt("id");
 				String projectName = result.getString("name");
@@ -331,13 +333,13 @@ public class ProjectDao implements IProjectDao {
 	public int getCount() throws Exception {
 		String sql = "SELECT COUNT(*) FROM projects WHERE is_deleted = 0";
 		try {
-		Statement stmt = this.manager.getConnection().createStatement();
-		
-		ResultSet result = stmt.executeQuery(sql);
-		result.next();
-		int count = result.getInt(1);
-		return count;
-		}catch (SQLException e) {
+			Statement stmt = this.manager.getConnection().createStatement();
+
+			ResultSet result = stmt.executeQuery(sql);
+			result.next();
+			int count = result.getInt(1);
+			return count;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new DatabaseException(MSG_SQL_INVALID_DATA);
 		}
@@ -346,12 +348,12 @@ public class ProjectDao implements IProjectDao {
 	@Override
 	public List<ProjectDto> getProjectPerPage(int numPage, int projectOnPage) throws Exception {
 		try {
-			PreparedStatement ps =this.manager.getConnection().prepareStatement(SELECT_PROJECTS_BY_PAGE);
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(SELECT_PROJECTS_BY_PAGE);
 			ps.setInt(1, (numPage * projectOnPage));
 			ps.setInt(2, projectOnPage);
 			ResultSet result = ps.executeQuery();
 			List<ProjectDto> projects = this.getProjectsDtoFromResult(result);
-			
+
 			ps.close();
 			return projects;
 		} catch (SQLException e) {
@@ -360,9 +362,10 @@ public class ProjectDao implements IProjectDao {
 		}
 	}
 
-	private List<ProjectDto> getProjectsDtoFromResult(ResultSet result) throws SQLException, UserDataException {
+	@Override
+	public List<ProjectDto> getProjectsDtoFromResult(ResultSet result) throws SQLException, UserDataException {
 		List<ProjectDto> resultList = new ArrayList<>();
-		
+
 		while (result.next()) {
 			int rsId = result.getInt("id");
 			String name = result.getString("name");
@@ -375,10 +378,60 @@ public class ProjectDao implements IProjectDao {
 			User user = userDao.getUserById(projectLeadId);
 
 			ProjectDto dto = ProjectDto.getDto(rsId, name, projectType, projectCategory, user.getName(), projectLeadId);
-			
+
 			resultList.add(dto);
 		}
-		
+
 		return resultList;
 	}
+
+	@Override
+	public int getProjectsCount(int id) throws SQLException {
+		String sql = " SELECT COUNT(*) FROM projects WHERE project_lead_id = ? AND is_deleted = 0";
+
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+		ps.setInt(1, id);
+		ResultSet result = ps.executeQuery();
+
+		if (result.next()) {
+			return result.getInt(1);
+		}
+		ps.close();
+		return 0;
+	}
+	
+	@Override
+	public int getCountOfUserProjects(int userId) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM projects WHERE is_deleted = 0 AND project_lead_id = ?";
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+		ps.setInt(1, userId);
+		ResultSet result = ps.executeQuery();
+
+		if (result.next()) {
+			result.getInt(1);
+		}
+		return 0;
+	}
+	
+	@Override
+	public List<ProjectDto> getProjectPerPageAndUserId(int userId, int numPage, int projectOnPage)
+			throws UserDataException, DatabaseException {
+		try {
+			PreparedStatement ps = this.manager.getConnection().prepareStatement(SELECT_PROJECTS_BY_PAGE_AND_USER_ID);
+			ps.setInt(1, userId);
+			ps.setInt(2, (numPage * projectOnPage));
+			ps.setInt(3, projectOnPage);
+			ResultSet result = ps.executeQuery();
+			List<ProjectDto> projects = this.getProjectsDtoFromResult(result);
+
+			ps.close();
+			return projects;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DatabaseException(MSG_SQL_INVALID_DATA, e);
+		}
+	}
+
+	
+
 }

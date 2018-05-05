@@ -27,23 +27,26 @@
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="http://localhost:8080/Jira/projects/create"">Create project</a></li>
+              <li><a href="http://localhost:8080/Jira/projects/create">Create project</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a></li>
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
+          
           <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
-           <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
+           <li>
+           <ul>
+           <li>
+           <a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/logout">Logout</a></li>
               <li><a href="http://localhost:8080/Jira/myProfile">My profile</a></li>
               <li><a href="http://localhost:8080/Jira/editProfile">Edit profile</a></li>
-              <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
+          </ul>
 		</div>
-        </ul>
        </nav>
       </div>
       <div class="nav-bg-fostrap">
@@ -53,7 +56,6 @@
     </nav>
     <div class='content'>
     </div>
-</div>
 </div>
 
  

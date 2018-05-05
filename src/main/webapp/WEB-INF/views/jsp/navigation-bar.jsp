@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<html lang="en" >
+<html>
 
 <head>
 
  <title>IT Talents</title>
   
-<link href="<c:url value="css/style.css" />" rel="stylesheet">  
+<link href="<c:url value="css/style.css"/>" rel="stylesheet">  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   
 </head>
@@ -20,14 +20,12 @@
           <li><a href="http://localhost:8080/Jira/">Jira</a></li>
           <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="http://localhost:8080/Jira/tasks/create">Create issue</a></li>
               <li><a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a></li>
               <li><a href="http://localhost:8080/Jira/tasks/usertasks">My open issues</a> </li>
             </ul>
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
             <ul class="dropdown">
-              <li><a href="http://localhost:8080/Jira/projects/create"">Create project</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a></li>
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
@@ -38,7 +36,6 @@
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
               <li><a href="http://localhost:8080/Jira/">Login</a></li>
-              <!-- <li><a href="">Tips</a></li> -->
             </ul>
           </li>
 		</div>
@@ -113,5 +110,5 @@ $(document).ready(function() {
 											});
 						});
 	</script>
- --></body>
+ -->
 </html>

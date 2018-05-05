@@ -5,8 +5,11 @@ public class User {
 	private String email;
 	private String password;
 	private String imageUrl;
+	private int creatorProjectsCount;
 	private int id;
-
+	
+	
+	
 	public User() {
 	}
 	
@@ -77,5 +80,17 @@ public class User {
 
 	public void setIt(int id) {
 		this.id = id;
+	}
+	
+	public int getCreatorProjectsCount() {
+		return creatorProjectsCount;
+	}
+	
+	public void increaseCreatorProjectCount(){
+		this.creatorProjectsCount++;
+	}
+	
+	public void setCreatorProjectsCount(int creatorProjectsCount) {
+		this.creatorProjectsCount = creatorProjectsCount;
 	}
 }

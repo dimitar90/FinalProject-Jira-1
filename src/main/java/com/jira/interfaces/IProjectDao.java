@@ -1,5 +1,6 @@
 package com.jira.interfaces;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +35,16 @@ public interface IProjectDao {
 	
 	public int getLeadByProjectId(int projectId) throws Exception;
 	
+	public int getProjectsCount(int id) throws Exception;
+
+	public List<ProjectDto> getProjectPerPageAndUserId(int userId,int numPage,int projectOnPage) throws Exception;
+
 	public int getCount() throws Exception;
+
+	List<ProjectDto> getProjectPerPage(int numPage, int projectOnPage) throws Exception;
 	
-	public List<ProjectDto> getProjectPerPage(int numPage,int projectOnPage) throws Exception;
+	List<ProjectDto> getProjectsDtoFromResult(ResultSet result) throws Exception;
+	
+	public int getCountOfUserProjects(int userId) throws Exception; 
+	
 }

@@ -1,103 +1,108 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-
 <html>
 <head>
-<jsp:include page="nav-bar-main.jsp"></jsp:include>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>IT Talents</title>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
+	  <jsp:include page="nav-bar-main.jsp"></jsp:include>
+<link rel="stylesheet" href="<c:url value="/css/style.css" />">
+    <title>IT Talents</title>
+    <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/default.css" id="theme" rel="stylesheet">
+ 
 </head>
 <body>
-<form class="form-horizontal">
-<fieldset>
-
-<!-- Form Name -->
-<legend>UPDATING VILLAGE BUDGET</legend>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="pname">PROJECT NAME</label>  
-  <div class="col-md-4">
-  <input id="pname" name="pname" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Select Basic -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="PTYPE">PROJECT TYPE</label>
-  <div class="col-md-4">
-    <select id="PTYPE" name="PTYPE" class="form-control">
-      <option value="1">ROADS AND BUILDINGS</option>
-      <option value="2">ELECTRICITY</option>
-      <option value="3">MEDICAL</option>
-      <option value="4">SAFETY AND CLEANING</option>
-    </select>
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="DVFCZ">ORGANIZER/CONTRACTOR</label>  
-  <div class="col-md-4">
-  <input id="DVFCZ" name="DVFCZ" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="KKKO">BUDJET REQUIRED</label>  
-  <div class="col-md-4">
-  <input id="KKKO" name="KKKO" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="CCC">AMOUNT SANCTIONED</label>  
-  <div class="col-md-4">
-  <input id="CCC" name="CCC" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="YIHK">AMOUNT SPEND</label>  
-  <div class="col-md-4">
-  <input id="YIHK" name="YIHK" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="BJKSS">BALANCE AMOUNT</label>  
-  <div class="col-md-4">
-  <input id="BJKSS" name="BJKSS" type="text" placeholder="" class="form-control input-md" required="">
-    
-  </div>
-</div>
-
-<!-- Button (Double) -->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="button1idFFF"></label>
-  <div class="col-md-8">
-    <button id="button1idFFF" name="button1idFFF" class="btn btn-success">UPDATE</button>
-    <button id="button2id" name="button2id" class="btn btn-danger">CANCEL</button>
-  </div>
-</div>
-
-</fieldset>
-</form>
-
+<div class="container-fluid">
+                <div class="row bg-title">
+                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">Profile page</h4> 
+                        </div>
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                        <a href="https://wrappixel.com/templates/ampleadmin/" target="_blank" class="btn btn-danger pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light">Upgrade to Pro</a>
+                        <ol class="breadcrumb">
+                            <li><a href="#">Dashboard</a></li>
+                            <li class="active">Profile Page</li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <!-- .row -->
+                <div class="row">
+                    <div class="col-md-4 col-xs-12">
+                        <div class="white-box">
+                            <div class="user-bg"> <img width="100%" alt="user" src="../plugins/images/large/img1.jpg">
+                                <div class="overlay-box">
+                                    <div class="user-content">
+                                        <a href="javascript:void(0)"><img src="../plugins/images/users/genu.jpg" class="thumb-lg img-circle" alt="img"></a>
+                                        <h4 class="text-white">User Name</h4>
+                                        <h5 class="text-white">info@myadmin.com</h5> </div>
+                                </div>
+                            </div>
+                            <div class="user-btm-box">
+                                <div class="col-md-4 col-sm-4 text-center">
+                                    <p class="text-purple"><i class="ti-facebook"></i></p>
+                                    <h1>258</h1> </div>
+                                <div class="col-md-4 col-sm-4 text-center">
+                                    <p class="text-blue"><i class="ti-twitter"></i></p>
+                                    <h1>125</h1> </div>
+                                <div class="col-md-4 col-sm-4 text-center">
+                                    <p class="text-danger"><i class="ti-dribbble"></i></p>
+                                    <h1>556</h1> </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-xs-12">
+                        <div class="white-box">
+                            <form class="form-horizontal form-material">
+                                <div class="form-group">
+                                    <label class="col-md-12">Full Name</label>
+                                    <div class="col-md-12">
+                                        <input type="text" placeholder="Johnathan Doe" class="form-control form-control-line"> </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="example-email" class="col-md-12">Email</label>
+                                    <div class="col-md-12">
+                                        <input type="email" placeholder="johnathan@admin.com" class="form-control form-control-line" name="example-email" id="example-email"> </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Password</label>
+                                    <div class="col-md-12">
+                                        <input type="password" value="password" class="form-control form-control-line"> </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Phone No</label>
+                                    <div class="col-md-12">
+                                        <input type="text" placeholder="123 456 7890" class="form-control form-control-line"> </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Message</label>
+                                    <div class="col-md-12">
+                                        <textarea rows="5" class="form-control form-control-line"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12">Select Country</label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control form-control-line">
+                                            <option>London</option>
+                                            <option>India</option>
+                                            <option>Usa</option>
+                                            <option>Canada</option>
+                                            <option>Thailand</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-success">Update Profile</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div>
 </body>
 </html>

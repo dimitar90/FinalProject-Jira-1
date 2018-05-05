@@ -28,7 +28,9 @@
 
 <title>View all projects</title>
 </head>
-	  <jsp:include page="nav-bar-main.jsp"></jsp:include><c:set var="first" value="0" />
+	  <jsp:include page="nav-bar-main.jsp"></jsp:include>
+	  
+	  <c:set var="first" value="0" />
 <body>
 	<%-- <h1>All projects</h1>
 	<table>
