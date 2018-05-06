@@ -36,7 +36,7 @@ import com.jira.model.User;
 
 @Controller
 public class UserController {
-	private static final int EXP_TIME = 2 * 60;
+	private static final int EXP_TIME = 5 * 60;
 
 	@Autowired
 	private UserManager userManager;
@@ -232,7 +232,7 @@ public class UserController {
 				os.write(b);
 				b = is.read();
 			}
-			session.removeAttribute("dto");
+			
 			is.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -289,24 +289,32 @@ public class UserController {
 	}
 	
 
-	@RequestMapping(value = "/leadId/{id}", method = RequestMethod.GET)
+
+
+	@RequestMapping(value = "/userId/{id}", method = RequestMethod.GET)
 	public String viewLead(Model model, @PathVariable int id, HttpSession session) {
 		try {
-			UserDto dto = userManager.getUserDtoById(id);
-			int projectsCount = this.projectDao.getProjectsCount(dto.getId());
+//			UserDto dto = userManager.getUserDtoById(id);
+//			int projectsCount = this.projectDao.getProjectsCount(dto.getId());
+//			
+//			dto.setDtoProjectsCount(projectsCount);
+//			model.addAttribute("dto", dto);
+			//get and project tasks here
+//			session.setAttribute("dto", dto);
 			
+			
+			UserDto dto = userManager.getUserDtoByProjectId(id);
+			int projectsCount = this.projectDao.getProjectsCount(dto.getId());
 			dto.setDtoProjectsCount(projectsCount);
 			model.addAttribute("dto", dto);
-			//get and project tasks here
 			session.setAttribute("dto", dto);
 			return "lead";
 
 
-		} catch (DatabaseException | SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
 		}
 
 	}
-
 }

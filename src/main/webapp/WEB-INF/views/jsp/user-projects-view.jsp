@@ -89,7 +89,7 @@ form.example::after {
 </head>
 	<body>
 
-<h2>${user.name} projects</h2>
+<h2>${userName} projects</h2>
 
 <!-- <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name"> -->
 

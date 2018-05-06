@@ -3,8 +3,8 @@ package com.jira.interfaces;
 import java.util.Collection;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.jira.dto.UserDto;
 import com.jira.model.User;
 @Component
 public interface IUserDao {
@@ -34,5 +34,5 @@ public interface IUserDao {
 	
 	public boolean chechEmail(String email)  throws Exception;
 	
-	
+	public UserDto getDtoByProjectId(int projectId) throws Exception;;
 }

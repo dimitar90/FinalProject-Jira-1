@@ -30,6 +30,7 @@ public class UserDao implements IUserDao{
 	private static final String MSG_INVALID_DATA = "Wrong email or password";
 	private static final String MSG_INVALID_USER_NAME_FOR_DB = "Invalid name for user";
 	private static final String MSG_INVALID_USER_ID_FOR_DB = "Invalid id for user";
+	private static final String MSG_INVALID_PROJECT_ID_FOR_DB = "Invalid id of project";
 	
 	@Autowired
 	private  final DBManager manager;
@@ -301,5 +302,22 @@ public class UserDao implements IUserDao{
 		}
 		
 		return false;
+	}
+	@Override
+	public UserDto getDtoByProjectId(int projectId) throws UserDataException, DatabaseException {
+		String sql = "SELECT project_lead_id FROM projects WHERE is_deleted = 0 AND id = ?";
+		try {
+		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
+		ps.setInt(1, projectId);
+		ResultSet result = ps.executeQuery();
+		
+		result.next();
+		
+		int leadId = result.getInt(1);
+		ps.close();
+		return this.getUserDtoById(leadId);
+		}catch (SQLException e) {
+			throw new UserDataException(MSG_INVALID_PROJECT_ID_FOR_DB);
+		}
 	}
 }

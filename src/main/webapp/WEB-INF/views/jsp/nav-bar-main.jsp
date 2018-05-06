@@ -44,7 +44,6 @@
             </ul>
           </li>
            <li>
-           <ul>
            <li>
            <a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
