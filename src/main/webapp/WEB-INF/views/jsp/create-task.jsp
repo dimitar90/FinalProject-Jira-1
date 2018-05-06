@@ -10,9 +10,13 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<c:set var="maxImageCount" value="2"/>
 </head>
-</head>
 
- <jsp:include page="navigation-bar.jsp"></jsp:include>
+	<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+	</c:if>
  
 <body>
 <s:form method="POST" action="create" enctype="multipart/form-data">

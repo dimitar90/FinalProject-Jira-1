@@ -8,7 +8,12 @@
 <link rel="stylesheet" href="<c:url value="/css/create-task-form.css" />">
 </head>
 
-<jsp:include page="navigation-bar.jsp"></jsp:include>
+	<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+	</c:if>
 
 <body>
 	<s:form action="${editTaskDto.id}" method="POST">

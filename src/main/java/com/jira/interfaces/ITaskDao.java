@@ -3,6 +3,7 @@ package com.jira.interfaces;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
@@ -41,4 +42,10 @@ public interface ITaskDao {
 	public void saveFileToDisk(Task task, MultipartFile f, String randomUUIDString) throws IOException;
 
 	public List<TaskBasicViewDto> getTasksWhichIncludePartOfSearchStringInName(String searchPart) throws DatabaseException;
+
+	public Map<String, Integer> getCountForIssueTypes(String firstDate, String secondDate) throws DatabaseException;
+
+	public Map<String, Integer> getCountForStateTypes(String firstDate, String secondDate) throws DatabaseException;
+
+	public String getValidDataRangeForTaskCharts() throws DatabaseException;
 }

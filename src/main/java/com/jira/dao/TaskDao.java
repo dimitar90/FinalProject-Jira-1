@@ -16,9 +16,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -41,6 +44,7 @@ import com.jira.interfaces.IUserDao;
 import com.jira.model.Project;
 import com.jira.model.Task;
 import com.jira.model.TaskIssue;
+import com.jira.model.TaskIssueType;
 import com.jira.model.TaskPriority;
 import com.jira.model.TaskState;
 import com.jira.model.TaskStateType;
@@ -51,9 +55,13 @@ public class TaskDao implements ITaskDao {
 	private static final String PATH_IMAGE_PREFFIX = "D:\\images\\tasks";
 	private static final String INVALID_DATA = "Invalid credentials!";
 
-	private static final String BETWEEN_TWO_DATE_PART = "(due_date BETWEEN ? AND ?)";
-	private static final String BEFORE_DATE_QUERY_PART = "due_date <= ?";
-	private static final String AFTER_DATE_QUERY_PART = "due_date >= ?";
+	private static final String BETWEEN_TWO_DUE_DATE_PART = "(due_date BETWEEN ? AND ?)";
+	private static final String BEFORE_DUE_DATE_QUERY_PART = "due_date <= ?";
+	private static final String AFTER_DUE_DATE_QUERY_PART = "due_date >= ?";
+	
+	private static final String BETWEEN_TWO_START_DATE_PART = "WHERE (t.start_date BETWEEN ? AND ?) AND t.is_deleted = 0 ";
+	private static final String BEFORE_START_DATE_QUERY_PART = "WHERE t.start_date <= ? AND t.is_deleted = 0 ";
+	private static final String AFTER_START_DATE_QUERY_PART = " WHERE t.start_date >= ? AND t.is_deleted = 0 ";
 
 	private static final String DELETE_TASK_QUERY = "UPDATE tasks SET is_deleted = 1 WHERE id = ?";
 	private static final String CHANGE_STATE_TASK_QUERY = "UPDATE tasks SET state_id = ? WHERE id = ?";
@@ -67,6 +75,10 @@ public class TaskDao implements ITaskDao {
 	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 ORDER BY id DESC LIMIT ?, ? ;";
 	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
 	private static final String SELECT_TASKS_BY_PART_OF_NAME_QEURY = "SELECT * FROM tasks WHERE (summary LIKE ?) AND is_deleted = 0 ORDER BY id DESC;";
+	private static final String SELECT_COUNT_FOR_ALL_ISSUE_TYPES_QUERY = "SELECT i.type AS type, COUNT(t.id) AS count FROM tasks AS t INNER JOIN issues AS i ON i.id = t.issue_id INSERT_WHERE_CLAUSE GROUP BY t.issue_id;";
+	private static final String SELECT_COUNT_FOR_ALL_STATE_TYPES_QUERY = "SELECT s.type AS type, COUNT(t.id) AS count FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id INSERT_WHERE_CLAUSE GROUP BY t.state_id;";
+	private static final String GET_FIRST_TASK_START_DATE_QUERY = "SELECT MIN(start_date) AS first_date FROM tasks WHERE is_deleted = 0;";
+	private static final String GET_LAST_TASK_START_DATE_QUERY = "SELECT MAX(start_date) AS last_date FROM tasks WHERE is_deleted = 0;";
 	
 	private final DBManager dbManager;
 	private final ITaskPriorityDao taskPriorityDao;
@@ -385,16 +397,16 @@ public class TaskDao implements ITaskDao {
 		}
 
 		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {
-			allParts.add(BETWEEN_TWO_DATE_PART);
+			allParts.add(BETWEEN_TWO_DUE_DATE_PART);
 			return;
 		}
 
 		if (firstDate.isEmpty()) {
-			allParts.add(BEFORE_DATE_QUERY_PART);
+			allParts.add(BEFORE_DUE_DATE_QUERY_PART);
 			return;
 		}
 
-		allParts.add(AFTER_DATE_QUERY_PART);
+		allParts.add(AFTER_DUE_DATE_QUERY_PART);
 	}
 
 	private void getSqlByIssueType(List<Integer> selectedIssueTypeIds, List<String> allParts) {
@@ -495,5 +507,130 @@ public class TaskDao implements ITaskDao {
 		fos.close();
 		
 		task.addImageUrl(fullPath);
+	}
+
+	@Override
+	public Map<String, Integer> getCountForIssueTypes(String firstDate, String secondDate) throws DatabaseException {
+		String startDateRangeQuery = this.getStartDateRangeQueryByTwoDates(firstDate, secondDate); 
+		String sql = SELECT_COUNT_FOR_ALL_ISSUE_TYPES_QUERY.replace("INSERT_WHERE_CLAUSE", startDateRangeQuery);
+		
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sql)) {
+			Map<String, Integer> issues = new HashMap<>();
+			//fill map with default values
+			this.fillIssueMapWithDefaultValues(issues);
+			this.setDateValuesInPreparedStatementForChartSelectQuery(pr,firstDate,secondDate);
+			
+			ResultSet rs = pr.executeQuery();
+			this.fillMapWithValuesFromDb(issues, rs);
+			
+			return issues;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+	
+	@Override
+	public Map<String, Integer> getCountForStateTypes(String firstDate, String secondDate) throws DatabaseException{
+		String startDateRangeQuery = this.getStartDateRangeQueryByTwoDates(firstDate, secondDate); 
+		String sql = SELECT_COUNT_FOR_ALL_STATE_TYPES_QUERY.replace("INSERT_WHERE_CLAUSE", startDateRangeQuery);
+		
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(sql)) {
+			Map<String, Integer> states = new HashMap<>();
+			//fill map with default values
+			this.fillStatesMapWithDefaultValues(states);
+			this.setDateValuesInPreparedStatementForChartSelectQuery(pr, firstDate,  secondDate);
+			
+			ResultSet rs = pr.executeQuery();
+			this.fillMapWithValuesFromDb(states, rs);
+
+			return states;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
+	}
+	
+	private void setDateValuesInPreparedStatementForChartSelectQuery(PreparedStatement pr, String firstDate, String secondDate) throws SQLException {
+		if (firstDate.isEmpty() && secondDate.isEmpty()) {
+			return;
+		}
+
+		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {
+			pr.setDate(1, java.sql.Date.valueOf(firstDate));
+			pr.setDate(2, java.sql.Date.valueOf(secondDate));
+			return;
+		}
+
+		if (firstDate.isEmpty()) {
+			pr.setDate(1, java.sql.Date.valueOf(secondDate));
+			return;
+		}
+		
+		if (secondDate.isEmpty()) {
+			pr.setDate(1, java.sql.Date.valueOf(firstDate));
+			return;
+		}
+	}
+	
+	private String getStartDateRangeQueryByTwoDates(String firstDate, String secondDate) {
+		if (firstDate.isEmpty() && secondDate.isEmpty()) {
+			return "";
+		}
+
+		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {
+			return BETWEEN_TWO_START_DATE_PART;
+		}
+
+		if (firstDate.isEmpty()) {
+			return BEFORE_START_DATE_QUERY_PART;
+		}
+		
+		return AFTER_START_DATE_QUERY_PART;
+	}
+	
+	private void fillIssueMapWithDefaultValues(Map<String, Integer> issues) {
+		for (TaskIssueType issueType : TaskIssueType.values()) {
+			issues.put(issueType.getValue(), 0);
+		}
+	}
+	
+	private void fillStatesMapWithDefaultValues(Map<String, Integer> states) {
+		for (TaskStateType stateType : TaskStateType.values()) {
+			states.put(stateType.getValue(), 0);
+		}
+	}
+	
+	private void fillMapWithValuesFromDb(Map<String, Integer> map, ResultSet rs) throws SQLException {
+		while (rs.next()) {
+			String type = rs.getString("type");
+			int count = rs.getInt("count");
+			
+			map.put(type, count);
+		}
+	}
+
+	@Override
+	public String getValidDataRangeForTaskCharts() throws DatabaseException {
+		try (Statement st = dbManager.getConnection().createStatement()){
+			ResultSet rs = st.executeQuery(GET_FIRST_TASK_START_DATE_QUERY);
+			String firstValidDate = "";
+			String lastValidDate = "";
+			
+			while (rs.next()) {
+				firstValidDate = rs.getString("first_date");
+			}
+			
+			rs = st.executeQuery(GET_LAST_TASK_START_DATE_QUERY);
+			
+			while (rs.next()) {
+				lastValidDate = rs.getString("last_date");
+			}
+			
+			return firstValidDate + " - " + lastValidDate;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new DatabaseException(INVALID_DATA, e);
+		}
 	}
 }

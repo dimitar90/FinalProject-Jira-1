@@ -43,7 +43,6 @@ public class ExportController {
 			this.exportDao.exportIntoPdf(os);
 		} catch (Exception e) {
 			e.printStackTrace();
-			
 		}
 	}
 }

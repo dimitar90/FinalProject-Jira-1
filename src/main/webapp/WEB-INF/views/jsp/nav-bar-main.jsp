@@ -33,8 +33,16 @@
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
-          
-          <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
+          <li><a href="javascript:void(0)" >Export<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+            	<li><a href="http://localhost:8080/Jira/export/pdf">Into PDF</a></li>
+            </ul>
+          </li>
+          <li><a href="javascript:void(0)" >Charts<span class="arrow-down"></span></a>
+            <ul class="dropdown">
+            	<li><a href="http://localhost:8080/Jira/charts/taskInfo">Tasks info</a></li>
+            </ul>
+          </li>
            <li>
            <ul>
            <li>

@@ -7,7 +7,7 @@
 
  <title>IT Talents</title>
   
-<link href="<c:url value="css/style.css"/>" rel="stylesheet">  
+<link href="<c:url value="/css/style.css"/>" rel="stylesheet">  
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   
@@ -32,7 +32,6 @@
               <li><a href="http://localhost:8080/Jira/projects/all/0">View all projects</a></li>
             </ul>
           </li>
-          <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
            <li><a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/register">Register</a></li>
