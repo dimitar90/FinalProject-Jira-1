@@ -16,6 +16,6 @@
 	<h1>Error. . . Please dont report me!</h1>
 	<% Exception e = (Exception) request.getAttribute("exception"); %>
 	<h2>Reason: <%out.print(e.getMessage()); %></h2>
-	<a href="index.jsp">Back to log in, sorry about that</a>
+	<a href="http://localhost:8080/Jira/">Back to log in, sorry about that</a>
 </body>
 </html>

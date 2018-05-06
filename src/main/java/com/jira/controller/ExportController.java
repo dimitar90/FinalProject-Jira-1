@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -22,27 +24,44 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jira.db.DBManager;
 import com.jira.exception.DatabaseException;
+import com.jira.exception.ExportException;
+import com.jira.exception.UserDataException;
 import com.jira.interfaces.IExportDao;
+import com.jira.manager.UserManager;
+import com.jira.model.User;
 
 @Controller
 @RequestMapping(value = "/export")
 public class ExportController {
+	private static final String NOT_LOGGED_MESSAGE = "You must logged in if you want download pdf with tasks!";
 	
 	private final IExportDao exportDao;
+	private final UserManager userManager;
 	
-	public ExportController(IExportDao exportDao) {
+	@Autowired
+	public ExportController(IExportDao exportDao, UserManager userManager) {
 		this.exportDao = exportDao;
+		this.userManager = userManager;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/pdf")
-	public void exportTasksIntoPdf(HttpServletResponse response) throws DatabaseException, IOException {
+	public String exportTasksIntoPdf(HttpServletResponse response, HttpSession session, Model model) throws DatabaseException, IOException {
 		try {
+			User loggedUser = this.userManager.getLoggedUser(session);
+			if (loggedUser == null) {
+				throw new ExportException(NOT_LOGGED_MESSAGE);
+			}
+			
 			ServletOutputStream os = response.getOutputStream();
 			response.setContentType("application/pdf");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + "allTasks.pdf" + "\"");
 			this.exportDao.exportIntoPdf(os);
+
+			return "";
 		} catch (Exception e) {
 			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
 		}
 	}
 }

@@ -39,7 +39,7 @@
     </label>
 
     <label>
-        <span>Description :</span>
+        <span>Description:</span>
         <textarea id="message" name="description" placeholder="Add a descripion" required></textarea>
     </label>
    

@@ -70,6 +70,10 @@
             <div class="card-header">
               <i class="fa fa-pie-chart"></i><b>Pie Chart For Issue Types</b></div>
             <div class="card-body"><div style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+             	<c:if test="${ isIssuesResults eq false }">
+             		<h3><b>No results found!</b></h3>
+             	</c:if>
+             	
              	 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 				    <script type="text/javascript">
 				      google.charts.load("current", {packages:["corechart"]});
@@ -104,6 +108,10 @@
             <div class="card-header">
               <i class="fa fa-pie-chart"></i> <b>Pie Chart For States</b></div>
             <div class="card-body"><div style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+              	<c:if test="${ isStatesResults eq false }">
+             		<h3><b>No results found!</b></h3>
+             	</c:if>
+              
               <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 			    <script type="text/javascript">
 			      google.charts.load("current", {packages:["corechart"]});

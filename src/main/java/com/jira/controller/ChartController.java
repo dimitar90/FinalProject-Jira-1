@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.DateException;
 import com.jira.interfaces.ITaskDao;
+import com.jira.manager.UserManager;
+import com.jira.model.User;
 
 @RequestMapping(value ="/charts")
 @Controller
@@ -26,15 +29,21 @@ public class ChartController {
 	private static final String TWO_EQUAL_DATES_FORMAT = "The chart is for a %s";
 
 	private final ITaskDao taskDao;
-	
+	private final UserManager userManager;
 	@Autowired
-	public ChartController(ITaskDao taskDao) {
+	public ChartController(ITaskDao taskDao, UserManager userManager) {
 		this.taskDao = taskDao;
+		this.userManager = userManager;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value =  "/taskInfo")
-	public String getTaskInfo(Model model) {
+	public String getTaskInfo(Model model, HttpSession session) {
 		try {
+			User loggedUser = this.userManager.getLoggedUser(session);
+			if (loggedUser == null) {
+				return "redirect:./../login";
+			}
+			
 			Map<String, Integer> issues = this.taskDao.getCountForIssueTypes("", "");
 			Map<String, Integer> states = this.taskDao.getCountForStateTypes("", "");
 			String dateRangeFromFirstDateToEndDate = this.taskDao.getValidDataRangeForTaskCharts();
@@ -53,9 +62,13 @@ public class ChartController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value =  "/taskInfo")
-	public String getTaskInfo(Model model, HttpServletRequest request) {
-		
+	public String getTaskInfo(Model model, HttpServletRequest request, HttpSession session) {
 		try {
+			User loggedUser = this.userManager.getLoggedUser(session);
+			if (loggedUser == null) {
+				return "redirect:./../login";
+			}
+			
 			String firstDate = request.getParameter("firstDate");
 			String secondDate = request.getParameter("secondDate");
 			
