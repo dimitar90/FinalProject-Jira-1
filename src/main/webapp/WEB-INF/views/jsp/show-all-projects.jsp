@@ -3,19 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 
-<%-- !-- Bootstrap core CSS-->	
-<link href="../../vendor/bootstrap/css/bootstrap.min.css"
-	rel="stylesheet">
-<!-- Custom fonts for this template-->
-<link href="../../vendor/font-awesome/css/font-awesome.min.css"
-	rel="stylesheet" type="text/css">
-<!-- Page level plugin CSS-->
-<link href="../../vendor/datatables/dataTables.bootstrap4.css"
-	rel="stylesheet">
-<!-- Custom styles for this template-->
-<link href="../../css/sb-admin.css" rel="stylesheet">
- <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
-<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />"> --%>
 <head>
 <link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 <link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
@@ -54,11 +41,6 @@
 		</c:forEach>
 	</table>
 	 --%>
-	
-	
-	
-	
-	<!--            							 -->
 	
 	
 		<div class="card mb-3">
@@ -148,20 +130,8 @@
 										<td>${p.projectType}</td>
 										<td>${p.projectCategory}</td>
 										<td>
-											<a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a>
+											<a href="http://localhost:8080/Jira/userId/${p.id}">${p.projectLead}</a>
 										</td>
-										<%-- <td>${t.priority.type.value}</td> --%>
-										<%-- <td>${t.state.type.value}</td> --%>
-										<%-- <td><a href="../detail/${ t.id }">Show details</a></td>
-										<td>
-											<c:if test="${not empty user}">
-												<c:if
-													test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-													<a href="../edit/${ t.id }">[Edit]</a>
-													<a href="../delete/${ t.id }">[Delete]</a>
-												</c:if>
-											</c:if> --%>
-										<!-- </td> -->
 									</tr>
 									</c:if>
 									<c:if test="${loop.index % 2 == 1}">
@@ -173,20 +143,8 @@
 										<td>${p.projectType}</td>
 										<td>${p.projectCategory}</td>
 										<td>
-											<a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a>
+											<a href="http://localhost:8080/Jira/userId/${p.id}">${p.projectLead}</a>
 										</td>
-										<%-- <td>${t.priority.type.value}</td>
-										<td>${t.state.type.value}</td>
-										<td><a href="../detail/${ t.id }">Show details</a></td>
-										<td>
-											<c:if test="${not empty user}">
-												<c:if
-													test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-													<a href="../edit/${ t.id }">[Edit]</a>
-													<a href="../delete/${ t.id }">[Delete]</a>
-												</c:if>
-											</c:if>
-										</td> --%>
 									</tr>
 									</c:if>
 									</c:forEach>
@@ -302,150 +260,5 @@
 	</div>
 	
 	
-	<%-- <div class="card mb-3">
-		<div class="card-header">
-			<i class="fa fa-table"></i> ALL PROJECTS
-		</div>
-		<div class="card-body">
-			<div class="table-responsive">
-				<div id="dataTable_wrapper"
-					class="dataTables_wrapper container-fluid dt-bootstrap4">
-					<div class="row">
-						<div class="col-sm-12">
-							<table class="table table-bordered dataTable" id="dataTable"
-								role="grid" aria-describedby="dataTable_info"
-								style="width: 100%;" width="100%" cellspacing="0">
-								<thead>
-									<tr role="row">
-										<th class="sorting_asc" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 202px;"
-											aria-sort="ascending"
-											aria-label="Name: activate to sort column descending">Project name</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 304px;"
-											aria-label="Position: activate to sort column ascending">Project type</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 145px;"
-											aria-label="Office: activate to sort column ascending">Project category</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 71px;"
-											aria-label="Age: activate to sort column ascending">Project lead</th>
-								</tr>
-								</thead>
-								<tfoot>
-									<tr>
-										<th rowspan="1" colspan="1">Project name</th>
-										<th rowspan="1" colspan="1">Project type</th>
-										<th rowspan="1" colspan="1">Project category</th>
-										<th rowspan="1" colspan="1">Project lead</th>
-									</tr>
-								</tfoot>
-								<tbody>
-									<c:forEach items="${ allProjects }" var="p" varStatus="loop">
-									<c:if test="${loop.index % 2 == 0}">
-									<tr role="row" class="even">
-										<td>
-										<a href="http://localhost:8080/Jira/projects/projectId/${p.id}">${p.name}</a>
-										</td>
-										<td>${p.projectType}</td>
-										<td>${p.projectCategory}</td>
-										<td>${p.projectCategory}</td>
-										<td>
-										<a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a>
-										</td>
-									</tr>
-									</c:if>
-									<c:if test="${loop.index % 2 == 1}">
-									<tr role="row" class="odd">
-										<td><a href="http://localhost:8080/Jira/projects/projectId/${p.id}">${p.name}</a></td>
-										<td>${p.projectType}</td>
-										<td>${t.assignee.name}</td>
-										<td>${p.projectCategory}</td>
-										<td><a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a></td>
-									</tr>
-									</c:if>
-									</c:forEach>
-								</tbody>
-							</table>
-						</div>
-					</div> --%>
-					
-
-					<%-- <div class="row">
-						<div class="col-sm-12 col-md-5">
-							<div class="dataTables_info" id="dataTable_info" role="status"
-								aria-live="polite">Showing ${ (currRecordPage * currentPage) + 1 } to ${ (currRecordPage * currentPage) + currRecordPage } of ${ projectCount } projects</div>
-						</div>
-						<div class="col-sm-12 col-md-7">
-							<div class="dataTables_paginate paging_simple_numbers"
-								id="dataTable_paginate">
-								<ul class="pagination">
-									<c:if test="${ currentPage <= 0 }">
-									<li class="paginate_button page-item previous disabled"
-										id="dataTable_previous"><a href="../../projects/all/${ currentPage - 1 }"
-										aria-controls="dataTable" data-dt-idx="0" tabindex="0"
-										class="page-link">Previous</a></li>
-									</c:if>
-									<c:if test="${ currentPage > 0 }">
-									<li class="paginate_button page-item previous"
-										id="dataTable_previous"><a href="../../projects/all/${ currentPage - 1 }"
-										aria-controls="dataTable" data-dt-idx="0" tabindex="0"
-										class="page-link">Previous</a></li>
-									</c:if>
-									<li class="paginate_button page-item active">
-									<a href="../../projects/all/${currentPage}"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 1 }</a>
-										</li>
-									<li class="paginate_button page-item "><a href="../../projects/all/${currentPage + 1}"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 2 }</a></li>
-									<li class="paginate_button page-item "><a href="../../projects/all/${currentPage + 2 }"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 3 }</a></li>
-									<li class="paginate_button page-item "><a href="../../projects/all/${currentPage + 3 }"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 4 }</a></li>
-									<li class="paginate_button page-item "><a href="../../projects/all/${currentPage + 4 }"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 5 }</a></li>
-									<li class="paginate_button page-item "><a href="../../projects/all/${currentPage + 5 }"
-										aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-										class="page-link">${ currentPage + 6 }</a></li>
-									<li class="paginate_button page-item next" id="dataTable_next"><a
-										href="../../projects/all/${ currentPage + 1 }" aria-controls="dataTable" data-dt-idx="7"
-										tabindex="0" class="page-link">Next</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> --%>
-
-	
-	
-	<!--            							 -->
-	
-	 <%-- 	if currentPage == firstPage button for first is hidden>
-	 <c:if test="${currentPage > first}">
-	 	<a href="${first}">First</a>
-     </c:if>
-     
-    if currentPage == firstPage button for previous is hidden>
-    <c:if test="${currentPage != first}">
-    	<td><a href="${currentPage - 1}">Previous</a></td>
-    </c:if>
-    
-    if currentPage == lastPage button for next is hidden>
-    <c:if test="${currentPage < noOfPages}">
-        <td><a href="${currentPage + 1}">Next</a></td>
-    </c:if>
-    
-     if currentPage == lastPage button for last is hidden>
-     <c:if test="${currentPage < noOfPages}">
-			<a href="${noOfPages}">Last</a>
-     </c:if> --%> 
 </body>
 </html>

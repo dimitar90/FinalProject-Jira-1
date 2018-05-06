@@ -403,11 +403,13 @@ public class ProjectDao implements IProjectDao {
 		PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 		ps.setInt(1, userId);
 		ResultSet result = ps.executeQuery();
-
+		int projectCount = 0;
 		if (result.next()) {
-			result.getInt(1);
+			projectCount = result.getInt(1);
+			
 		}
-		return 0;
+		ps.close();
+		return projectCount;
 	}
 	
 	@Override

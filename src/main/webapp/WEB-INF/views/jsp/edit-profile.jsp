@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<jsp:include page="nav-bar-main.jsp"></jsp:include>
-    <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-    
-    <%-- <%@ page import="com.jira.model.pojo.User" %>  --%>
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+	
+    <html>
  <head>
-<%--  <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
-<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">	  --%> 
+ <jsp:include page="nav-bar-main.jsp"></jsp:include>
+<%--	<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">	  --%> 
 	<link rel="stylesheet" href="<c:url value="/css/style.css" />">
     <title>IT Talents</title>
     <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">

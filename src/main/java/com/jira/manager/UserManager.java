@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.servlet.http.HttpSession;
@@ -184,6 +185,14 @@ public class UserManager {
 	public UserDto getUserDtoById(Integer id) throws DatabaseException {
 		
 		return this.userDao.getUserDtoById(id);
+	}
+
+	public UserDto getUserDtoByProjectId(int projectId) throws UserDataException, DatabaseException {
+		return userDao.getDtoByProjectId(projectId);
+	}
+
+	public User getUserById(int userId) throws UserDataException, SQLException {
+		return userDao.getUserById(userId);
 	}
 	
 	

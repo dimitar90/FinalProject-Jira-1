@@ -8,15 +8,26 @@ public class ProjectTypeBusinessDto {
 	private String projectType;
 	private String projectCategory;
 	private String projectLead;
-
-	public ProjectTypeBusinessDto(int id, String name, String projectType, String projectCategory, String projectLead) {
+	private int projectLeadId;
+	
+	public ProjectTypeBusinessDto(int id, String name, String projectType, String projectCategory, String projectLead,int projectLeadId) {
 		this.setId(id);
 		this.setName(name);
 		this.setProjectType(projectType);
 		this.setProjectCategory(projectCategory);
 		this.setProjectLead(projectLead);
+		this.setProjectLeadId(projectLeadId);
 	}
 
+	public void setProjectLeadId(int projectLeadId) {
+		this.projectLeadId = projectLeadId;
+	}
+
+
+	public int getProjectLeadId() {
+		return projectLeadId;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -57,7 +68,8 @@ public class ProjectTypeBusinessDto {
 		this.projectLead = projectLead;
 	}
 
-	public static ProjectTypeBusinessDto getDto(int id, String projectName, String projectType, String projectCategory, String projectLead) {
-		return new ProjectTypeBusinessDto(id, projectName, projectType, projectCategory, projectLead);
+	
+	public static ProjectTypeBusinessDto getDto(int id, String projectName, String projectType, String projectCategory, String projectLead,int projectLeadId) {
+		return new ProjectTypeBusinessDto(id, projectName, projectType, projectCategory, projectLead, projectLeadId);
 	}
 }

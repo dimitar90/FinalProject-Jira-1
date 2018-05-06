@@ -40,11 +40,11 @@
           </div>
           <div class="form-group">
             <div class="form-check">
-              <label class="form-check-label">
+              <!-- <label class="form-check-label">
                 <input class="form-check-input" type="checkbox">Remember Password</label>
-            </div>
+            </div> -->
           </div>
-          <input class="btn btn-primary btn-block" type="submit" value="Log in"/>  
+          <input class="btn btn-primary btn-block" type="submit" value="Log in" />  
         </form>
         <div class="text-center">
           <a class="d-block small mt-3" href="http://localhost:8080/Jira/register">Sign up for an account</a>

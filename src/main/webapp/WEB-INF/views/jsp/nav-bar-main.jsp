@@ -36,7 +36,6 @@
           
           <li><a href="http://localhost:8080/Jira/export/pdf">PDF export</a></li>
            <li>
-           <ul>
            <li>
            <a href="javascript:void(0)" >Menu<span class="arrow-down"></span></a>
             <ul class="dropdown">

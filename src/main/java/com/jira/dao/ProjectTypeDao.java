@@ -101,7 +101,7 @@ public class ProjectTypeDao implements IProjectTypeDao {
 				User projectLead = userDao.getUserById(projectLeadId);
 
 				dtoList.add(
-						ProjectTypeSoftwareDto.getDto(id, name, projectType, projectCategory, projectLead.getName()));
+						ProjectTypeSoftwareDto.getDto(id, name, projectType, projectCategory, projectLead.getName(), projectLeadId));
 			}
 
 		} catch (SQLException e) {
@@ -131,7 +131,7 @@ public class ProjectTypeDao implements IProjectTypeDao {
 				User projectLead = userDao.getUserById(projectLeadId);
 
 				dtoList.add(
-						ProjectTypeBusinessDto.getDto(id, name, projectType, projectCategory, projectLead.getName()));
+						ProjectTypeBusinessDto.getDto(id, name, projectType, projectCategory, projectLead.getName(),projectLeadId));
 			}
 
 		} catch (SQLException e) {

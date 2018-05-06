@@ -66,9 +66,9 @@
           </div>
             <div class="form-group">
             <label for="exampleInputEmail1">Upload image</label>
-            <input type="file" accept="image/*" name="singleFile">
+            <input type="file" accept="image/*" name="singleFile" required="required">
           </div>
-          <input class="btn btn-primary btn-block" type="submit" required="" value="Sign up"/>     
+          <input class="btn btn-primary btn-block" type="submit" required="required" value="Sign up"/>     
         </form>
         <div class="text-center">
           <a class="d-block small mt-3" href="http://localhost:8080/Jira/">Already have an account? Log in</a>
