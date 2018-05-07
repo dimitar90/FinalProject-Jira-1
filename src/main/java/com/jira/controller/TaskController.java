@@ -27,6 +27,7 @@ import com.jira.configuration.WebInitializer;
 import com.jira.dto.TaskBasicViewDto;
 import com.jira.dto.TaskViewDetailsDto;
 import com.jira.exception.DatabaseException;
+import com.jira.exception.TaskException;
 import com.jira.interfaces.IProjectDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.ITaskIssueDao;
@@ -48,7 +49,11 @@ public class TaskController {
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
 	private static final int ROWS_COUNT_PER_PAGE = 3;
 	private static final String ALLOWED_FILE_EXTENSIONS = ".png .jpeg .jpg .bmp";
+	private static final String MY_OPEN_TASK_TABLE_NAME = "MY OPEN TASKS";
+	private static final String FILTERED_TASK_TABLE_NAME = "FILTERED TASKS";
 
+	private static final String TASK_DUE_DATE_EXCEPTION_MESSAGE = "Due date can not be before today's date!";
+	
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskIssueDao taskIssueDao;
 	private final IProjectDao projectDao;
@@ -80,12 +85,13 @@ public class TaskController {
 			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 			List<TaskBasicViewDto> tasks = this.taskDao.getAllOpenTasksByUserId(loggedUser.getId());
 			model.addAttribute("tasks", tasks);
-
+			model.addAttribute("tableName", MY_OPEN_TASK_TABLE_NAME);
+			
 			return "my-open-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			return "error";
 		}
 	}
 
@@ -97,15 +103,17 @@ public class TaskController {
 			String secondDate = request.getParameter("secondDate");
 
 			List<Integer> issueTypeIds = this.getIssueTypeIds(selectedIssueTypes);
-
 			List<TaskBasicViewDto> tasks = taskDao.getFilteredTasksByIssueTypeAndDate(issueTypeIds, firstDate, secondDate);
+			
 			model.addAttribute("tasks", tasks);
 			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			model.addAttribute("tableName", FILTERED_TASK_TABLE_NAME);
+
 			return "filtered-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			return "error";
 		}
 	}
 	
@@ -117,11 +125,13 @@ public class TaskController {
 			List<TaskBasicViewDto> tasks = this.taskDao.getTasksWhichIncludePartOfSearchStringInName(searchPart);
 			model.addAttribute("tasks", tasks);
 			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			model.addAttribute("tableName", FILTERED_TASK_TABLE_NAME);
+
 			return "filtered-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			return "error";
 		}
 	}
 
@@ -261,7 +271,7 @@ public class TaskController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			return "error";
 		}
 	}
 	
@@ -328,15 +338,17 @@ public class TaskController {
 
 		UUID uuid = UUID.randomUUID();
 		String randomUUIDString = uuid.toString();
-		for (MultipartFile f : files) {
-			if (f.isEmpty()) {
+		for (MultipartFile file : files) {
+			if (file.isEmpty()) {
 				continue;
 			}
+			
 			try {
-				this.taskDao.saveFileToDisk(task, f, randomUUIDString);
+				this.taskDao.saveFileToDisk(task, file, randomUUIDString);
 			} catch (IOException e) {
 				e.printStackTrace();
-				return "redirect:../../error";
+				modelMap.addAttribute("exception", e);
+				return "error";
 			}
 		}
 
@@ -347,11 +359,15 @@ public class TaskController {
 	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId, Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {
 		boolean isValid = !summary.isEmpty() && 
 						  !description.isEmpty() && 
-						  !dueDate.isEmpty() && (LocalDate.parse(dueDate, DATE_FORMATTER).compareTo(LocalDate.now()) >= 0) &&
+						  !dueDate.isEmpty() &&
 						  projectId != null && projectDao.isExistById(projectId) &&
 						  priorityId != null && taskPriorityDao.isExistById(priorityId) && 
 						  issueTypeId != null && taskIssueDao.isExistById(issueTypeId) && 
 						  assigneeId != null && userDao.isExistById(assigneeId) && projectDao.isExistById(projectId);
+		
+		if ((LocalDate.parse(dueDate, DATE_FORMATTER).compareTo(LocalDate.now()) < 0)) {
+			throw new TaskException(TASK_DUE_DATE_EXCEPTION_MESSAGE);
+		}
 		
 		for (MultipartFile file : files) {
 			if (file.isEmpty()) {

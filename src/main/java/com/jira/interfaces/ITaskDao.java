@@ -18,7 +18,7 @@ import com.jira.model.Task;
 
 @Component
 public interface ITaskDao {
-	public void saveTask(Task task) throws DatabaseException, SQLException;
+	public int saveTask(Task task) throws DatabaseException, SQLException;
 	
 	public TaskViewDetailsDto getById(int taskId) throws DatabaseException;
 	

@@ -10,9 +10,8 @@
 	</c:if>
 
 <body>
-		<div class="card-header">
-			<i class="fa fa-table"></i> MY OPEN TASKS
-		</div>
+		<jsp:include page="filter-form.jsp"></jsp:include>
+
 		<jsp:include page="table-for-tasks-withou-pagination.jsp"></jsp:include>
 </body>
 </html>

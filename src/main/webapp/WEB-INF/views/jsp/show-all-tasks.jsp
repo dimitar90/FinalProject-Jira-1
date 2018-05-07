@@ -18,6 +18,7 @@
 	<c:if test= '${empty sessionScope.user}'>
 			<jsp:include page="navigation-bar.jsp"></jsp:include>
 	</c:if>
+	
 <body>
 	<jsp:include page="filter-form.jsp"></jsp:include>
 			

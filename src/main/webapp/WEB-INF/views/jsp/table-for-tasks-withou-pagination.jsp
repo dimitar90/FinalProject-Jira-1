@@ -10,6 +10,9 @@
 </head>
 
 <div class="card mb-3">
+		<div class="card-header">
+			<i class="fa fa-table"></i><b>${ tableName }</b>
+		</div>
 		<div class="card-body">
 			<div class="table-responsive">
 				<div id="dataTable_wrapper"

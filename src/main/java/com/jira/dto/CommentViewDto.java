@@ -9,12 +9,15 @@ import com.jira.model.User;
 public class CommentViewDto {
 	private String description;
 	private LocalDateTime dateTime;
-	private User user;
+	private String username;
+	private String userImageBase64;
 
-	public CommentViewDto(String description, LocalDateTime dateTime, User user) {
+	public CommentViewDto(String description, LocalDateTime dateTime, String username, String userImageBase64) {
 		this.setDescription(description);
 		this.setDateTime(dateTime);
-		this.setUser(user);
+		this.setUsername(username);
+		this.setUserImageBase64(userImageBase64);
+		//this.setUserAvatarName(userAvatarName);
 	}
 
 	public String getDescription() {
@@ -33,11 +36,27 @@ public class CommentViewDto {
 		this.dateTime = dateTime;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUsername(String username) {
+		this.username = username;
 	}
+	
+	public String getUserImageBase64() {
+		return userImageBase64;
+	}
+
+	public void setUserImageBase64(String userImageBase64) {
+		this.userImageBase64 = userImageBase64;
+	}
+	
+	/*public String getUserAvatarName() {
+		return userAvatarName;
+	}
+
+	public void setUserAvatarName(String userAvatarName) {
+		this.userAvatarName = userAvatarName;
+	}*/
 }

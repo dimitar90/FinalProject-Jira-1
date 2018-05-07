@@ -29,7 +29,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 	public static final int MAX_FILE_SIZE_IN_BYTES = 5 * 1024 * 1024;
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    	registry.addResourceHandler("/uploaded/**").addResourceLocations("file:///D:\\uploaded\\");
+    	registry.addResourceHandler("/userAvatar/**").addResourceLocations("file:///D:\\images\\Users\\");
     	registry.addResourceHandler("/img/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
         registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");

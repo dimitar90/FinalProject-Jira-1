@@ -19,9 +19,10 @@ import com.jira.interfaces.ICommentTaskDao;
 import com.jira.interfaces.IUserDao;
 import com.jira.model.CommentTask;
 import com.jira.model.User;
+import com.jira.util.ImageConvertor;
 
 @Component
-public class CommentTaskDao implements ICommentTaskDao {
+public class CommentDao implements ICommentTaskDao {
 	private static final String INVALID_DATA = "Invalid credentials";
 	
 	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ;";
@@ -33,7 +34,7 @@ public class CommentTaskDao implements ICommentTaskDao {
 	private final IUserDao userDao;
 	
 	@Autowired
-	public CommentTaskDao(DBManager dbManager, IUserDao userDao) {
+	public CommentDao(DBManager dbManager, IUserDao userDao) {
 		this.dbManager = dbManager;
 		this.userDao = userDao;
 	}
@@ -64,7 +65,9 @@ public class CommentTaskDao implements ICommentTaskDao {
 				int userId = rs.getInt("user_id");
 
 				User user = userDao.getUserById(userId);
-				CommentViewDto comment = new CommentViewDto(description, dateTime, user);
+				String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(user.getImageUrl());
+				//String userAvatarName = user.getImageUrl().substring(user.getImageUrl().lastIndexOf("\\") + 1);
+				CommentViewDto comment = new CommentViewDto(description, dateTime, user.getName(), userImageBase64);
 				comments.add(comment);
 			}
 			

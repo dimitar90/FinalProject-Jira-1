@@ -49,6 +49,7 @@ import com.jira.model.TaskPriority;
 import com.jira.model.TaskState;
 import com.jira.model.TaskStateType;
 import com.jira.model.User;
+import com.jira.util.ImageConvertor;
 
 @Component
 public class TaskDao implements ITaskDao {
@@ -101,7 +102,7 @@ public class TaskDao implements ITaskDao {
 	}
 
 	@Override
-	public void saveTask(Task task) throws DatabaseException, SQLException {
+	public int saveTask(Task task) throws DatabaseException, SQLException {
 		Connection conn = dbManager.getConnection();
 
 		try {
@@ -124,7 +125,7 @@ public class TaskDao implements ITaskDao {
 
 			pr.executeUpdate();
 			ResultSet rs = pr.getGeneratedKeys();
-
+			
 			if (rs.next()) {
 				Integer taskId = rs.getInt(1);
 				task.setId(taskId);
@@ -139,6 +140,7 @@ public class TaskDao implements ITaskDao {
 
 			pr.close();
 			conn.commit();
+			return task.getId();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			conn.rollback();
@@ -436,7 +438,7 @@ public class TaskDao implements ITaskDao {
 			while (rs.next()) {
 				String imagePath = rs.getString("image_url");
 
-				String base64Encoded = this.convertFromLocalPathToBase64String(imagePath);
+				String base64Encoded = ImageConvertor.convertFromLocalPathToBase64String(imagePath);
 				// if image does not exist return empty string and continue;
 				if (base64Encoded.isEmpty()) {
 					continue;
@@ -452,35 +454,6 @@ public class TaskDao implements ITaskDao {
 		}
 	}
 
-	private String convertFromLocalPathToBase64String(String imagePath)
-			throws FileNotFoundException, UnsupportedEncodingException {
-		File file = new File(imagePath);
-
-		if (!file.exists()) {
-			return "";
-		}
-
-		FileInputStream fis = new FileInputStream(file);
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		try {
-			for (int readNum; (readNum = fis.read(buf)) != -1;) {
-				bos.write(buf, 0, readNum);
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-
-		byte[] bytes = bos.toByteArray();
-
-		byte[] encodeBase64 = Base64.getEncoder().encode(bytes);
-		String base64Encoded = new String(encodeBase64, "UTF-8");
-
-		return base64Encoded;
-	}
-
-
 
 	private void addCommentsToTask(TaskViewDetailsDto viewTaskDto) throws TaskException, DatabaseException {
 		if (viewTaskDto == null) {
@@ -492,18 +465,18 @@ public class TaskDao implements ITaskDao {
 	}
 
 	@Override
-	public void saveFileToDisk(Task task, MultipartFile f, String randomUUIDString) throws IOException {
-		String dirPath = PATH_IMAGE_PREFFIX + "\\" + randomUUIDString + "\\";
+	public void saveFileToDisk(Task task, MultipartFile file, String randomUUIDString) throws IOException {
+		String dirPath = PATH_IMAGE_PREFFIX + File.separator + randomUUIDString + File.separator;
 		File dir = new File(dirPath);
 		if (!dir.exists()) {
 			dir.mkdirs();
 		}
 		
-		String fullPath = dirPath + f.getOriginalFilename();
+		String fullPath = dirPath + file.getOriginalFilename();
 		File convFile = new File(fullPath);
 		convFile.createNewFile();
 		FileOutputStream fos = new FileOutputStream(convFile);
-		fos.write(f.getBytes());
+		fos.write(file.getBytes());
 		fos.close();
 		
 		task.addImageUrl(fullPath);

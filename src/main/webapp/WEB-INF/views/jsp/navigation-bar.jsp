@@ -14,7 +14,7 @@
 </head>
   
 <div id="main">
-  <div class="container">
+  <div class="container" style="display:block; height: 3px;">
     <nav>
       <div class="nav-fostrap">
         <ul>

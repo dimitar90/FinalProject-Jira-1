@@ -13,7 +13,7 @@
 </head>
   
 <div id="main">
-  <div class="container">
+  <div class="container" style="display:block; height: 3px;">
     <nav>
       <div class="nav-fostrap">
         <ul>
@@ -26,7 +26,7 @@
             </ul>
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
-            <ul class="dropdown">
+            <ul class="dropdown" >
               <li><a href="http://localhost:8080/Jira/projects/create">Create project</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a></li>

@@ -77,7 +77,7 @@
         <span>
            	Due Date:
         </span>
-          <input id="#dueDateId" type="date" name="dueDate" placeholder="Add a summary" required/>
+          <input id="#dueDateId" class="form-control pull-right" type="date" name="dueDate" required/>
     </label>
     <br>
      <label id="imageLabel">

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ import com.jira.interfaces.IUserDao;
 import com.jira.manager.UserManager;
 import com.jira.model.CommentTask;
 import com.jira.model.User;
+import com.jira.util.ImageConvertor;
 
 @Controller
 @RequestMapping(value = "/comments")
@@ -48,25 +50,35 @@ public class CommentController {
 	@RequestMapping(method = RequestMethod.GET, value = "/add")
 	public String add(@RequestParam String description,
 					  @RequestParam Integer taskId,
-					  HttpSession session) throws Exception {
-		User loggedUser = this.userManager.getLoggedUser(session);
-		if (loggedUser == null) {
-			throw new UserDataException(NOT_LOGGED_USER);
+					  HttpSession session,
+					  Model model) throws Exception {
+		try {
+			User loggedUser = this.userManager.getLoggedUser(session);
+			if (loggedUser == null) {
+				throw new UserDataException(NOT_LOGGED_USER);
+			}
+			
+			if (!this.taskDao.isExistById(taskId)) {
+				throw new CommentException(NOT_EXIST_TASK_MESSAGE);
+			}
+			
+			if (description.isEmpty()) {
+				throw new CommentException(EMPTY_DESCRIPTION_ERROR_MESSAGE);
+			}
+			
+			CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
+			this.commentTaskDao.save(comment);
+			
+			String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(loggedUser.getImageUrl());
+			//String userAvatarName = loggedUser.getImageUrl().substring(loggedUser.getImageUrl().lastIndexOf("\\") + 1);
+			
+			CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), loggedUser.getName(), userImageBase64);
+			
+			return  new Gson().toJson(commentViewDto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			return "error";
 		}
-		
-		if (!this.taskDao.isExistById(taskId)) {
-			throw new CommentException(NOT_EXIST_TASK_MESSAGE);
-		}
-		
-		if (description.isEmpty()) {
-			throw new CommentException(EMPTY_DESCRIPTION_ERROR_MESSAGE);
-		}
-		
-		CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
-		this.commentTaskDao.save(comment);
-		
-		CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), this.userDao.getUserById(comment.getUserId()));
-		
-		return  new Gson().toJson(commentViewDto);
 	}
 }
