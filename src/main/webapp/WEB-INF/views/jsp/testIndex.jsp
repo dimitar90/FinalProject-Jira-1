@@ -3,56 +3,94 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
+
+
 <head>
 
-	<jsp:include page="nav-bar-main.jsp"></jsp:include>
-	 <link rel="stylesheet" href="<c:url value="/css/style.css" />">
-	 <title>IT Talents</title>
- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<link href="search-filter.css" rel="stylesheet">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="<c:url value="/css/search-filter.css" />">
+<jsp:include page="nav-bar-main.jsp"></jsp:include>
+<link rel="stylesheet" href="<c:url value="/css/style.css" />">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CoPilot</title>
+<link rel="stylesheet" href="<c:url value="/css/bootstrap.min.css" />">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+	
+<link rel="stylesheet" href="<c:url value="/css/AdminLTE.min.css" />">
+
+<link rel="stylesheet" href="<c:url value="/css/skin-blue.min.css" />">
+<link rel="stylesheet" href="<c:url value="/css/pace.min.css" />">
+
+
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<link href="/static/css/app.f8ce4e197be91b0a3d5c93d690914585.css"
+	rel="stylesheet">
 </head>
-
-
 <body>
-
-
-<div class="container">
-  <div class="row searchFilter" >
-     <div class="col-sm-12" >
-      <div class="input-group" >
-       <input id="table_filter" type="text" class="form-control" aria-label="Text input with segmented button dropdown" >
-       <div class="input-group-btn" >
-        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><span class="label-icon" >Category</span> <span class="caret" >&nbsp;</span></button>
-        <div class="dropdown-menu dropdown-menu-right" >
-           <ul class="category_filters" >
-            <li >
-             <input class="cat_type category-input" data-label="All" id="all" value="" name="radios" type="radio" ><label for="all" >All</label>
-            </li>
-            <li >
-             <input type="radio" name="radios" id="Design" value="Design" ><label class="category-label" for="Design" >Design</label>
-            </li>
-            <li >
-             <input type="radio" name="radios" id="Marketing" value="Marketing" ><label class="category-label" for="Marketing" >Marketing</label>
-            </li>
-            <li >
-             <input type="radio" name="radios" id="Programming" value="Programming" ><label class="category-label" for="Programming" >Programming</label>
-            </li>
-            <li >
-             <input type="radio" name="radios" id="Sales" value="Sales" ><label class="category-label" for="Sales" >Sales</label>
-            </li>
-            <li >
-             <input type="radio" name="radios" id="Support" value="Support" ><label class="category-label" for="Support" >Support</label>
-            </li>
-           </ul>
-        </div>
-        <button id="searchBtn" type="button" class="btn btn-secondary btn-search" ><span class="glyphicon glyphicon-search" >&nbsp;</span> <span class="label-icon" >Search</span></button>
-       </div>
-      </div>
-     </div>
-  </div>
-</div>
-</body>
+	<div class="row center-block">
+		<h2>Simple chart</h2>
+		<div class="col-md-12">
+			<div class="box">
+				<div class="box-header">
+					<h3 class="box-title">Project progress by categories</h3>
+				</div>
+				<div class="box-body no-padding table-responsive">
+					<table class="table table-striped">
+						<tbody>
+							<tr>
+								<th style="width: 10px;">#</th>
+								<th>Projects categories</th>
+								<th>Progress</th>
+								<th style="width: 40px;">Label</th>
+							</tr>
+							<tr>
+								<td>1.</td>
+								<td>Atlassian Add-ons</td>
+								<td><div class="progress progress-xs">
+										<div class="progress-bar progress-bar-danger"
+											style="width: 55%;"></div>
+									</div></td>
+								<td><span class="badge bg-red">55%</span></td>
+							</tr>
+							<tr>
+								<td>2.</td>
+								<td>Atlassian Products</td>
+								<td><div class="progress progress-xs">
+										<div class="progress-bar progress-bar-yellow"
+											style="width: 70%;"></div>
+									</div></td>
+								<td><span class="badge bg-yellow">70%</span></td>
+							</tr>
+							<tr>
+								<td>3.</td>
+								<td>Atlassian Products</td>
+								<td><div
+										class="progress progress-xs progress-striped active">
+										<div class="progress-bar progress-bar-primary"
+											style="width: 30%;"></div>
+									</div></td>
+								<td><span class="badge bg-light-blue">30%</span></td>
+							</tr>
+							<tr>
+								<td>4.</td>
+								<td>Common moduls</td>
+								<td><div
+										class="progress progress-xs progress-striped active">
+										<div class="progress-bar progress-bar-success"
+											style="width: 90%;"></div>
+									</div></td>
+								<td><span class="badge bg-green">90%</span></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<body>
 </html>

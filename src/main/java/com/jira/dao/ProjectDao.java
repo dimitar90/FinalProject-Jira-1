@@ -155,7 +155,7 @@ public class ProjectDao implements IProjectDao {
 			throw new DatabaseException(MSG_SQL_INVALID_DATA);
 		}
 	}
-
+	@Override
 	public ProjectDto getProjectDtoByName(String projectName)
 			throws DatabaseException, SQLException, ProjectException, UserDataException {
 		String sql = "SELECT * FROM projects WHERE is_deleted = 0 AND name = ?";
@@ -183,7 +183,8 @@ public class ProjectDao implements IProjectDao {
 		}
 		return null;
 	}
-
+	
+	@Override
 	public List<String> getLimitedProjectNamesWithPrefix(String prefix) throws DatabaseException {
 		List<String> projectNames = new ArrayList<>();
 
@@ -202,7 +203,21 @@ public class ProjectDao implements IProjectDao {
 			throw new DatabaseException(MSG_SQL_INVALID_DATA);
 		}
 	}
-
+	
+	@Override
+	public List<Integer> getCategoriesId(String[] categories) {
+		
+		List<Integer> categoryIds = new ArrayList<>();
+		if (categories == null) {
+			categoryIds.addAll(this.projectCategoryDao.getAllIds());
+		}else {
+			for (String id : categories) {
+				categoryIds.add(Integer.parseInt(id));
+			}
+		}
+		return categoryIds;
+	}
+	
 	@Override
 	public boolean isExistById(int projectId) throws DatabaseException {
 		String sql = "SELECT id FROM projects WHERE id = ?";
@@ -291,7 +306,8 @@ public class ProjectDao implements IProjectDao {
 			throw new DatabaseException(MSG_INVALID_ID);
 		}
 	}
-
+	
+	@Override
 	public void deleteProjectById(int id) throws DatabaseException {
 		String sql = "UPDATE projects SET is_deleted = 1 WHERE id =  ? AND is_deleted = 0";
 		try {
@@ -441,7 +457,7 @@ public class ProjectDao implements IProjectDao {
 				"SELECT id,name,project_type_id,project_category_id,project_lead_id FROM projects WHERE ");
 				finalQuery.append(queryParts.get(0)).append(" AND  is_deleted = 0");
 				try (PreparedStatement ps = this.manager.getConnection().prepareStatement(finalQuery.toString().trim())) {
-					this.setParametersToExecuteTheQuery(categoriesId,ps);
+					this.setParametersToExecuteTheQueryCategories(categoriesId,ps);
 					
 					ResultSet result = ps.executeQuery();
 					
@@ -472,7 +488,7 @@ public class ProjectDao implements IProjectDao {
 		return projects;
 	}
 
-	private void setParametersToExecuteTheQuery(List<Integer> categoriesId, PreparedStatement ps) throws SQLException {
+	private void setParametersToExecuteTheQueryCategories(List<Integer> categoriesId, PreparedStatement ps) throws SQLException {
 		for (int index = 1; index <= categoriesId.size(); index++) {
 			ps.setInt(index, categoriesId.get(index - 1));
 		}
@@ -492,6 +508,60 @@ public class ProjectDao implements IProjectDao {
 		queryParts.add(currentQuery.toString().trim());
 	}
 
+/*	@Override
+	public List<Integer> getTypesId(String[] types) {
+		List<Integer> typesId = new ArrayList<>();
+		if (types == null) {
+			typesId.addAll(this.projectTypeDao.getAllIds());
+		}else {
+			for (String id : types) {
+				typesId.add(Integer.parseInt(id));
+			}
+		}
+		return typesId;
+	}*/
+
+/*	@Override
+	public List<ProjectDto> getProjectsFilteredByTypes(List<Integer> typesId) throws Exception {
+		List<String> queryParts = new LinkedList<>();
+
+		this.createQueryBasedOnTypesIds(typesId,queryParts);
+		
+		StringBuilder finalQuery = new StringBuilder(
+				"SELECT id,name,project_type_id,project_category_id,project_lead_id FROM projects WHERE ");
+				finalQuery.append(queryParts.get(0)).append(" AND  is_deleted = 0");
+				try (PreparedStatement ps = this.manager.getConnection().prepareStatement(finalQuery.toString().trim())) {
+					this.setParametersToExecuteTheQueryTypes(typesId,ps);
+					
+					ResultSet result = ps.executeQuery();
+					
+					List<ProjectDto> projects = this.extractResult(result);
+
+					return projects;
+				}
+	}*/
+
+	/*private void createQueryBasedOnTypesIds(List<Integer> typesId, List<String> queryParts) {
+		StringBuilder currentQuery = new StringBuilder();
+		currentQuery.append("project_types_id IN (");
+
+		for (int index = 0; index < typesId.size(); index++) {
+			currentQuery.append("?").append(",");
+		}
+
+		currentQuery.deleteCharAt(currentQuery.length() - 1);
+		currentQuery.append(")");
+
+		queryParts.add(currentQuery.toString().trim());
+	
+	}*/
+
+	/*private void setParametersToExecuteTheQueryTypes(List<Integer> typesId, PreparedStatement ps) throws SQLException {
+		for (int index = 1; index <= typesId.size(); index++) {
+			ps.setInt(index, typesId.get(index - 1));
+		}
+	}
+*/
 	
 
 }

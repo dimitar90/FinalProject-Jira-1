@@ -93,9 +93,8 @@ public class ProjectController {
 	@RequestMapping(value = "/filterCategory", method = RequestMethod.POST)
 	public String filterCategory(Model model,@RequestParam("selectedCategoriesId") String[] categories) {
 		try {
-
 			
-			List<Integer> categoriesId = this.getCategoriesId(categories);
+			List<Integer> categoriesId = this.projectDao.getCategoriesId(categories);
 			List<ProjectDto> projects = projectDao.getProjectsFilteredByCategories(categoriesId);
 			
 			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
@@ -111,18 +110,7 @@ public class ProjectController {
 
 	
 	
-	private List<Integer> getCategoriesId(String[] categories) {
 	
-		List<Integer> categoryIds = new ArrayList<>();
-		if (categories == null) {
-			categoryIds.addAll(this.projectCategoryDao.getAllIds());
-		}else {
-			for (String id : categories) {
-				categoryIds.add(Integer.parseInt(id));
-			}
-		}
-		return categoryIds;
-	}
 
 	@RequestMapping(value = "/userProjects/{currPage}", method = RequestMethod.GET)
 	public String showAllProjects(Model model, HttpSession session, @PathVariable int currPage) {

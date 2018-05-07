@@ -144,4 +144,9 @@ public class ProjectTypeDao implements IProjectTypeDao {
 	public String getProjectTypeById(int id) {
 		return projectTypes.get(id).getType().getValue();
 	}
+
+
+	public List<Integer> getAllIds() {
+		return new ArrayList<>(this.projectTypes.keySet());
+	}
 }

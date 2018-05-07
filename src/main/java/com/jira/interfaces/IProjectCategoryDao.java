@@ -1,11 +1,9 @@
 package com.jira.interfaces;
 
-import java.sql.SQLException;
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.stereotype.Component;
 
-import com.jira.exception.ProjectException;
 import com.jira.model.ProjectCategory;
 import com.jira.model.ProjectCategoryEnum;
 
@@ -15,8 +13,8 @@ public interface IProjectCategoryDao {
 
 	public ProjectCategoryEnum getProjectCategoryEnum(String name) throws Exception;
 
-	public List<ProjectCategory> getAllCategories();
+	public Collection<ProjectCategory> getAllCategories();
 
 	public String getProjectCategoryById(int projectCategoryId);
-	public List<Integer> getAllIds();
+	public Collection<Integer> getAllIds();
 }

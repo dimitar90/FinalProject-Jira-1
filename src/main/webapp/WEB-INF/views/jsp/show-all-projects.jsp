@@ -20,16 +20,7 @@
 <body>			
 <jsp:include page="category-filter-form.jsp"></jsp:include>
 
-<%-- <form  action="<c:url value="http://localhost:8080/Jira/projects/filterCategory" />" method="POST">
-		<span>
-			Filter by category
-			<c:forEach items="${ categories }" var="it">
-			<input type="checkbox" name="selectedCategoriesId" value="${it.id}"> ${it.category.value}
-		</c:forEach>
-		</span>
-		<br>
-		<input type="submit" value="Filter" />
-</form> --%>
+
 					<div class="row">
 						<div class="col-sm-12">
 							<table class="table table-bordered dataTable" id="dataTable"
@@ -54,18 +45,6 @@
 										<th class="sorting" tabindex="0" aria-controls="dataTable"
 											rowspan="1" colspan="1" style="width: 71px;"
 											aria-label="Age: activate to sort column ascending">Project Lead</th>
-										<!-- <th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 140px;"
-											aria-label="Start date: activate to sort column ascending">Priority</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">State</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">Details</th>
-										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 114px;"
-											aria-label="Salary: activate to sort column ascending">Actions</th> -->
 									</tr>
 								</thead>
 								<tfoot>
@@ -75,10 +54,6 @@
 										<th rowspan="1" colspan="1">Project Type</th>
 										<th rowspan="1" colspan="1">Project Category</th>
 										<th rowspan="1" colspan="1">Project Lead</th>
-										<!-- <th rowspan="1" colspan="1">Priority</th>
-										<th rowspan="1" colspan="1">State</th>
-										<th rowspan="1" colspan="1">Details</th>
-										<th rowspan="1" colspan="1">Actions</th> -->
 									</tr>
 								</tfoot>
 								<tbody>
@@ -268,6 +243,5 @@ function debounce( fn, threshold ) {
 	}
 }
 </script> -->
-	 -->
 </body>
 </html>

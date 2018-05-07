@@ -14,11 +14,13 @@ public interface IProjectTypeDao {
 
 	public ProjectTypeEnum getProjectTypeEnum(String type) throws Exception;
 
-	public List<ProjectType> getAllProjectTypes();
+	public Collection<ProjectType> getAllProjectTypes();
 
 	public Collection<ProjectTypeSoftwareDto> getAllSoftwareProjects() throws Exception;
 
 	public Collection<ProjectTypeBusinessDto> getAllBusinessProjects() throws Exception;
 	
 	public String getProjectTypeById(int id);
+	
+	public Collection<Integer> getAllIds();
 }
