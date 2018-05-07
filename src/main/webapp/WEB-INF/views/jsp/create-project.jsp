@@ -54,7 +54,7 @@
 			<!-- Text input-->
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="PTYPE">Project
-					type</label>
+					category</label>
 				<div class="col-md-4">
 					<select id="PTYPE" name="projectCategory" class="form-control">
 						<c:forEach items="${ projectCategories }" var="p">

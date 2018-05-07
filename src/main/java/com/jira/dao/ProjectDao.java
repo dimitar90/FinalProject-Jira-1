@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.jira.db.DBManager;
 import com.jira.dto.ProjectDto;
-import com.jira.dto.TaskBasicViewDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.ProjectException;
 import com.jira.exception.UserDataException;
@@ -429,6 +429,67 @@ public class ProjectDao implements IProjectDao {
 			e.printStackTrace();
 			throw new DatabaseException(MSG_SQL_INVALID_DATA, e);
 		}
+	}
+	
+	@Override
+	public List<ProjectDto> getProjectsFilteredByCategories(List<Integer> categoriesId) throws SQLException, UserDataException {
+		List<String> queryParts = new LinkedList<>();
+
+		this.createQueryBasedOnCategoryIds(categoriesId,queryParts);
+		
+		StringBuilder finalQuery = new StringBuilder(
+				"SELECT id,name,project_type_id,project_category_id,project_lead_id FROM projects WHERE ");
+				finalQuery.append(queryParts.get(0)).append(" AND  is_deleted = 0");
+				try (PreparedStatement ps = this.manager.getConnection().prepareStatement(finalQuery.toString().trim())) {
+					this.setParametersToExecuteTheQuery(categoriesId,ps);
+					
+					ResultSet result = ps.executeQuery();
+					
+					List<ProjectDto> projects = this.extractResult(result);
+
+					return projects;
+				}
+	}
+
+	private List<ProjectDto> extractResult(ResultSet result) throws UserDataException, SQLException {
+		List<ProjectDto> projects = new ArrayList<>();
+		while(result.next()) {
+			
+			int id = result.getInt("id");
+			String projectName = result.getString("name");
+			int projectTypeId = result.getInt("project_type_id");
+			int projectCategoryId = result.getInt("project_category_id");
+			int projectLeadId = result.getInt("project_lead_id");
+
+			String projectType = projectTypeDao.getProjectTypeById(projectTypeId);
+			String projectCategory = projectCategoryDao.getProjectCategoryById(projectCategoryId);
+			User user = userDao.getUserById(projectLeadId);
+			
+			
+			ProjectDto dto = ProjectDto.getDto(id, projectName, projectType, projectCategory, user.getName(), projectLeadId);
+			projects.add(dto);
+		}
+		return projects;
+	}
+
+	private void setParametersToExecuteTheQuery(List<Integer> categoriesId, PreparedStatement ps) throws SQLException {
+		for (int index = 1; index <= categoriesId.size(); index++) {
+			ps.setInt(index, categoriesId.get(index - 1));
+		}
+	}
+
+	private void createQueryBasedOnCategoryIds(List<Integer> categoriesId,List<String> queryParts) {
+		StringBuilder currentQuery = new StringBuilder();
+		currentQuery.append("project_category_id IN (");
+
+		for (int index = 0; index < categoriesId.size(); index++) {
+			currentQuery.append("?").append(",");
+		}
+
+		currentQuery.deleteCharAt(currentQuery.length() - 1);
+		currentQuery.append(")");
+
+		queryParts.add(currentQuery.toString().trim());
 	}
 
 	

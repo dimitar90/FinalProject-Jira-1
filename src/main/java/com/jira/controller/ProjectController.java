@@ -55,10 +55,10 @@ public class ProjectController {
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String create(Model model) {
 		try {// TODO session validate
-				// get all project, categories and types
+			
 			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
 			List<ProjectType> projectTypes = projectTypeDao.getAllProjectTypes();
-			// put them into the request
+			
 			model.addAttribute("projectCategories", projectCategories);
 			model.addAttribute("projectTypes", projectTypes);
 
@@ -88,6 +88,40 @@ public class ProjectController {
 			model.addAttribute("exception", e);
 			return "error";
 		}
+	}
+
+	@RequestMapping(value = "/filterCategory", method = RequestMethod.POST)
+	public String filterCategory(Model model,@RequestParam("selectedCategoriesId") String[] categories) {
+		try {
+
+			
+			List<Integer> categoriesId = this.getCategoriesId(categories);
+			List<ProjectDto> projects = projectDao.getProjectsFilteredByCategories(categoriesId);
+			
+			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
+			
+			model.addAttribute("projects", projects);
+			model.addAttribute("categories", projectCategories);
+			return "filtred-projects-result";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+
+	
+	
+	private List<Integer> getCategoriesId(String[] categories) {
+	
+		List<Integer> categoryIds = new ArrayList<>();
+		if (categories == null) {
+			categoryIds.addAll(this.projectCategoryDao.getAllIds());
+		}else {
+			for (String id : categories) {
+				categoryIds.add(Integer.parseInt(id));
+			}
+		}
+		return categoryIds;
 	}
 
 	@RequestMapping(value = "/userProjects/{currPage}", method = RequestMethod.GET)
@@ -183,6 +217,9 @@ public class ProjectController {
 	@RequestMapping(value = "/delete/{dtoProjectId}", method = RequestMethod.GET)
 	public String deletProject(Model model, @PathVariable("dtoProjectId") int projectId, HttpServletRequest request) {
 		try {
+			
+			//TODO check for session exist
+			
 			if (!this.projectDao.isExistById(projectId)) {
 				return "redirect:../all/0";
 			}
@@ -193,13 +230,13 @@ public class ProjectController {
 				return "redirect:../all/0";
 			}
 
+			
 			HttpSession session = request.getSession();
 			User user = (User) session.getAttribute("user");
 			int loggedUserId = user.getId();
 			int leadId = projectDao.getLeadByProjectId(projectId);
-
 			if (leadId != loggedUserId) {
-				return "redirect:../showAllProjects";
+				return "redirect:../all/0";
 			}
 
 			projectDao.deleteProjectById(projectId);
@@ -207,7 +244,7 @@ public class ProjectController {
 			List<ProjectDto> dtoList = projectDao.getAllBelongingToUser(user.getId());
 
 			session.setAttribute("myProjects", dtoList);
-			return "project-view";
+			return "redirect:../all/0";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "error";
@@ -232,8 +269,9 @@ public class ProjectController {
 
 			List<ProjectDto> projects = this.projectDao.getProjectPerPage(currPage, RECORDS_PER_PAGE);
 			model.addAttribute("projects", projects);
-
-			List<ProjectDto> allProjects = new ArrayList<>();
+			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
+			
+			model.addAttribute("categories", projectCategories);
 
 			// allProjects.addAll(projectDao.getAllProjectDtos());
 			// model.addAttribute("allProjects", allProjects);

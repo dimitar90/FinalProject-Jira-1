@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,5 +67,11 @@ public class ProjectCategoryDao implements IProjectCategoryDao{
 
 	public String getProjectCategoryById(int projectCategoryId) {
 		return projectCategories.get(projectCategoryId).getCategory().getValue();
+	}
+
+
+	@Override
+	public List<Integer> getAllIds() {
+		return new ArrayList<>(this.projectCategories.keySet());
 	}
 }

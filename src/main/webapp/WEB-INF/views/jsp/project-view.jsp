@@ -12,8 +12,11 @@
        <link rel="stylesheet" href="<c:url value="css/default.css" />"> 
  
 </head>
-<body>
 
+<body>
+<%-- <c:set value="${sessionScope.user} var="user"/> --%>
+	
+<c:if test="${!empty dtoProject }">
 <div class="col-sm-12">
                         <div class="white-box">
                             <h3 class="box-title">${dtoProject.projectLead} </h3>
@@ -36,17 +39,81 @@
 											 	<td>${dtoProject.projectType}</td>
 			   								 	<td>${dtoProject.projectCategory}</td>
 											 	<td>
-											 	<a href="http://localhost:8080/Jira/userId/${dtoProject.id}">${dtoProject.projectLead}</a>
+											 		<a href="http://localhost:8080/Jira/userId/${dtoProject.id}">${dtoProject.projectLead}</a>
 											 	</td>
-											 <th>
-											<a href="http://localhost:8080/Jira/projects/delete/${ dtoProject.id }">Delete</a>
-											</th>
+											 	<td>
+											 		<c:if test="${user.id == dtoProject.projectLeadId}">
+													<a href="http://localhost:8080/Jira/projects/delete/${ dtoProject.id }">Delete</a>			
+													</c:if>
+												</td>
 										</tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+</c:if>
+                     
+                    <c:if test="${empty dtoProject }">
+                      <div>
+                       <span>
+                       <h1>No project to view</h1>
+                       </span>
+                      </div>
+                    </c:if>
+                    <div class="col-sm-12">
+                        <div class="white-box">
+                            <h3 class="box-title"> </h3>
+                            <p class="text-muted">Tasks of the project</p>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+											<th>Task Summary</th>
+											<th>Due date</th>
+											<th>Project name</th>
+											<th >Priority</th>
+											<th >State</th>
+											<th >Creator</th>
+											<th >Assigne</th>
+											<th>Details</th>
+											<th>Action</th>
+										</tr>
+                                    </thead>
+                                    <tbody>
+                                        <c:forEach items="${ tasksDto }" var="t">
+										  <tr>	
+											<td >${t.summary}</td>
+											<td>${t.dueDate}</td>
+											<td>${t.project.name}</td>
+											<td>${t.priority.type.value}</td>
+											<td>${t.state.type.value}</td>
+											<td>${t.creator.name}</td>
+											<td>${t.assignee.name}</td>
+											<td><a href="../detail/${ t.id }">Show details</a></td>
+											<td>
+												<c:if test="${not empty user}">
+													<c:if
+														test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
+															<a href="../edit/${ t.id }">[Edit]</a>
+																<a href="../delete/${ t.id }">[Delete]</a>
+																</c:if>
+															</c:if>
+														</td>
+										 </tr>
+									   </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="${empty tasksDto && !empty dtoProject}">
+                      <div>
+                       <span>
+                       <h1>No task on the projects</h1>
+                       </span>
+                      </div>
+                    </c:if>
 </body>
 </html>
 

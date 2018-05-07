@@ -18,4 +18,5 @@ public interface IProjectCategoryDao {
 	public List<ProjectCategory> getAllCategories();
 
 	public String getProjectCategoryById(int projectCategoryId);
+	public List<Integer> getAllIds();
 }

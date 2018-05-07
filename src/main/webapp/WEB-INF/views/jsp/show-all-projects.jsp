@@ -13,61 +13,23 @@
 <link rel="stylesheet" href="<c:url value="/css/style.css" />">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 
-<title>View all projects</title>
-</head>
-	  <jsp:include page="nav-bar-main.jsp"></jsp:include>
-	  
-	  <c:set var="first" value="0" />
-<body>
-	<%-- <h1>All projects</h1>
-	<table>
-		<tr>
-			<th>Project name</th>
-			<th>Project type</th>
-			<th class="project">Project category</th>
-			<th class="project">Project lead</th>
-		</tr>
-		<c:forEach items="${ allProjects }" var="p">
-		<tr>	
-			<td>
-			<a href="http://localhost:8080/Jira/projects/projectId/${p.id}">${p.name}</a>
-			</td> 
-			<td>${p.projectType}</td>
-			<td class="project">${p.projectCategory}</td>
-			<td>
-			<a href="http://localhost:8080/Jira/leadId/${p.projectLeadId}">${p.projectLead}</a>
-			</td>
-		</tr>
-		</c:forEach>
-	</table>
-	 --%>
-	
-	
-		<div class="card mb-3">
-		<div class="card-header">
-			<i class="fa fa-table"></i> ALL PROJECTS VIEW
-		</div>
-		<div class="card-body">
-			<div class="table-responsive">
-				<div id="dataTable_wrapper"
-					class="dataTables_wrapper container-fluid dt-bootstrap4">
-					
-			<div class="search-container">
+<title>IT Talents</title>
+<jsp:include page="nav-bar-main.jsp"></jsp:include>
 
-		<form action="searchBtn" method="post">
-			<input id="projectInput" type="text" list="projects" name="project"
-				placeholder="Search.." required>
-			<button type="submit">
-				<i class="fa fa-search"></i>
-			</button>
-		</form>
-	<div id="searchResult"></div>
-	</div>
-</div> 
-							</div>
-						</div>
-					</div>
-					
+</head>
+<body>			
+<jsp:include page="category-filter-form.jsp"></jsp:include>
+
+<%-- <form  action="<c:url value="http://localhost:8080/Jira/projects/filterCategory" />" method="POST">
+		<span>
+			Filter by category
+			<c:forEach items="${ categories }" var="it">
+			<input type="checkbox" name="selectedCategoriesId" value="${it.id}"> ${it.category.value}
+		</c:forEach>
+		</span>
+		<br>
+		<input type="submit" value="Filter" />
+</form> --%>
 					<div class="row">
 						<div class="col-sm-12">
 							<table class="table table-bordered dataTable" id="dataTable"
@@ -87,7 +49,7 @@
 											rowspan="1" colspan="1" style="width: 304px;"
 											aria-label="Position: activate to sort column ascending">Project Type</th>
 										<th class="sorting" tabindex="0" aria-controls="dataTable"
-											rowspan="1" colspan="1" style="width: 145px;"
+											rowspan="1" colspan="1" style="width:145px;"
 											aria-label="Office: activate to sort column ascending">Project Category</th>
 										<th class="sorting" tabindex="0" aria-controls="dataTable"
 											rowspan="1" colspan="1" style="width: 71px;"
@@ -260,5 +222,52 @@
 	</div>
 	
 	
+<!-- 	<script>
+
+//quick search regex
+<!-- var qsRegex;
+
+//init Isotope
+var $grid = $('.grid').isotope({
+	itemSelector: '.grid-item',
+	layoutMode: 'vertical',
+	percentPosition: true,
+	hiddenStyle: {
+		opacity: 0
+	},
+	visibleStyle: {
+		opacity: 1
+	},
+	filter: function() {
+		return qsRegex ? $(this).text().match( qsRegex ) : true;
+	}
+});
+
+//use value of search field to filter
+var $quicksearch = $('.quicksearch').keyup( debounce( function() {
+	qsRegex = new RegExp( $quicksearch.val(), 'gi' );
+	$grid.isotope();
+}, 300 ) );
+
+$grid.on('shown.bs.collapse hidden.bs.collapse', function() {
+$grid.isotope('layout');
+})
+
+//debounce so filtering doesn't happen every millisecond
+function debounce( fn, threshold ) {
+	var timeout;
+	return function debounced() {
+		if ( timeout ) {
+			clearTimeout( timeout );
+		}
+		function delayed() {
+			fn();
+			timeout = null;
+		}
+		timeout = setTimeout( delayed, threshold || 100 );
+	}
+}
+</script> -->
+	 -->
 </body>
 </html>

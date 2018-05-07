@@ -46,5 +46,6 @@ public interface IProjectDao {
 	List<ProjectDto> getProjectsDtoFromResult(ResultSet result) throws Exception;
 	
 	public int getCountOfUserProjects(int userId) throws Exception; 
+	public List<ProjectDto> getProjectsFilteredByCategories(List<Integer> categoriesId)throws Exception;
 	
 }
