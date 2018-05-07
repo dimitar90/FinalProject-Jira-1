@@ -34,7 +34,7 @@ import com.jira.dto.TaskViewDetailsDto;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.TaskException;
 import com.jira.exception.UserDataException;
-import com.jira.interfaces.ICommentTaskDao;
+import com.jira.interfaces.ICommentDao;
 import com.jira.interfaces.IProjectDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.ITaskIssueDao;
@@ -87,11 +87,11 @@ public class TaskDao implements ITaskDao {
 	private final ITaskIssueDao taskIssueDao;
 	private final IUserDao userDao;
 	private final IProjectDao projectDao;
-	private final ICommentTaskDao commentDao;
+	private final ICommentDao commentDao;
 
 	@Autowired
 	public TaskDao(DBManager dbManager, ITaskPriorityDao taskPriorityDao, ITaskStateDao taskStateDao,
-			ITaskIssueDao taskIssueDao, IUserDao userDao, IProjectDao projectDao, ICommentTaskDao commentDao) {
+			ITaskIssueDao taskIssueDao, IUserDao userDao, IProjectDao projectDao, ICommentDao commentDao) {
 		this.dbManager = dbManager;
 		this.taskPriorityDao = taskPriorityDao;
 		this.taskStateDao = taskStateDao;

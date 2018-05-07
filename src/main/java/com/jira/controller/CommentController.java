@@ -19,11 +19,11 @@ import com.jira.dto.CommentViewDto;
 import com.jira.exception.CommentException;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.UserDataException;
-import com.jira.interfaces.ICommentTaskDao;
+import com.jira.interfaces.ICommentDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.IUserDao;
 import com.jira.manager.UserManager;
-import com.jira.model.CommentTask;
+import com.jira.model.Comment;
 import com.jira.model.User;
 import com.jira.util.ImageConvertor;
 
@@ -35,14 +35,12 @@ public class CommentController {
 	private static final String NOT_EXIST_TASK_MESSAGE = "This task not exist!";
 
 	private final ITaskDao taskDao;
-	private final ICommentTaskDao commentTaskDao;
-	private final IUserDao userDao;
+	private final ICommentDao commentTaskDao;
 	private final UserManager userManager;
 	@Autowired
-	public CommentController(ITaskDao taskDao, ICommentTaskDao commentTaskDao, IUserDao userDao, UserManager userManager) {
+	public CommentController(ITaskDao taskDao, ICommentDao commentTaskDao, UserManager userManager) {
 		this.taskDao = taskDao;
 		this.commentTaskDao = commentTaskDao;
-		this.userDao = userDao;
 		this.userManager = userManager;
 	}
 
@@ -66,7 +64,7 @@ public class CommentController {
 				throw new CommentException(EMPTY_DESCRIPTION_ERROR_MESSAGE);
 			}
 			
-			CommentTask comment = new CommentTask(description, LocalDateTime.now(), loggedUser.getId(), taskId);
+			Comment comment = new Comment(description, LocalDateTime.now(), loggedUser.getId(), taskId);
 			this.commentTaskDao.save(comment);
 			
 			String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(loggedUser.getImageUrl());
