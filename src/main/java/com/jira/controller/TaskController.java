@@ -44,6 +44,7 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
+	private static final long MAX_FILE_SIZE_IN_BYTES = 5 * 1024 * 1024;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
@@ -53,7 +54,7 @@ public class TaskController {
 	private static final String FILTERED_TASK_TABLE_NAME = "FILTERED TASKS";
 
 	private static final String TASK_DUE_DATE_EXCEPTION_MESSAGE = "Due date can not be before today's date!";
-	
+
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskIssueDao taskIssueDao;
 	private final IProjectDao projectDao;
@@ -374,7 +375,7 @@ public class TaskController {
 				continue;
 			}
 			
-			if (file.getSize() > SpringWebConfig.MAX_FILE_SIZE_IN_BYTES) {
+			if (file.getSize() > MAX_FILE_SIZE_IN_BYTES) {
 				return false;
 			}
 			

@@ -10,14 +10,15 @@ public class CommentViewDto {
 	private String description;
 	private LocalDateTime dateTime;
 	private String username;
-	private String userImageBase64;
+	//private String userImageBase64;
+	private String userAvatarName;
 
-	public CommentViewDto(String description, LocalDateTime dateTime, String username, String userImageBase64) {
+	public CommentViewDto(String description, LocalDateTime dateTime, String username, String userAvatarName) {
 		this.setDescription(description);
 		this.setDateTime(dateTime);
 		this.setUsername(username);
-		this.setUserImageBase64(userImageBase64);
-		//this.setUserAvatarName(userAvatarName);
+		//this.setUserImageBase64(userImageBase64);
+		this.setUserAvatarName(userAvatarName);
 	}
 
 	public String getDescription() {
@@ -44,19 +45,19 @@ public class CommentViewDto {
 		this.username = username;
 	}
 	
-	public String getUserImageBase64() {
-		return userImageBase64;
-	}
-
-	public void setUserImageBase64(String userImageBase64) {
-		this.userImageBase64 = userImageBase64;
-	}
+//	public String getUserImageBase64() {
+//		return userImageBase64;
+//	}
+//
+//	public void setUserImageBase64(String userImageBase64) {
+//		this.userImageBase64 = userImageBase64;
+//	}
 	
-	/*public String getUserAvatarName() {
+	public String getUserAvatarName() {
 		return userAvatarName;
 	}
 
 	public void setUserAvatarName(String userAvatarName) {
 		this.userAvatarName = userAvatarName;
-	}*/
+	}
 }

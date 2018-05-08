@@ -7,13 +7,13 @@
 
  <title>IT Talents</title>
   
-<link href="<c:url value="/css/style.css" />" rel="stylesheet">  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<link href="<c:url value="/css/style.css" />" rel="stylesheet">  
   
 </head>
   
 <div id="main">
-  <div class="container" style="display:block; height: 3px;">
+  <div class="container">
     <nav>
       <div class="nav-fostrap">
         <ul>
@@ -26,7 +26,7 @@
             </ul>
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>
-            <ul class="dropdown" >
+            <ul  id="showfront" class="dropdown"  >
               <li><a href="http://localhost:8080/Jira/projects/create">Create project</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllSoftware">Software</a></li>
               <li><a href="http://localhost:8080/Jira/projects/showAllBusiness">Business</a></li>

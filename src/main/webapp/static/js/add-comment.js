@@ -8,17 +8,19 @@ function addComment() {
 			if (this.readyState == 4 && this.status == 200) {
 				var json = request.responseText;
 				var newComment = JSON.parse(json);
+				
+				console.log(newComment);
 	
 				var newCommentHtml = "<div class=\"row\">"+
 										"<div class=\"col-md-2\">"+
 										"<div>" +
 											"<div>" +
 												"<div>" +
-													"<span><img src=\"data:image/jpeg;base64," + newComment.userImageBase64  + "\" height=\"100\" width=\"100\" class=\"avatar img-circle\" alt=\"avatar\"></span>" +
+													"<span><img src=\"/Jira/userAvatar/" + newComment.userAvatarName+"\" height=\"100\" width=\"100\"></span>" +
 												"</div>" +
 											"</div>" +
 											"<div>" +
-												+"<p>" + newComment.username + "</p>" +
+												"<p>" + newComment.username + "</p>" +
 											"</div>" +
 										"</div>" +
 									"</div>" +

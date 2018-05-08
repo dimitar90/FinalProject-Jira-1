@@ -265,3 +265,7 @@ a { text-decoration: none; }
   right: 0;
   left: 0;
 }
+
+#showfront {
+	z-index: 1000;
+}

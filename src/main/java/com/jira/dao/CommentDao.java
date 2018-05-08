@@ -73,9 +73,9 @@ public class CommentDao implements ICommentDao {
 				int userId = rs.getInt("user_id");
 
 				User user = userDao.getUserById(userId);
-				String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(user.getImageUrl());
-				//String userAvatarName = user.getImageUrl().substring(user.getImageUrl().lastIndexOf("\\") + 1);
-				CommentViewDto comment = new CommentViewDto(description, dateTime, user.getName(), userImageBase64);
+				//String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(user.getImageUrl());
+				String userAvatarName = user.getImageUrl().substring(user.getImageUrl().lastIndexOf("\\") + 1);
+				CommentViewDto comment = new CommentViewDto(description, dateTime, user.getName(), userAvatarName);
 				comments.add(comment);
 			}
 			

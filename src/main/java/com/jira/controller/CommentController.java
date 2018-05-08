@@ -67,10 +67,10 @@ public class CommentController {
 			Comment comment = new Comment(description, LocalDateTime.now(), loggedUser.getId(), taskId);
 			this.commentTaskDao.save(comment);
 			
-			String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(loggedUser.getImageUrl());
-			//String userAvatarName = loggedUser.getImageUrl().substring(loggedUser.getImageUrl().lastIndexOf("\\") + 1);
+			//String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(loggedUser.getImageUrl());
+			String userAvatarName = loggedUser.getImageUrl().substring(loggedUser.getImageUrl().lastIndexOf("\\") + 1);
 			
-			CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), loggedUser.getName(), userImageBase64);
+			CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), loggedUser.getName(), userAvatarName);
 			
 			return  new Gson().toJson(commentViewDto);
 		} catch (Exception e) {

@@ -26,10 +26,11 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @EnableWebMvc
 @ComponentScan("com.jira*")
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
-	public static final int MAX_FILE_SIZE_IN_BYTES = 5 * 1024 * 1024;
+	public static final int MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
+	
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    	registry.addResourceHandler("/userAvatar/**").addResourceLocations("file:///D:\\images\\Users\\");
+    	registry.addResourceHandler("/userAvatar/**").addResourceLocations("file:///C:\\images\\Users\\");
     	registry.addResourceHandler("/img/**").addResourceLocations("/static/images/");
         registry.addResourceHandler("/css/**").addResourceLocations("/static/css/");
         registry.addResourceHandler("/pdfs/**").addResourceLocations("/static/pdf/");

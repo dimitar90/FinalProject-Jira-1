@@ -138,9 +138,7 @@
 					<div>
 						<div>
 							<div>
-								<span><img
-									src="data:image/jpeg;base64,${c.userImageBase64}" height="100"
-									width="100" class="avatar img-circle" alt="avatar"></span>
+								<span><img src="<c:url value="/userAvatar/${ c.userAvatarName }" />" height="100" width="100"></span>
 							</div>
 						</div>
 						<div>
