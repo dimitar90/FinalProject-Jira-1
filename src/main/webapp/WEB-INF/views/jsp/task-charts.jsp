@@ -167,6 +167,7 @@
 			          ['Task', 'Hours per Day'],
 			          ['To do', ${ states.get("To do") }],
 			          ['In progress', ${ states.get("In progress") }],
+			          ['Code Review', ${ states.get("Code Review") }],
 			          ['Done', ${ states.get("Done") }]
 			        ]);
 			

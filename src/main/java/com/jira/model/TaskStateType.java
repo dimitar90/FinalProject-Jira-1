@@ -3,7 +3,8 @@ package com.jira.model;
 public enum TaskStateType {
 	toDo("To do"),
 	inProgress("In progress"),
-	done("Done");
+	done("Done"),
+	codeReview("Code Review");
 	
 	private String value;
 
