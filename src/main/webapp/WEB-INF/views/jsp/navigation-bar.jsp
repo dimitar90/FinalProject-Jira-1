@@ -22,7 +22,6 @@
           <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a></li>
-              <li><a href="http://localhost:8080/Jira/tasks/usertasks">My open issues</a> </li>
             </ul>
           </li>
           <li><a href="javascript:void(0)" >Projects<span class="arrow-down"></span></a>

@@ -8,6 +8,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,10 +36,12 @@ import com.jira.model.User;
 @RequestMapping(value = "/export")
 public class ExportController {
 	private static final String NOT_LOGGED_MESSAGE = "You must logged in if you want download pdf with tasks!";
-	
+	private static final String SUCCESSFULLY_DOWNLOAD_PDF_MESSAGE = "User %s with id:%d successfully downloaded pdf file with all tasks.";
+			
+    private static final Logger logger = LogManager.getLogger(ExportController.class);
 	private final IExportDao exportDao;
 	private final UserManager userManager;
-	
+
 	@Autowired
 	public ExportController(IExportDao exportDao, UserManager userManager) {
 		this.exportDao = exportDao;
@@ -56,11 +60,13 @@ public class ExportController {
 			response.setContentType("application/pdf");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + "allTasks.pdf" + "\"");
 			this.exportDao.exportIntoPdf(os);
-
+			
+			logger.info(String.format(SUCCESSFULLY_DOWNLOAD_PDF_MESSAGE, loggedUser.getName(), loggedUser.getId()));
 			return "";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e);
 			return "error";
 		}
 	}

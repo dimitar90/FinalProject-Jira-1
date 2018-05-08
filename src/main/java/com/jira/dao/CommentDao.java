@@ -45,15 +45,13 @@ public class CommentDao implements ICommentDao {
 			pr.setTimestamp(2, Timestamp.valueOf(comment.getDateTime()));
 			pr.setInt(3, comment.getUserId());
 			pr.setInt(4, comment.getTaskId());
-			
-			ResultSet rs = pr.getGeneratedKeys();
-			
-			if (rs.next()) {
-				Integer commentId = rs.getInt(1);
-				comment.setId(commentId);
-			}
-			
 			pr.executeUpdate();
+
+			ResultSet rs = pr.getGeneratedKeys();
+			rs.next();
+			int commentId = rs.getInt(1);
+			comment.setId(commentId);
+			
 			return comment.getId();
 		} catch (Exception e) {
 			e.printStackTrace();

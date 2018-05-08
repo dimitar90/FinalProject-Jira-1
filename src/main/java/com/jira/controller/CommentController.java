@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,14 +35,17 @@ public class CommentController {
 	private static final String EMPTY_DESCRIPTION_ERROR_MESSAGE = "Description cannot be empty!";
 	private static final String NOT_LOGGED_USER = "Logged first!";
 	private static final String NOT_EXIST_TASK_MESSAGE = "This task not exist!";
-
+	private static final String SUCCESSFULLY_ADD_COMMENT_MESSAGE = "User %s with id: %d successfully added comment with id: %d to task with id: %d";
+	
+    private static final Logger logger = LogManager.getLogger(TaskController.class);
 	private final ITaskDao taskDao;
-	private final ICommentDao commentTaskDao;
+	private final ICommentDao commentDao;
 	private final UserManager userManager;
+	
 	@Autowired
 	public CommentController(ITaskDao taskDao, ICommentDao commentTaskDao, UserManager userManager) {
 		this.taskDao = taskDao;
-		this.commentTaskDao = commentTaskDao;
+		this.commentDao = commentTaskDao;
 		this.userManager = userManager;
 	}
 
@@ -65,17 +70,18 @@ public class CommentController {
 			}
 			
 			Comment comment = new Comment(description, LocalDateTime.now(), loggedUser.getId(), taskId);
-			this.commentTaskDao.save(comment);
-			
+			this.commentDao.save(comment);
 			//String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(loggedUser.getImageUrl());
 			String userAvatarName = loggedUser.getImageUrl().substring(loggedUser.getImageUrl().lastIndexOf("\\") + 1);
 			
 			CommentViewDto commentViewDto = new CommentViewDto(comment.getDescription(), comment.getDateTime(), loggedUser.getName(), userAvatarName);
 			
+			logger.info(String.format(SUCCESSFULLY_ADD_COMMENT_MESSAGE, loggedUser.getName(), loggedUser.getId(), comment.getId(), taskId));
 			return  new Gson().toJson(commentViewDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e);
 			return "error";
 		}
 	}

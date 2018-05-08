@@ -106,13 +106,14 @@
 										<td>${task.priority.type.value}</td>
 										<td>${task.state.type.value}</td>
 										<td>${task.issue.type.value}</td>
-										<td><c:if test="${not empty user}">
-												<c:if
-													test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-													<a href="../edit/${ t.id }">[Edit]</a>
-													<a href="../delete/${ t.id }">[Delete]</a>
+										<td>
+											<c:if test="${not empty user}">
+												<c:if test="${(user.id == task.creator.id || user.id == task.assignee.id)}">
+													<a href="../edit/${ task.id }">[Edit]</a>
+													<a href="../delete/${ task.id }">[Delete]</a>
 												</c:if>
-											</c:if></td>
+											</c:if>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -151,7 +152,7 @@
 						<div>
 							<p>
 							<b>Written on: </b>${c.dateTime.year}/${c.dateTime.monthValue}/${c.dateTime.dayOfMonth} ${c.dateTime.hour}:${c.dateTime.minute}:${c.dateTime.second}
-							</p>${c.description}
+								</p>${c.description}
 							</div>
 					</div>
 				</div>

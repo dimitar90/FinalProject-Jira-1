@@ -161,36 +161,6 @@
 										</li>
 									</c:if>
 									
-									<%-- loop for button for other range pages 
-									<c:forEach begin="${ firstIndexPaginationLoop }" end="${ lastIndexPaginationLoop }" varStatus="loop">
-										 <c:if test="${loop.index <= 2 }">
-										 	 <c:if test="${ (currentPage + loop.index ) <= noOfPages }">
-												<li class="paginate_button page-item active"><a href="../../tasks/all/${currentPage}"
-													aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-													class="page-link">${ currentPage + loop.index }</a></li>
-											</c:if>
-											<c:if test="${ (currentPage + loop.index )  > noOfPages }">
-												<li class="paginate_button page-item active disabled"><a href="../../tasks/all/${currentPage}"
-													aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-													class="page-link">${ currentPage + loop.index }</a></li>
-											</c:if>
-										 </c:if>
-										 
-										 <c:if test="${loop.index > 2  }">
-										 	<c:if test="${ (currentPage + loop.index ) <= noOfPages }">
-												<li class="paginate_button page-item active"><a href="../../tasks/all/${currentPage}"
-													aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-													class="page-link">${ (currentPage + 1) + loop.index }</a></li>
-											   </c:if>
-											<c:if test="${ (currentPage + loop.index )  > noOfPages }">
-												<li class="paginate_button page-item active disabled"><a href="../../tasks/all/${currentPage}"
-													aria-controls="dataTable" data-dt-idx="1" tabindex="0"
-													class="page-link">${ (currentPage + 1) + loop.index }</a></li>
-											   </c:if>
-										 </c:if>
-	   									
-									</c:forEach> --%>
-									
 									<li class="paginate_button page-item next disabled" id="dataTable_next">
 										<a aria-controls="dataTable"  tabindex="0" class="page-link">${ currentPage + 1 }</a>
 									</li>
