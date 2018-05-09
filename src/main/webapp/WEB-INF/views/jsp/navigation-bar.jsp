@@ -18,7 +18,7 @@
     <nav>
       <div class="nav-fostrap">
         <ul>
-          <li><a href="http://localhost:8080/Jira/">Jira</a></li>
+          <li><a href="#">Jira</a></li>
           <li><a href="javascript:void(0)">Issues<span class="arrow-down"></span></a>
             <ul class="dropdown">
               <li><a href="http://localhost:8080/Jira/tasks/all/0">Show all issues</a></li>

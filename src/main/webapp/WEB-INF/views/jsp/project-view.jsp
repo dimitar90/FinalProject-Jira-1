@@ -58,8 +58,10 @@
                         </div>
                     </div>
 </c:if>
+
+<jsp:include page="table-for-tasks-withou-pagination.jsp"></jsp:include>
                      
-                    <c:if test="${empty dtoProject }">
+                  <%--   <c:if test="${empty dtoProject }">
                       <div>
                        <span>
                        <h1>No project to view</h1>
@@ -112,7 +114,7 @@
                        <span>
                       
                        </span>
-                      </div>
+                      </div> --%>
                     
 </body>
 </html>

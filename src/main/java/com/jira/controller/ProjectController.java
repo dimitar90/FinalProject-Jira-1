@@ -35,6 +35,8 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/projects")
 public class ProjectController {
+	private static final String TABLE_NAME = "Tasks for this project";
+
 	private static final int RECORDS_PER_PAGE = 3;
 
 	@Autowired
@@ -122,26 +124,8 @@ public class ProjectController {
 	public String showAllLeadProjects(Model model, HttpSession session, @PathVariable int currPage) {
 		List<ProjectDto> userProjects = new ArrayList<>();
 
-
-		// int userId = ((User) session.getAttribute("user")).getId();
-
 		int userId = ((UserDto) session.getAttribute("dto")).getId();
-//		session.removeAttribute("dto");
 		try {
-//			int projectCount = this.projectDao.getCountOfUserProjects(userId);
-//			int noOfPages = (projectCount / RECORDS_PER_PAGE) - 1;
-//
-//			if (projectCount % RECORDS_PER_PAGE != 0) {
-//				noOfPages++;
-//			}
-//
-//			model.addAttribute("currRecordPage", RECORDS_PER_PAGE);
-//			model.addAttribute("projectCount", projectCount);
-//			model.addAttribute("noOfPages", noOfPages);
-//			model.addAttribute("currentPage", currPage);
-
-//			List<ProjectDto> projects = this.projectDao.getProjectPerPageAndUserId(userId, currPage, RECORDS_PER_PAGE);
-
 			userProjects.addAll(projectDao.getAllBelongingToUser(userId));
 			User user = userManager.getUserById(userId);
 			model.addAttribute("userProjects", userProjects);
@@ -155,33 +139,15 @@ public class ProjectController {
 			model.addAttribute("exception", e);
 			return "error";
 		}
-
 	}
 	
 	@RequestMapping(value = "/userProjects/{currPage}", method = RequestMethod.GET)
 	public String showAllUserProjects(Model model, HttpSession session, @PathVariable int currPage) {
 		List<ProjectDto> userProjects = new ArrayList<>();
 
-
-		// int userId = ((User) session.getAttribute("user")).getId();
-
 		int userId = ((User) session.getAttribute("user")).getId();
-//		session.removeAttribute("dto");
+
 		try {
-//			int projectCount = this.projectDao.getCountOfUserProjects(userId);
-//			int noOfPages = (projectCount / RECORDS_PER_PAGE) - 1;
-//
-//			if (projectCount % RECORDS_PER_PAGE != 0) {
-//				noOfPages++;
-//			}
-//
-//			model.addAttribute("currRecordPage", RECORDS_PER_PAGE);
-//			model.addAttribute("projectCount", projectCount);
-//			model.addAttribute("noOfPages", noOfPages);
-//			model.addAttribute("currentPage", currPage);
-
-//			List<ProjectDto> projects = this.projectDao.getProjectPerPageAndUserId(userId, currPage, RECORDS_PER_PAGE);
-
 			userProjects.addAll(projectDao.getAllBelongingToUser(userId));
 			User user = userManager.getUserById(userId);
 			model.addAttribute("userProjects", userProjects);
@@ -239,7 +205,8 @@ public class ProjectController {
 
 			List<TaskBasicViewDto> tasksDto = taskDao.getAllByProjectId(id);
 
-			model.addAttribute("tasksDto", tasksDto);
+			model.addAttribute("tasks", tasksDto);
+			model.addAttribute("tableName", TABLE_NAME);
 			return "project-view";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -250,9 +217,6 @@ public class ProjectController {
 	@RequestMapping(value = "/delete/{dtoProjectId}", method = RequestMethod.GET)
 	public String deletProject(Model model, @PathVariable("dtoProjectId") int projectId, HttpServletRequest request) {
 		try {
-			
-			//TODO check for session exist
-			
 			if (!this.projectDao.isExistById(projectId)) {
 				return "redirect:../all/0";
 			}
@@ -286,8 +250,6 @@ public class ProjectController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/all/{currPage}")
 	public String showAllProjectPages(Model model, @PathVariable Integer currPage) {
-		// TODO validation for logged user
-
 		try {
 			int projectCount = this.projectDao.getCount();
 			int noOfPages = (projectCount / RECORDS_PER_PAGE) - 1;
@@ -305,9 +267,6 @@ public class ProjectController {
 			List<ProjectCategory> projectCategories = projectCategoryDao.getAllCategories();
 			
 			model.addAttribute("categories", projectCategories);
-
-			// allProjects.addAll(projectDao.getAllProjectDtos());
-			// model.addAttribute("allProjects", allProjects);
 
 			return "show-all-projects";
 		} catch (Exception e) {
