@@ -50,21 +50,21 @@
 							</tr>
 							<tr>
 								<td>1.</td>
-								<td>Atlassian Add-ons</td>
+								<td>Atlassian Add-Ons</td>
 								<td><div class="progress progress-xs">
 										<div class="progress-bar progress-bar-danger"
-											style="width: 55%;"></div>
+											style="width: 90%"></div>
 									</div></td>
-								<td><span class="badge bg-red">55%</span></td>
+								<td><span class="badge bg-red">${categories.get("Atlassian Add-ons")}%</span></td>
 							</tr>
 							<tr>
 								<td>2.</td>
-								<td>Atlassian Products</td>
+								<td>No Category</td>
 								<td><div class="progress progress-xs">
 										<div class="progress-bar progress-bar-yellow"
-											style="width: 70%;"></div>
+											style="width: 30%"></div>
 									</div></td>
-								<td><span class="badge bg-yellow">70%</span></td>
+								<td><span class="badge bg-yellow">${categories.get("No Category")}%</span></td>
 							</tr>
 							<tr>
 								<td>3.</td>
@@ -72,9 +72,9 @@
 								<td><div
 										class="progress progress-xs progress-striped active">
 										<div class="progress-bar progress-bar-primary"
-											style="width: 30%;"></div>
+											style="width: 30%"></div>
 									</div></td>
-								<td><span class="badge bg-light-blue">30%</span></td>
+								<td><span class="badge bg-light-blue">${categories.get("Atlassian Products")}%</span></td>
 							</tr>
 							<tr>
 								<td>4.</td>
@@ -82,9 +82,22 @@
 								<td><div
 										class="progress progress-xs progress-striped active">
 										<div class="progress-bar progress-bar-success"
-											style="width: 90%;"></div>
+											style="width: 20%"></div>
 									</div></td>
-								<td><span class="badge bg-green">90%</span></td>
+								<td><span class="badge bg-green">${categories.get("Common Moduls")}%</span></td>
+							</tr>
+							<tr>
+								<td>5.</td>
+								<td>Confluence Plugins</td>
+								<td><div
+								<c:set target="${categories}" property="1"  value="Confluence Plugins" />
+								<c:set var="categories"></c:set>
+								
+										class="progress progress-xs progress-striped active">
+										<div class="progress-bar progress-bar-success"
+											style="width: ${categories.get("Confluence Plugins")}%"></div>
+									</div></td>
+								<td><span class="badge bg-green">${Confluence Plugins}%</span></td>
 							</tr>
 						</tbody>
 					</table>

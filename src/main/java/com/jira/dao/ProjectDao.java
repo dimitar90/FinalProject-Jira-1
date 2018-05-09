@@ -206,7 +206,6 @@ public class ProjectDao implements IProjectDao {
 	
 	@Override
 	public List<Integer> getCategoriesId(String[] categories) {
-		
 		List<Integer> categoryIds = new ArrayList<>();
 		if (categories == null) {
 			categoryIds.addAll(this.projectCategoryDao.getAllIds());
@@ -351,6 +350,7 @@ public class ProjectDao implements IProjectDao {
 			ResultSet result = stmt.executeQuery(sql);
 			result.next();
 			int count = result.getInt(1);
+			stmt.close();
 			return count;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -394,7 +394,7 @@ public class ProjectDao implements IProjectDao {
 
 			resultList.add(dto);
 		}
-
+		
 		return resultList;
 	}
 
@@ -462,7 +462,7 @@ public class ProjectDao implements IProjectDao {
 					ResultSet result = ps.executeQuery();
 					
 					List<ProjectDto> projects = this.extractResult(result);
-
+					
 					return projects;
 				}
 	}
@@ -485,6 +485,7 @@ public class ProjectDao implements IProjectDao {
 			ProjectDto dto = ProjectDto.getDto(id, projectName, projectType, projectCategory, user.getName(), projectLeadId);
 			projects.add(dto);
 		}
+		
 		return projects;
 	}
 
@@ -507,61 +508,11 @@ public class ProjectDao implements IProjectDao {
 
 		queryParts.add(currentQuery.toString().trim());
 	}
-
-/*	@Override
-	public List<Integer> getTypesId(String[] types) {
-		List<Integer> typesId = new ArrayList<>();
-		if (types == null) {
-			typesId.addAll(this.projectTypeDao.getAllIds());
-		}else {
-			for (String id : types) {
-				typesId.add(Integer.parseInt(id));
-			}
-		}
-		return typesId;
-	}*/
-
-/*	@Override
-	public List<ProjectDto> getProjectsFilteredByTypes(List<Integer> typesId) throws Exception {
-		List<String> queryParts = new LinkedList<>();
-
-		this.createQueryBasedOnTypesIds(typesId,queryParts);
-		
-		StringBuilder finalQuery = new StringBuilder(
-				"SELECT id,name,project_type_id,project_category_id,project_lead_id FROM projects WHERE ");
-				finalQuery.append(queryParts.get(0)).append(" AND  is_deleted = 0");
-				try (PreparedStatement ps = this.manager.getConnection().prepareStatement(finalQuery.toString().trim())) {
-					this.setParametersToExecuteTheQueryTypes(typesId,ps);
-					
-					ResultSet result = ps.executeQuery();
-					
-					List<ProjectDto> projects = this.extractResult(result);
-
-					return projects;
-				}
-	}*/
-
-	/*private void createQueryBasedOnTypesIds(List<Integer> typesId, List<String> queryParts) {
-		StringBuilder currentQuery = new StringBuilder();
-		currentQuery.append("project_types_id IN (");
-
-		for (int index = 0; index < typesId.size(); index++) {
-			currentQuery.append("?").append(",");
-		}
-
-		currentQuery.deleteCharAt(currentQuery.length() - 1);
-		currentQuery.append(")");
-
-		queryParts.add(currentQuery.toString().trim());
 	
-	}*/
-
-	/*private void setParametersToExecuteTheQueryTypes(List<Integer> typesId, PreparedStatement ps) throws SQLException {
-		for (int index = 1; index <= typesId.size(); index++) {
-			ps.setInt(index, typesId.get(index - 1));
-		}
+	@Override
+	public boolean checkProjectName(String projectName) {
+		return ((projectName.isEmpty()) || (!projectName.matches("^[_A-z0-9]*((-|\\s)*[_A-z0-9])*$")) || (projectName.length() < MIN_LENGTH_PROJECT_NAME));
 	}
-*/
-	
+
 
 }

@@ -18,17 +18,20 @@
 
 
 <link rel="stylesheet" href="<c:url value="/css/style.css" />">
-<jsp:include page="nav-bar-main.jsp"></jsp:include>
 
 </head>
+
+	<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+	</c:if>
 <body style="">
-	<!-- <div id="topbar">
-		<a href="http://designshack.net">Back to Design Shack</a>
-	</div> -->
 	<div id="w">
 		<div id="content" class="clearfix">
 			<div id="userphoto">
-				<img src="http://localhost:8080/Jira/getPicLead?dto=${dto.email}" height="100" width="100" class="avatar img-circle" alt="avatar">
+				<img src="http://localhost:8080/Jira/getPicLead?dto=${sessionScope.dto.email}" height="100" width="100" class="avatar img-circle" alt="avatar">
 			</div>
 			<h1>Jira profile</h1>
 			<nav id="profiletabs">
@@ -42,33 +45,28 @@
 			<section id="settings" class="">
 			<p class="setting">
 			<span>Full name:</span>
-				${dto.name}
+				${sessionScope.dto.name}
 				
 			</p>
 			<p class="setting">
 			<span>Email:</span>
-				${dto.email}
+				${sessionScope.dto.email}
 			</p>
-			<c:if test="${ dto.dtoProjectsCount > 0 }">
+			<c:if test="${not empty sessionScope.user}">
+			
+			<c:if test="${ sessionScope.dto.dtoProjectsCount > 0 }">
 			<p class="setting">
 				<span>Creator on: </span>
-				<a href="http://localhost:8080/Jira/projects/userProjects/0">${dto.dtoProjectsCount} projects</a>
+				<a href="http://localhost:8080/Jira/projects/leadProjects/0">${dto.dtoProjectsCount} projects</a>
 			</p>
 			</c:if>
-			<c:if test="${ dto.dtoProjectsCount <= 0 }">
+			<c:if test="${ sessionScope.dto.dtoProjectsCount <= 0 }">
 			<p class="setting">
 				<span>Creator on: </span>
 				NO PROJECTS
 			</p>
 			</c:if>
-			<!-- <p class="setting">
-				<span>Update Frequency <img src="images/edit.png"
-					alt="*Edit*"></span> Weekly
-			</p>
-			<p class="setting">
-				<span>Connected Accounts <img src="images/edit.png"
-					alt="*Edit*"></span> None
-			</p> -->
+			</c:if>
 			</section>
 		</div>
 	</div>

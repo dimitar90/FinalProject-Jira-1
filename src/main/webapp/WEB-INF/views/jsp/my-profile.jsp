@@ -66,15 +66,7 @@
                   <h6>User</h6>
                 </div>
                 <div class="col-lg-4 col-sm-4 follow-info">
-<!--                   <p>Hello I’m Jenifer Smith, a leading expert in interactive and creative design.</p>
-                  <p>@jenifersmith</p>
-                  <p><i class="fa fa-twitter">jenifertweet</i></p>
- --><!--                   <h6>
-                                    <span><i class="icon_clock_alt"></i>11:05 AM</span>
-                                    <span><i class="icon_calendar"></i>25.10.13</span>
-                                    <span><i class="icon_pin_alt"></i>NY</span>
-                                </h6>
- -->                </div>
+                 </div>
                 <div class="col-lg-2 col-sm-6 follow-info weather-category">
                   <ul>
                     <li class="active">
@@ -243,21 +235,6 @@
                       <div class="bio-graph-heading">
                         Hey ${user.name}, welcome to the Atlassian customer portal. For questions relating to managing your account, licensing or purchasing, please see the purchasing and licensing FAQ or contact a customer service representative. To request technical support, please visit our Support Portal. For technical support with your product add-ons please check listing details on the Atlassian Marketplace.
                       </div>
-                      <!-- 
-                      <c:if test="${ user.creatorProjectsCount > 0 }">
-			<p class="setting">
-				<span>Creator on: </span>
-				<a href="http://localhost:8080/Jira/projects/userProjects/0">${user.creatorProjectsCount} projects</a>
-			</p>
-			</c:if>
-			<c:if test="${ user.creatorProjectsCount <= 0 }">
-			<p class="setting">
-				<span>Creator on: </span>
-				NO PROJECTS
-			</p>
-			</c:if>
-                       -->
-                      
                       <div class="panel-body bio-graph-info">
                         <h1>Bio Graph</h1>
                         <div class="row">
@@ -370,89 +347,4 @@
                   </div>
                 </div>
               </div>
-            <!-- </section> -->
-         <!--  </div>
-        </div>
- -->
-        <!-- page end-->
-      <!-- </section> -->
-    </section>
-
-
-
-<%-- </head>
-<body style="">
-	<!-- <div id="topbar">
-		<a href="http://designshack.net">Back to Design Shack</a>
-	</div> -->
-	<div id="w">
-		<div id="content" class="clearfix">
-			<div id="userphoto">
-				<img src="getPicSession?user=${user.email}" height="100" width="100" class="avatar img-circle" alt="avatar">
-			</div>
-			<h1>Jira profile</h1>
-			<nav id="profiletabs">
-			<ul class="clearfix">
-			<!-- 	<li><a href="#bio" class="">Bio</a></li>
-				<li><a href="#activity">Activity</a></li>
-				<li><a href="#friends">Friends</a></li> -->
-				<li><a href="#settings" class="sel">Personal info</a></li>
-			</ul>
-			</nav> 
-			<section id="settings" class="">
-			<p class="setting">
-			<span>Full name:</span>
-				${user.name}
-				
-			</p>
-			<p class="setting">
-			<span>Email:</span>
-				${user.email}
-			</p>
-			<c:if test="${ user.creatorProjectsCount > 0 }">
-			<p class="setting">
-				<span>Creator on: </span>
-				<a href="http://localhost:8080/Jira/projects/userProjects/0">${user.creatorProjectsCount} projects</a>
-			</p>
-			</c:if>
-			<c:if test="${ user.creatorProjectsCount <= 0 }">
-			<p class="setting">
-				<span>Creator on: </span>
-				NO PROJECTS
-			</p>
-			</c:if>
-			<!-- <p class="setting">
-				<span>Update Frequency <img src="images/edit.png"
-					alt="*Edit*"></span> Weekly
-			</p>
-			<p class="setting">
-				<span>Connected Accounts <img src="images/edit.png"
-					alt="*Edit*"></span> None
-			</p> -->
-			</section>
-		</div>
-	</div>
-	<script data-cfasync="false"
-		src="/cdn-cgi/scripts/d07b1474/cloudflare-static/email-decode.min.js"></script>
-	<script type="text/javascript">
-		$(function() {
-			$('#profiletabs ul li a').on('click', function(e) {
-				e.preventDefault();
-				var newcontent = $(this).attr('href');
-
-				$('#profiletabs ul li a').removeClass('sel');
-				$(this).addClass('sel');
-
-				$('#content section').each(function() {
-					if (!$(this).hasClass('hidden')) {
-						$(this).addClass('hidden');
-					}
-				});
-
-				$(newcontent).removeClass('hidden');
-			});
-		});
-	</script>
-
-</body>
- --%></body>
+ -</body>

@@ -1,11 +1,14 @@
 package com.jira.interfaces;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import com.jira.dto.UserDto;
+import com.jira.exception.DatabaseException;
 import com.jira.model.User;
+
 @Component
 public interface IUserDao {
 	public User createUser(String username, String email, String password, String imageUrl);
@@ -27,12 +30,21 @@ public interface IUserDao {
 	public User createUser(String username, String email, String password);
 
 	public void changeImageUrl(String imageUrl, User u) throws Exception;
-	
+
 	public boolean isExistById(int userId) throws Exception;
-	
+
 	public int getuserByName(String leadName) throws Exception;
+
+	public boolean chechEmail(String email) throws Exception;
+
+	public UserDto getDtoByProjectId(int projectId) throws Exception;
+
+	public Optional<User> findByEmail(String email) throws Exception;
+
+	public Optional<User> findByResetToken(String resetToken) throws Exception;
+
+	public void saveToken(User user) throws Exception;
 	
-	public boolean chechEmail(String email)  throws Exception;
-	
-	public UserDto getDtoByProjectId(int projectId) throws Exception;;
+	public void resetToken(User user) throws Exception;
+
 }

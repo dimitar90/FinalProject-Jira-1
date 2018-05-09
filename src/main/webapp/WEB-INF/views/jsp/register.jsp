@@ -68,6 +68,13 @@
             <label for="exampleInputEmail1">Upload image</label>
             <input type="file" accept="image/*" name="singleFile" required="required">
           </div>
+            <c:if test="${ requestScope.errorMsg != null}">
+          <div class="form-group">
+            <div class="form-check">
+              <div class="alert alert-warning" role="alert">
+					${errorMsg} <strong>Try again!</strong>
+				</div>
+				</c:if>
           <input class="btn btn-primary btn-block" type="submit" required="required" value="Sign up"/>     
         </form>
         <div class="text-center">

@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <head>
-	<jsp:include page="nav-bar-main.jsp"></jsp:include>
 
     <title>IT Talents</title>
 	 <link rel="stylesheet" href="<c:url value="/css/style.css" />">
@@ -12,7 +11,15 @@
        <link rel="stylesheet" href="<c:url value="css/default.css" />"> 
  
 </head>
-<body>
+<body>	
+
+	<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+	</c:if>		
+<c:if test = "${!empty softwareProjects}">
 
 <div class="col-sm-12">
                         <div class="white-box">
@@ -46,5 +53,9 @@
                             </div>
                         </div>
                     </div>
+                </c:if>
+                <c:if test = "${empty softwareProjects}">
+               	 <h1>THERE ARE NO SOFTWARE PROJECTS</h1>
+                </c:if>
 </body>
 </html>

@@ -84,6 +84,13 @@
                                     <div class="col-md-12">
                                         <input type="password" name ="newPass" placeholder="new password" class="form-control form-control-line"> </div>
                                 </div>
+                                    <c:if test="${ requestScope.errorMsg != null}">
+         								 <div class="form-group">
+          								  <div class="form-check">
+         								     <div class="alert alert-danger" role="alert">
+											${errorMsg} <strong>Try again!</strong>
+												</div>
+											</c:if>
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <button class="btn btn-success">Update Profile</button>
@@ -96,71 +103,5 @@
                 </div>
                 <!-- /.row -->
             </div>
-<%-- <div class="container">
-    <h1>Edit Profile</h1>
-  	<hr>
-	<div class="row">
-      <div class="col-md-3">
-        <div class="text-center">
-			<img src="getPicSession?user=${user.email} " height="100" width="100" class="avatar img-circle" alt="avatar">
-          <h6>Change your photo here</h6>
-          <form action="./changePic" method="post" enctype="multipart/form-data">
-          <input type="file" accept="image/*" name="fileForChange"><br>
-		  <input type="submit" value="Save changes">
-		  </form>
-        </div>
-      </div>
-      
-      <!-- edit form column -->
-      <div class="col-md-9 personal-info">
-        <div class="alert alert-info alert-dismissable"> 
-          <i class="fa fa-coffee"></i>
-        </div>
-        <h3>Personal info</h3>
-        
-        <form class="form-horizontal" role="form" action="./editProfile" method="post">
-           <div class="form-group">
-            <label class="col-lg-3 control-label">Email:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="email" placeholder="Put your email here.." name="email" required>
-            </div>
-          </div>
-           <div class="form-group">
-            <label class="col-md-3 control-label">Password:</label>
-            <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="put password.." name="oldPass" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">Confirm password:</label required>
-            <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="confirm your password.." name="oldConfPass">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label">New name:</label>
-            <div class="col-lg-8">
-              <input class="form-control" type="text" placeholder="new name here.." name="newName">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">New password:</label>
-            <div class="col-md-8">
-              <input class="form-control" type="password" placeholder="new password.." name="newPass">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-              <input type="submit" value="Save Changes">
-              <span></span>
-              <input type="reset" class="btn btn-default" value="Cancel">
-            </div>
-          </div>
-        </form>
-      </div>
-  </div>
-</div>
-<hr> --%>
 </body>
 </html>

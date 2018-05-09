@@ -23,7 +23,13 @@
 
 	<form class="form-horizontal" action="create" method="post">
 		<fieldset>
-
+ 						<c:if test="${ requestScope.errorMsg != null}">
+         									 <div class="form-group">
+          									  <div class="form-check">
+         								     <div class="alert alert-danger" role="alert">
+											${errorMsg} <strong>Try again!</strong>
+												</div>
+											</c:if>
 			<!-- Form Name -->
 			<legend>Create project here</legend>
 
@@ -34,7 +40,7 @@
 				<div class="col-md-4">
 					<input id="pname" name="projectName" type="text"
 						placeholder="project name" class="form-control input-md"
-						required="">
+						required="required" autocomplete="off">
 
 				</div>
 			</div>
@@ -63,7 +69,7 @@
 					</select>
 				</div>
 			</div>
-			<!-- Button (Double) -->
+			
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="button1idFFF"></label>
 				<div class="col-md-8">

@@ -17,9 +17,15 @@ public class DBManager {
 	private static final String DB_PORT = "3306";
 
 	private static final String DB_NAME = "jira";
+	
+	private static final String DB_USE_SSL = "&useSSL=false";
 
 	private Connection connection;
-
+/*
+ * his.connection = DriverManager.getConnection(
+				"jdbc:mysql://" + DB_HOST + ":" + DB_PORT + "/" + DB_SCHEMA + "?" + DB_USE_SSL,
+				DB_USER, DB_PASS);
+ */
 	public DBManager() {
 		// load driver
 		try {
@@ -30,7 +36,7 @@ public class DBManager {
 		System.out.println("Driver loaded");
 		// Create connection
 		try {
-			connection = DriverManager.getConnection("jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_NAME, DB_USER,
+			connection = DriverManager.getConnection("jdbc:mysql://" + DB_IP + ":" + DB_PORT + "/" + DB_NAME + "?" +DB_USE_SSL ,DB_USER,
 					DB_PASSWORD);
  
 		} catch (SQLException e) {

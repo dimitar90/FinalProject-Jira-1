@@ -6,6 +6,7 @@ public class User {
 	private String password;
 	private String imageUrl;
 	private int creatorProjectsCount;
+	private String resetToken;
 	private int id;
 	
 	
@@ -92,5 +93,18 @@ public class User {
 	
 	public void setCreatorProjectsCount(int creatorProjectsCount) {
 		this.creatorProjectsCount = creatorProjectsCount;
+	}
+	
+
+	public void setPassword(String hashed) {
+		this.password = password;
+	}
+	
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+	}
+	
+	public String getResetToken() {
+		return resetToken;
 	}
 }

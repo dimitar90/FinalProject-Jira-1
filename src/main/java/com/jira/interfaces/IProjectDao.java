@@ -47,14 +47,11 @@ public interface IProjectDao {
 
 	public Collection<ProjectDto> getProjectsFilteredByCategories(List<Integer> categoriesId) throws Exception;
 
-//	public Collection<Integer> getTypesId(String[] types);
-
-/*	public Collection<ProjectDto> getProjectsFilteredByTypes(List<Integer> typesId) throws Exception;
-*/
 	public Collection<Integer> getCategoriesId(String[] categories);
 
 	public ProjectDto getProjectDtoByName(String projectName) throws Exception;
 
 	public Collection<String> getLimitedProjectNamesWithPrefix(String prefix) throws Exception;
 
+	public boolean checkProjectName(String projectName);
 }
