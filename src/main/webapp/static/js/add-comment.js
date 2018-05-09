@@ -9,21 +9,31 @@ function addComment() {
 				var json = request.responseText;
 				var newComment = JSON.parse(json);
 				
-			   /* if (document.querySelector("#comments tbody tr").innerHTML.indexOf("even") != -1) {
-					nextColor = odd;
-				} else {
-					nextColor = even;
-				}
-				*/
-				/*var html = "<tr role='row' class=" + nextColor + " >" + */
+				console.log(newComment);
+	
+				var newCommentHtml = "<div class=\"row\">"+
+										"<div class=\"col-md-2\">"+
+										"<div>" +
+											"<div>" +
+												"<div>" +
+													"<span><img src=\"/Jira/userAvatar/" + newComment.userAvatarName+"\" height=\"100\" width=\"100\"></span>" +
+												"</div>" +
+											"</div>" +
+											"<div>" +
+												"<p>" + newComment.username + "</p>" +
+											"</div>" +
+										"</div>" +
+									"</div>" +
+									"<div class=\"col-md-10\">" +
+										"<div>" +
+											"<div>" +
+												"<p>" +
+													"<b>Written on: </b>" + newComment.dateTime.date.year + "/" + newComment.dateTime.date.month + "/" + newComment.dateTime.date.day + " " + newComment.dateTime.time.hour + ":" + newComment.dateTime.time.minute + ":" + newComment.dateTime.time.second + "</p>" + newComment.description +"</div>" +
+										"</div>" +
+									"</div>" +
+								"</div>";
 				
-				var html = "<tr>" +
-								"<td>"  + newComment.user.name + "</td>" +
-								"<td>"  + newComment.dateTime.date.year + "/" + newComment.dateTime.date.month + "/" + newComment.dateTime.date.day + " " +
-										+ newComment.dateTime.time.hour + ":" + newComment.dateTime.time.minute + ":" + newComment.dateTime.time.second +"</td>" +
-								"<td>" + newComment["description"] + "</td>"  +
-							"</tr>";
-				document.querySelector("#comments tbody").innerHTML = html + document.querySelector("#comments tbody").innerHTML;
+				document.querySelector("#comments").innerHTML = newCommentHtml + document.querySelector("#comments").innerHTML;
 			}
 		}
 		

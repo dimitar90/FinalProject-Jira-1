@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import com.jira.dto.CommentViewDto;
 import com.jira.exception.CommentException;
 import com.jira.exception.DatabaseException;
-import com.jira.model.CommentTask;
+import com.jira.model.Comment;
 
 @Component
-public interface ICommentTaskDao {
-	public void save(CommentTask comment) throws CommentException;
+public interface ICommentDao {
+	public int save(Comment comment) throws DatabaseException;
 	
 	public List<CommentViewDto> getCommentsByTaskId(int taskId) throws DatabaseException;
 	

@@ -2,21 +2,21 @@ package com.jira.model;
 
 import java.time.LocalDateTime;
 
-public class CommentTask {
+public class Comment {
 	private int id;
 	private String description;
 	private LocalDateTime dateTime;
 	private int userId;
 	private int taskId;
 
-	public CommentTask(String description, LocalDateTime dateTime, int userId, int taskId) {
+	public Comment(String description, LocalDateTime dateTime, int userId, int taskId) {
 		this.setDescription(description);
 		this.setDateTime(dateTime);
 		this.setUserId(userId);
 		this.setTaskId(taskId);
 	}
 	
-	public CommentTask(int id, String description, LocalDateTime dateTime, int userId, int taskId) {
+	public Comment(int id, String description, LocalDateTime dateTime, int userId, int taskId) {
 		this(description, dateTime, userId, taskId);
 		this.setId(id);
 	}

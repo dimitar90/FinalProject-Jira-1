@@ -11,8 +11,9 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -22,11 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jira.configuration.SpringWebConfig;
-import com.jira.configuration.WebInitializer;
 import com.jira.dto.TaskBasicViewDto;
 import com.jira.dto.TaskViewDetailsDto;
-import com.jira.exception.DatabaseException;
+import com.jira.exception.TaskException;
 import com.jira.interfaces.IProjectDao;
 import com.jira.interfaces.ITaskDao;
 import com.jira.interfaces.ITaskIssueDao;
@@ -43,12 +42,20 @@ import com.jira.model.User;
 @Controller
 @RequestMapping(value = "/tasks")
 public class TaskController {
+	private static final long MAX_FILE_SIZE_IN_BYTES = 5 * 1024 * 1024;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
 	private static final int ROWS_COUNT_PER_PAGE = 3;
 	private static final String ALLOWED_FILE_EXTENSIONS = ".png .jpeg .jpg .bmp";
+	private static final String MY_OPEN_TASK_TABLE_NAME = "MY OPEN TASKS";
+	private static final String FILTERED_TASK_TABLE_NAME = "FILTERED TASKS";
+	private static final String TASK_DUE_DATE_EXCEPTION_MESSAGE = "Due date can not be before today's date!";
+	private static final String DELETE_TASK_MESSAGE = "User %s with id: %d successfully deleted task with id: %d";
+	private static final String EDIT_TASK_STATE_MESSAGE = "User %s with id: %d successfully edited task with id: %d. Change state id from %d to %d.";
+	private static final String SUCCESSFULLY_CREATE_TASK_MESSAGE = "User %s with id: %d successfully created task with id: %d.";
 
+    private static final Logger logger = LogManager.getLogger(TaskController.class);
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskIssueDao taskIssueDao;
 	private final IProjectDao projectDao;
@@ -56,7 +63,7 @@ public class TaskController {
 	private final ITaskDao taskDao;
 	private final ITaskStateDao taskStateDao;
 	private final UserManager userManager;
-	
+    
 	@Autowired
 	public TaskController(ITaskPriorityDao taskPriorityDao, ITaskIssueDao taskIssueDao, IProjectDao projectDao,
 			IUserDao userDao, ITaskDao taskDao, ITaskStateDao taskStateDao, UserManager userManager) {
@@ -68,7 +75,7 @@ public class TaskController {
 		this.taskStateDao = taskStateDao;
 		this.userManager = userManager;
 	}
-
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/usertasks")
 	public String showTasksOnLoggedUser(HttpSession session, Model model) {
 		User loggedUser = this.userManager.getLoggedUser(session);
@@ -80,32 +87,37 @@ public class TaskController {
 			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 			List<TaskBasicViewDto> tasks = this.taskDao.getAllOpenTasksByUserId(loggedUser.getId());
 			model.addAttribute("tasks", tasks);
-
+			model.addAttribute("tableName", MY_OPEN_TASK_TABLE_NAME);
+			
 			return "my-open-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			logger.error(e.getStackTrace());
+			return "error";
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/filter")
-	public String getFilteredTasks(Model model, HttpServletRequest request) throws DatabaseException {
+	public String getFilteredTasks(Model model, HttpServletRequest request) {
 		try {
 			String[] selectedIssueTypes = request.getParameterValues("selectedIssueTypeIds");
 			String firstDate = request.getParameter("firstDate");
 			String secondDate = request.getParameter("secondDate");
 
 			List<Integer> issueTypeIds = this.getIssueTypeIds(selectedIssueTypes);
-
 			List<TaskBasicViewDto> tasks = taskDao.getFilteredTasksByIssueTypeAndDate(issueTypeIds, firstDate, secondDate);
+			
 			model.addAttribute("tasks", tasks);
 			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			model.addAttribute("tableName", FILTERED_TASK_TABLE_NAME);
+
 			return "filtered-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			logger.error(e.getStackTrace());
+			return "error";
 		}
 	}
 	
@@ -117,11 +129,14 @@ public class TaskController {
 			List<TaskBasicViewDto> tasks = this.taskDao.getTasksWhichIncludePartOfSearchStringInName(searchPart);
 			model.addAttribute("tasks", tasks);
 			model.addAttribute("issueTypes", taskIssueDao.getAll());
+			model.addAttribute("tableName", FILTERED_TASK_TABLE_NAME);
+
 			return "filtered-tasks";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			logger.error(e.getStackTrace());
+			return "error";
 		}
 	}
 
@@ -148,12 +163,15 @@ public class TaskController {
 			if (task.getAssignee().getId() != loggedUserId && task.getCreator().getId() != loggedUserId) {
 				return REDIRECT_FIRST_PAGE_ALL_TASKS;
 			}
-
-			taskDao.deleteById(taskId);
+			
+			this.taskDao.deleteById(taskId);
+			logger.info(String.format(DELETE_TASK_MESSAGE, user.getName(), user.getId(), task.getId()));
+			
 			return  REDIRECT_FIRST_PAGE_ALL_TASKS;
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
 			return "error";
 		}
 	}
@@ -184,6 +202,7 @@ public class TaskController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
 			return "error";
 		}
 	}
@@ -204,10 +223,12 @@ public class TaskController {
 			}
 			taskDao.changeStateById(taskId, newStateId);
 
+			logger.info(String.format(EDIT_TASK_STATE_MESSAGE, loggedUser.getName(), loggedUser.getId(), task.getId(), task.getState().getId(), newStateId));
 			return "redirect:/tasks/detail/" + taskId;
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
 			return "error";
 		}
 	}
@@ -221,23 +242,32 @@ public class TaskController {
 			}
 
 			model.addAttribute("task", task);
+			
 			return "task-details";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
 			return "error";
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/goToPage")
-	public String goToPage(Model model, @RequestParam Integer page) throws DatabaseException {
-		int countOfTasks = this.taskDao.getCountOfTasks();
+	public String goToPage(Model model, @RequestParam Integer page) {
+		try {
+			int countOfTasks = this.taskDao.getCountOfTasks();
 
-		if (page <= 0 || page > this.getNumberOfPages(countOfTasks)) {
-			page = 1;
+			if (page <= 0 || page > this.getNumberOfPages(countOfTasks)) {
+				page = 1;
+			}
+			
+			return "redirect:./all/" + (page - 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
+			return "error";
 		}
-		
-		return "redirect:./all/" + (page - 1);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/all/{pageNumber}")
@@ -261,19 +291,11 @@ public class TaskController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
-			return "redirect:error";
+			logger.error(e.getStackTrace());
+			return "error";
 		}
 	}
 	
-	private int getNumberOfPages(int countOfTasks) {
-		int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
-		if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
-			noOfPages++;
-		}
-		
-		return noOfPages;
-	}
-
 	@RequestMapping(method = RequestMethod.GET, value = "/create")
 	public String submit(Model modelMap, HttpSession session) {
 		User loggedUser = this.userManager.getLoggedUser(session);
@@ -296,6 +318,7 @@ public class TaskController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			modelMap.addAttribute("exception", e);
+			logger.error(e.getStackTrace());
 			return "error";
 		}
 	}
@@ -328,37 +351,45 @@ public class TaskController {
 
 		UUID uuid = UUID.randomUUID();
 		String randomUUIDString = uuid.toString();
-		for (MultipartFile f : files) {
-			if (f.isEmpty()) {
+		for (MultipartFile file : files) {
+			if (file.isEmpty()) {
 				continue;
 			}
+			
 			try {
-				this.taskDao.saveFileToDisk(task, f, randomUUIDString);
+				this.taskDao.saveFileToDisk(task, file, randomUUIDString);
 			} catch (IOException e) {
 				e.printStackTrace();
-				return "redirect:../../error";
+				modelMap.addAttribute("exception", e);
+				logger.error(e.getStackTrace());
+				return "error";
 			}
 		}
 
 		this.taskDao.saveTask(task);
-		return "redirect:./all/0";
+		logger.info(String.format(SUCCESSFULLY_CREATE_TASK_MESSAGE, loggedUser.getName(), loggedUser.getId(), task.getId()));
+		return "redirect:./detail/" + task.getId();
 	}
 
 	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId, Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {
 		boolean isValid = !summary.isEmpty() && 
 						  !description.isEmpty() && 
-						  !dueDate.isEmpty() && (LocalDate.parse(dueDate, DATE_FORMATTER).compareTo(LocalDate.now()) >= 0) &&
+						  !dueDate.isEmpty() &&
 						  projectId != null && projectDao.isExistById(projectId) &&
 						  priorityId != null && taskPriorityDao.isExistById(priorityId) && 
 						  issueTypeId != null && taskIssueDao.isExistById(issueTypeId) && 
 						  assigneeId != null && userDao.isExistById(assigneeId) && projectDao.isExistById(projectId);
+		
+		if ((LocalDate.parse(dueDate, DATE_FORMATTER).compareTo(LocalDate.now()) < 0)) {
+			throw new TaskException(TASK_DUE_DATE_EXCEPTION_MESSAGE);
+		}
 		
 		for (MultipartFile file : files) {
 			if (file.isEmpty()) {
 				continue;
 			}
 			
-			if (file.getSize() > SpringWebConfig.MAX_FILE_SIZE_IN_BYTES) {
+			if (file.getSize() > MAX_FILE_SIZE_IN_BYTES) {
 				return false;
 			}
 			
@@ -370,6 +401,15 @@ public class TaskController {
 		}
 
 		return isValid;
+	}
+	
+	private int getNumberOfPages(int countOfTasks) {
+		int noOfPages = (countOfTasks / ROWS_COUNT_PER_PAGE) - 1;
+		if (countOfTasks % ROWS_COUNT_PER_PAGE != 0) {
+			noOfPages++;
+		}
+		
+		return noOfPages;
 	}
 
 	private List<Integer> getIssueTypeIds(String[] selectedIssueTypes) {

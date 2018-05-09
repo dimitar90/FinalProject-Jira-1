@@ -15,40 +15,47 @@ import com.jira.dto.CommentViewDto;
 import com.jira.exception.CommentException;
 import com.jira.exception.DatabaseException;
 import com.jira.exception.TaskException;
-import com.jira.interfaces.ICommentTaskDao;
+import com.jira.interfaces.ICommentDao;
 import com.jira.interfaces.IUserDao;
-import com.jira.model.CommentTask;
+import com.jira.model.Comment;
 import com.jira.model.User;
+import com.jira.util.ImageConvertor;
+import com.mysql.jdbc.Statement;
 
 @Component
-public class CommentTaskDao implements ICommentTaskDao {
+public class CommentDao implements ICommentDao {
 	private static final String INVALID_DATA = "Invalid credentials";
 	
-	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ;";
+	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ORDER BY date DESC;";
 	private static final String INSERT_QUERY = "INSERT INTO comments (description, date, user_id, task_id) VALUES (?, ?, ?, ?);";
 	private static final String SELECT_COUNT_OF_COMMENTS_BY_TASK_ID_QUERY = "SELECT COUNT(*) FROM comments WHERE task_id = ?";
 
-	
 	private final DBManager dbManager;
 	private final IUserDao userDao;
 	
 	@Autowired
-	public CommentTaskDao(DBManager dbManager, IUserDao userDao) {
+	public CommentDao(DBManager dbManager, IUserDao userDao) {
 		this.dbManager = dbManager;
 		this.userDao = userDao;
 	}
 
-	public void save(CommentTask comment) throws CommentException {
-		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(INSERT_QUERY)) {
+	public int save(Comment comment) throws  DatabaseException {
+		try (PreparedStatement pr = dbManager.getConnection().prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)) {
 			pr.setString(1, comment.getDescription());
 			pr.setTimestamp(2, Timestamp.valueOf(comment.getDateTime()));
 			pr.setInt(3, comment.getUserId());
 			pr.setInt(4, comment.getTaskId());
-
 			pr.executeUpdate();
+
+			ResultSet rs = pr.getGeneratedKeys();
+			rs.next();
+			int commentId = rs.getInt(1);
+			comment.setId(commentId);
+			
+			return comment.getId();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new CommentException(INVALID_DATA, e);
+			throw new DatabaseException(INVALID_DATA, e);
 		}
 	}
 	
@@ -64,7 +71,9 @@ public class CommentTaskDao implements ICommentTaskDao {
 				int userId = rs.getInt("user_id");
 
 				User user = userDao.getUserById(userId);
-				CommentViewDto comment = new CommentViewDto(description, dateTime, user);
+				//String userImageBase64 = ImageConvertor.convertFromLocalPathToBase64String(user.getImageUrl());
+				String userAvatarName = user.getImageUrl().substring(user.getImageUrl().lastIndexOf("\\") + 1);
+				CommentViewDto comment = new CommentViewDto(description, dateTime, user.getName(), userAvatarName);
 				comments.add(comment);
 			}
 			

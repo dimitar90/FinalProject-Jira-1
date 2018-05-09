@@ -36,7 +36,7 @@ public class UserDao implements IUserDao {
 	private final DBManager manager;
 
 	@Autowired
-	private UserDao(DBManager dbManager) {
+	public UserDao(DBManager dbManager) {
 		this.manager = dbManager;
 	}
 

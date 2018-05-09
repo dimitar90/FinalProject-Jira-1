@@ -43,7 +43,7 @@ public class ProjectDao implements IProjectDao {
 	private ProjectCategoryDao projectCategoryDao;
 
 	@Autowired
-	private ProjectDao(DBManager dbManager) {
+	public ProjectDao(DBManager dbManager) {
 		this.manager = dbManager;
 	}
 
