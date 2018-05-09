@@ -7,7 +7,6 @@
     <title>Create task</title>
 	<link rel="stylesheet" href="<c:url value="/css/style.css" />">
 	<link rel="stylesheet" href="<c:url value="/css/create-task-form.css" />">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 	<c:set var="maxImageCount" value="2"/>
 </head>
 
@@ -35,7 +34,7 @@
         <span>
             Summary:
         </span>
-        <input id="name" type="text" name="summary" placeholder="Add a summary" required/>
+        <input id="name" type="text" name="summary" placeholder="Add a summary" maxlength=50 required/>
     </label>
 
     <label>

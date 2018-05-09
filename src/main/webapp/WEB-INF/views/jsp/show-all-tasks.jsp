@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <head>
+<title>All tasks</title>
 <link href="<c:url value="/vendor/bootstrap/css/bootstrap.min.css" />" rel="stylesheet">
 <link href="<c:url value="/vendor/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" type="text/css">
 <link href="<c:url value="/vendor/datatables/dataTables.bootstrap4.css" />" rel="stylesheet">
@@ -137,57 +138,59 @@
 							<div class="dataTables_paginate paging_simple_numbers"
 								id="dataTable_paginate">
 								<ul class="pagination">
+								
 									<%-- First button --%>
-									<c:if test="${ currentPage == 0 }">
-										<li class="paginate_button page-item previous disabled" id="dataTable_previous">
+									<c:choose>
+										<c:when test="${ currentPage <= 0 }">
+											<li class="paginate_button page-item previous disabled" id="dataTable_previous">
+										</c:when>
+										<c:otherwise>
+											<li class="paginate_button page-item previous" id="dataTable_previous">
+										</c:otherwise>
+									</c:choose>
 											<a href="../../tasks/all/0" aria-controls="dataTable" class="page-link">First</a>
-										</li>
-									</c:if>
-									<c:if test="${ currentPage > 0 }">
-										<li class="paginate_button page-item previous" id="dataTable_previous">
-											<a href="../../tasks/all/0" aria-controls="dataTable" class="page-link">First</a>
-										</li>
-									</c:if>
+											</li>
 								
 									<%-- Previous button --%>
-									<c:if test="${ currentPage <= 0 }">
-										<li class="paginate_button page-item previous disabled" id="dataTable_previous">
+									<c:choose>
+										<c:when test="${ currentPage <= 0 }">
+											<li class="paginate_button page-item previous disabled" id="dataTable_previous">
+										</c:when>
+										<c:otherwise>
+											<li class="paginate_button page-item previous" id="dataTable_previous">
+										</c:otherwise>
+									</c:choose>
 											<a href="../../tasks/all/${ currentPage - 1 }" aria-controls="dataTable" class="page-link">Previous</a>
-										</li>
-									</c:if>
-									<c:if test="${ currentPage > 0 }">
-										<li class="paginate_button page-item previous" id="dataTable_previous">
-											<a href="../../tasks/all/${ currentPage - 1 }" aria-controls="dataTable" class="page-link">Previous</a>
-										</li>
-									</c:if>
+											</li>
 									
 									<li class="paginate_button page-item next disabled" id="dataTable_next">
 										<a aria-controls="dataTable"  tabindex="0" class="page-link">${ currentPage + 1 }</a>
 									</li>
 								
+								
 									<%-- Next button --%>
-									<c:if test="${currentPage + 1 <= noOfPages}">
-										<li class="paginate_button page-item next" id="dataTable_next">
+									<c:choose>
+										<c:when test="${currentPage + 1 <= noOfPages}">
+											<li class="paginate_button page-item next" id="dataTable_next">
+										</c:when>
+										<c:otherwise>
+											<li class="paginate_button page-item next disabled" id="dataTable_next">
+										</c:otherwise>
+									</c:choose>
 											<a href="../../tasks/all/${ currentPage + 1 }" aria-controls="dataTable" class="page-link">Next</a>
-										</li>
-									</c:if>
-									<c:if test="${currentPage + 1 > noOfPages}">
-										<li class="paginate_button page-item next disabled" id="dataTable_next">
-											<a href="../../tasks/all/${ currentPage + 1 }" aria-controls="dataTable" class="page-link">Next</a>
-										</li>
-									</c:if>
+											</li>
 									
 									<%-- Last button --%>
-									<c:if test="${currentPage >= noOfPages}">
-										<li class="paginate_button page-item next disabled" id="dataTable_next">
+									<c:choose>
+										<c:when test="${currentPage >= noOfPages}">
+											<li class="paginate_button page-item next disabled" id="dataTable_next">
+										</c:when>
+									<c:otherwise>
+											<li class="paginate_button page-item next" id="dataTable_next">
+										</c:otherwise>
+									</c:choose>
 											<a href="../../tasks/all/${ noOfPages }" aria-controls="dataTable" class="page-link">Last</a>
-										</li>
-									</c:if>
-									<c:if test="${currentPage < noOfPages}">
-										<li class="paginate_button page-item next" id="dataTable_next">
-											<a href="../../tasks/all/${ noOfPages }" aria-controls="dataTable" class="page-link">Last</a>
-										</li>
-									</c:if>
+											</li>
 								</ul>
 							</div>
 						</div>

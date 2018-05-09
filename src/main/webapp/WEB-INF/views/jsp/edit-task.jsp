@@ -3,8 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags/form"%>
 
+<title>Edit task</title>
+
 <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
 <link rel="stylesheet" href="<c:url value="/css/create-task-form.css" />">
 </head>
 
@@ -53,7 +54,14 @@
 		</label>
 		<label> <span> State: </span> <select name="newStateId">
 				<c:forEach items="${ states }" var="s">
-					<option value="${ s.id }">${ s.type.getValue() }</option>
+					<c:choose>
+						<c:when test="${editTaskDto.state.type.value == s.type.value}">
+							<option value="${ s.id }" selected="selected">${ s.type.value }</option>
+						</c:when>
+						<c:otherwise>
+							<option value="${ s.id }">${ s.type.value }</option>
+						</c:otherwise>
+					</c:choose>
 				</c:forEach>
 		</select>
 		</label>

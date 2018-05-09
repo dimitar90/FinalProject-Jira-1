@@ -37,7 +37,7 @@ public class CommentController {
 	private static final String NOT_EXIST_TASK_MESSAGE = "This task not exist!";
 	private static final String SUCCESSFULLY_ADD_COMMENT_MESSAGE = "User %s with id: %d successfully added comment with id: %d to task with id: %d";
 	
-    private static final Logger logger = LogManager.getLogger(TaskController.class);
+    private static final Logger logger = LogManager.getLogger(CommentController.class);
 	private final ITaskDao taskDao;
 	private final ICommentDao commentDao;
 	private final UserManager userManager;

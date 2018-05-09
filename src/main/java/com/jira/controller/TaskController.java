@@ -56,7 +56,6 @@ public class TaskController {
 	private static final String SUCCESSFULLY_CREATE_TASK_MESSAGE = "User %s with id: %d successfully created task with id: %d.";
 
     private static final Logger logger = LogManager.getLogger(TaskController.class);
-    
 	private final ITaskPriorityDao taskPriorityDao;
 	private final ITaskIssueDao taskIssueDao;
 	private final IProjectDao projectDao;
@@ -369,7 +368,7 @@ public class TaskController {
 
 		this.taskDao.saveTask(task);
 		logger.info(String.format(SUCCESSFULLY_CREATE_TASK_MESSAGE, loggedUser.getName(), loggedUser.getId(), task.getId()));
-		return "redirect:./all/0";
+		return "redirect:./detail/" + task.getId();
 	}
 
 	private boolean isValidData(String summary, String description, String dueDate, Integer priorityId, Integer issueTypeId, Integer assigneeId, Integer projectId, MultipartFile[] files) throws Exception {

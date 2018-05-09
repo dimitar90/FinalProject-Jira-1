@@ -26,7 +26,7 @@ import com.mysql.jdbc.Statement;
 public class CommentDao implements ICommentDao {
 	private static final String INVALID_DATA = "Invalid credentials";
 	
-	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ;";
+	private static final String SELECT_COMMENTS_BY_TASK_ID = "SELECT description, date, user_id FROM comments WHERE task_id = ? ORDER BY date DESC;";
 	private static final String INSERT_QUERY = "INSERT INTO comments (description, date, user_id, task_id) VALUES (?, ?, ?, ?);";
 	private static final String SELECT_COUNT_OF_COMMENTS_BY_TASK_ID_QUERY = "SELECT COUNT(*) FROM comments WHERE task_id = ?";
 
