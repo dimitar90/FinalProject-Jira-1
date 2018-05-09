@@ -49,7 +49,7 @@ public class ExportController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/pdf")
-	public String exportTasksIntoPdf(HttpServletResponse response, HttpSession session, Model model) throws DatabaseException, IOException {
+	public void exportTasksIntoPdf(HttpServletResponse response, HttpSession session, Model model) throws DatabaseException, IOException {
 		try {
 			User loggedUser = this.userManager.getLoggedUser(session);
 			if (loggedUser == null) {
@@ -60,14 +60,12 @@ public class ExportController {
 			response.setContentType("application/pdf");
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + "allTasks.pdf" + "\"");
 			this.exportDao.exportIntoPdf(os);
-			
 			logger.info(String.format(SUCCESSFULLY_DOWNLOAD_PDF_MESSAGE, loggedUser.getName(), loggedUser.getId()));
-			return "";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("exception", e);
 			logger.error(e);
-			return "error";
+			response.sendRedirect("./login");
 		}
 	}
 }
