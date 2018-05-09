@@ -2,35 +2,31 @@
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<html>
-
 
 <head>
-
 <jsp:include page="nav-bar-main.jsp"></jsp:include>
 <link rel="stylesheet" href="<c:url value="/css/style.css" />">
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CoPilot</title>
-<link rel="stylesheet" href="<c:url value="/css/bootstrap.min.css" />">
+	<link rel="stylesheet" href="<c:url value="/css/bootstrap.min.css" />">
 
-<link rel="stylesheet"
+	<link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-<link rel="stylesheet"
+	<link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 	
-<link rel="stylesheet" href="<c:url value="/css/AdminLTE.min.css" />">
+	<link rel="stylesheet" href="<c:url value="/css/AdminLTE.min.css" />">
 
-<link rel="stylesheet" href="<c:url value="/css/skin-blue.min.css" />">
-<link rel="stylesheet" href="<c:url value="/css/pace.min.css" />">
-
-
+	<link rel="stylesheet" href="<c:url value="/css/skin-blue.min.css" />">
+	<link rel="stylesheet" href="<c:url value="/css/pace.min.css" />">
+	
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<link href="/static/css/app.f8ce4e197be91b0a3d5c93d690914585.css"
-	rel="stylesheet">
+	<link href="/static/css/app.f8ce4e197be91b0a3d5c93d690914585.css" rel="stylesheet">
 </head>
+
 <body>
 	<div class="row center-block">
 		<h2>Simple chart</h2>

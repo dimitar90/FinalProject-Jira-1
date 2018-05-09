@@ -26,7 +26,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 @EnableWebMvc
 @ComponentScan("com.jira*")
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
-	public static final int MAX_FILE_SIZE_IN_BYTES = 10 * 1024 * 1024;
+	public static final int MAX_FILE_SIZE_IN_BYTES = 100 * 1024 * 1024;
 	
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -70,13 +70,13 @@
 														<td>${t.dueDate}</td>
 														<td>${t.priority.type.value}</td>
 														<td>${t.state.type.value}</td>
-														<td><a href="./detail/${ t.id }">Show details</a></td>
+														<td><a href="http://localhost:8080/Jira/tasks/detail/${ t.id }">Show details</a></td>
 														<td>
 															<c:if test="${not empty user}">
 																<c:if
 																	test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-																	<a href="./edit/${ t.id }">[Edit]</a>
-																	<a href="./delete/${ t.id }">[Delete]</a>
+																	<a href="http://localhost:8080/Jira/tasks/edit/${ t.id }">[Edit]</a>
+																	<a href="http://localhost:8080/Jira/tasks/delete/${ t.id }">[Delete]</a>
 																</c:if>
 															</c:if>
 														</td>
@@ -91,13 +91,13 @@
 														<td>${t.dueDate}</td>
 														<td>${t.priority.type.value}</td>
 														<td>${t.state.type.value}</td>
-														<td><a href="./detail/${ t.id }">Show details</a></td>
+														<td><a href="http://localhost:8080/Jira/tasks/detail/${ t.id }">Show details</a></td>
 														<td>
 															<c:if test="${not empty user}">
 																<c:if
 																	test="${(user.id == t.creator.id || user.id == t.assignee.id)}">
-																	<a href="./edit/${ t.id }">[Edit]</a>
-																	<a href="./delete/${ t.id }">[Delete]</a>
+																	<a href="http://localhost:8080/Jira/tasks/edit/${ t.id }">[Edit]</a>
+																	<a href="http://localhost:8080/Jira/tasks/delete/${ t.id }">[Delete]</a>
 																</c:if>
 															</c:if>
 														</td>

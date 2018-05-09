@@ -5,7 +5,12 @@
 	
     <html>
  <head>
- <jsp:include page="nav-bar-main.jsp"></jsp:include>
+ <c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+</c:if>
 <%--	<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">	  --%> 
 	<link rel="stylesheet" href="<c:url value="/css/style.css" />">
     <title>IT Talents</title>

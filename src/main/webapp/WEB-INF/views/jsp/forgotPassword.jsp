@@ -5,8 +5,12 @@
 <html>
 <head>
 
-<jsp:include page="navigation-bar.jsp"></jsp:include>
-
+<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+</c:if>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

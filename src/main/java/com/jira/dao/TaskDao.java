@@ -53,6 +53,7 @@ import com.jira.util.ImageConvertor;
 
 @Component
 public class TaskDao implements ITaskDao {
+	private static final String NOT_DELETED_WHERE_CLAUSE_PART = " WHERE t.is_deleted = 0 ";
 	private static final String PATH_IMAGE_PREFFIX = "C:\\images\\tasks";
 	private static final String INVALID_DATA = "Invalid credentials!";
 
@@ -64,20 +65,21 @@ public class TaskDao implements ITaskDao {
 	private static final String BEFORE_START_DATE_QUERY_PART = "WHERE t.start_date <= ? AND t.is_deleted = 0 ";
 	private static final String AFTER_START_DATE_QUERY_PART = " WHERE t.start_date >= ? AND t.is_deleted = 0 ";
 
-	private static final String DELETE_TASK_QUERY = "UPDATE tasks SET is_deleted = 1 WHERE id = ?";
-	private static final String CHANGE_STATE_TASK_QUERY = "UPDATE tasks SET state_id = ? WHERE id = ?";
 	private static final String SELECT_TASKS_BY_ID_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE is_deleted = 0 AND id = ?;";
 	private static final String SELECT_IMAGE_QUERY = "SELECT image_url FROM task_images WHERE task_id = ?";
-	private static final String INSERT_TASK_QUERY = "INSERT INTO tasks (summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String INSERT_IMAGE_TASK_QUERY = "INSERT INTO task_images (image_url, task_id) VALUES (?, ?)";
 	private static final String SELECT_ALL_OPEN_TASKS_BY_USER_ID_QUERY = "SELECT t.id, t.summary, t.due_date, t.start_date, t.description, t.project_id, t.priority_id, t.state_id, t.issue_id, t.creator_id, t.assignee_id FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id WHERE s.type <> ? AND assignee_id = ? AND t.is_deleted = 0 ORDER BY due_date;";
 	private static final String SELECT_TASKS_BY_PROJECT_ID_QUERY = "SELECT id, summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id FROM tasks WHERE project_id = ? AND is_deleted = 0 ORDER BY due_date;";
-	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
-	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 ORDER BY id DESC LIMIT ?, ? ;";
-	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
 	private static final String SELECT_TASKS_BY_PART_OF_NAME_QEURY = "SELECT * FROM tasks WHERE (summary LIKE ?) AND is_deleted = 0 ORDER BY id DESC;";
 	private static final String SELECT_COUNT_FOR_ALL_ISSUE_TYPES_QUERY = "SELECT i.type AS type, COUNT(t.id) AS count FROM tasks AS t INNER JOIN issues AS i ON i.id = t.issue_id INSERT_WHERE_CLAUSE GROUP BY t.issue_id;";
 	private static final String SELECT_COUNT_FOR_ALL_STATE_TYPES_QUERY = "SELECT s.type AS type, COUNT(t.id) AS count FROM tasks AS t INNER JOIN states AS s ON s.id = t.state_id INSERT_WHERE_CLAUSE GROUP BY t.state_id;";
+	private static final String SELECT_TASK_BY_PAGE = "SELECT id, summary, due_date, priority_id, project_id, state_id, assignee_id, creator_id FROM tasks WHERE is_deleted = 0 ORDER BY id DESC LIMIT ?, ? ;";
+	private static final String DELETE_TASK_QUERY = "UPDATE tasks SET is_deleted = 1 WHERE id = ?";
+	private static final String CHANGE_STATE_TASK_QUERY = "UPDATE tasks SET state_id = ? WHERE id = ?";
+	private static final String INSERT_TASK_QUERY = "INSERT INTO tasks (summary, due_date, start_date, description, project_id, priority_id, state_id, issue_id, creator_id, assignee_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String INSERT_IMAGE_TASK_QUERY = "INSERT INTO task_images (image_url, task_id) VALUES (?, ?)";
+	private static final String GET_COUNT_OF_TASKS = "SELECT COUNT(*) FROM tasks WHERE is_deleted = 0";
+	private static final String IS_EXIST_TASK_QUERY = "SELECT COUNT(*) FROM tasks WHERE id = ? AND is_deleted = 0";
+
 	private static final String GET_FIRST_TASK_START_DATE_QUERY = "SELECT MIN(start_date) AS first_date FROM tasks WHERE is_deleted = 0;";
 	private static final String GET_LAST_TASK_START_DATE_QUERY = "SELECT MAX(start_date) AS last_date FROM tasks WHERE is_deleted = 0;";
 	
@@ -548,7 +550,7 @@ public class TaskDao implements ITaskDao {
 	
 	private String getStartDateRangeQueryByTwoDates(String firstDate, String secondDate) {
 		if (firstDate.isEmpty() && secondDate.isEmpty()) {
-			return "";
+			return NOT_DELETED_WHERE_CLAUSE_PART;
 		}
 
 		if (!firstDate.isEmpty() && !secondDate.isEmpty()) {

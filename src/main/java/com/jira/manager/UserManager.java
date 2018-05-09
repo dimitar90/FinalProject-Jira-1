@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -216,12 +217,12 @@ public class UserManager implements IUserManager {
 	public void resetPasswordByToken(User user) throws DatabaseException {
 		this.userDao.resetPassword(user);
 	}
-
+	
 	@Override
 	public void resetTheTokenByEmail(User user) throws DatabaseException {
 		userDao.resetToken(user);
 	}
-
+	
 	public String checkCredentials(String username, String password, String confirmPassword, String email)
 			throws SQLException, UserDataException {
 		String message = null;

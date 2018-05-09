@@ -2,8 +2,12 @@
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="en" >
-<jsp:include page="navigation-bar.jsp"></jsp:include>
-
+<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+</c:if>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -26,23 +30,21 @@
     <div class="card card-login mx-auto mt-5">
       <div class="card-header">Enter new password here..</div>
       <div class="card-body">
-       <%-- <form action="<c:url value='/resetPassword/${ token }'></c:url>" method="post"> --%>
-        <form action = "/resetPassword/${ token }" method="post">
+        <form action = "http://localhost:8080/Jira/resetPassword/${ token }" method="post">
           <div class="form-group">
         
             <label for="exampleInputEmail1">Password </label>
-           <input class="form-control" id="exampleInputPassword1" name = "password" type="password" placeholder="Password"
-             required="required" pattern=".{4,}" title="Minimum 4 characters required" autocomplete="off">
+           <input class="form-control" id="exampleInputPassword1" name = "password" type="password" placeholder="Password">
           </div>
           <div class="form-group">
             <label for="exampleInputPassword1">Confirm passwordd</label>
             <input class="form-control" id="exampleInputPassword1" name = "confirmPassword"  type="password" placeholder="Confirm password"
-            required="required" pattern=".{4,}" title="Minimum 4 characters required" autocomplete="off">
+           >
           </div>
           <div class="form-group">
             <div class="form-check">
           </div>
-          <input class="btn btn-primary btn-block" type="submit" value="Log in" />  
+          <input class="btn btn-primary btn-block" type="submit" value="Reset" />  
         </form>
         <div class="text-center">
         </div>

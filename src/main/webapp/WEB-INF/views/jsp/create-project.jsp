@@ -5,13 +5,17 @@
 
 <html>
 <head>
-<jsp:include page="nav-bar-main.jsp"></jsp:include>
-<link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
-
+	<link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
 
 <title>IT Talents</title>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-
+<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+</c:if>
+	
 <script
 	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>

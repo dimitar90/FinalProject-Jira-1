@@ -307,18 +307,28 @@ public class ProjectDao implements IProjectDao {
 	}
 	
 	@Override
-	public void deleteProjectById(int id) throws DatabaseException {
+	public void deleteProjectById(int id) throws DatabaseException, SQLException {
 		String sql = "UPDATE projects SET is_deleted = 1 WHERE id =  ? AND is_deleted = 0";
+		String deleteTasksOnThisProjectSql = "UPDATE tasks SET is_deleted = 1 WHERE project_id = ?";
 		try {
+			this.manager.getConnection().setAutoCommit(false);
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setInt(1, id);
 			ps.executeUpdate();
+			
+		    ps = this.manager.getConnection().prepareStatement(deleteTasksOnThisProjectSql);
+		    ps.setInt(1, id);
+			ps.executeUpdate();
+			
 			ps.close();
+			this.manager.getConnection().commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			this.manager.getConnection().rollback();
 			throw new DatabaseException(MSG_INVALID_PROJECT_ID);
+		} finally {
+			this.manager.getConnection().setAutoCommit(true);
 		}
-
 	}
 
 	@Override

@@ -192,7 +192,6 @@ public class UserController {
 	public String editProfile(HttpSession session, HttpServletRequest request, Model model, @RequestParam String email,
 			@RequestParam String oldPass, @RequestParam String oldConfPass, @RequestParam String newName,
 			@RequestParam String newPass) {
-		// TODO check session
 		try {
 
 			if (this.userManager.checkUsername(newName)) {
@@ -384,8 +383,8 @@ public class UserController {
 
 				// if there is a user -> generate reset token and set to him
 				User user = optional.get();
-
-				user.setResetToken(UUID.randomUUID().toString());
+				String token = UUID.randomUUID().toString().replaceAll("-", "");
+				user.setResetToken(token);
 
 				this.userManager.saveResetTokenDB(user);
 
@@ -402,23 +401,20 @@ public class UserController {
 		}
 	}
 
-	@RequestMapping(value = "/resetPassword/{passwordResetToken}", method = RequestMethod.GET)
-	public String showResetPasswordPage(Model model, @PathVariable("passwordResetToken") String token) {
-		System.out.println(token);
+	@RequestMapping(value = "/resetPassword/{token}", method = RequestMethod.GET)
+	public String showResetPasswordPage(Model model, @PathVariable("token") String token) {
 		model.addAttribute("token", token);
 		return "resetPassword";
 	}
 
 	@RequestMapping(value = "/resetPassword/{token}", method = RequestMethod.POST)
-	public String resetPassword(Model model, @PathVariable("token") String token,
-			@RequestParam(value = "passwprd", required = true) String password,
-			@RequestParam(value = "confirmPassword", required = true) String confirmPassword) {// @RequestParam(value =// "email", required =
-		System.out.println(token);																								// true) String
-																								// userEmail
+	public String resetPassword(Model model,HttpServletRequest request, @PathVariable("token") String token) {
 		try {
+			String password = request.getParameter("password");
+			String confirmPassword = request.getParameter("confirmPassword");
 			// check if user has token and if passwords are compared each other
 			Optional<User> optional = userManager.findUserByResetToken(token);
-
+			
 			if (!optional.isPresent() || userManager.comparingPassword(password, confirmPassword)) {
 				model.addAttribute("errorMessage", "Oops!  This is an invalid password reset link.");
 				return "resetPassword";
@@ -433,7 +429,7 @@ public class UserController {
 				this.userManager.resetTheTokenByEmail(user);
 			}
 
-			return "redirect:../../";
+			return "redirect:../";
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("error", e);

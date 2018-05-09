@@ -46,7 +46,7 @@ public class TaskController {
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	private static final String REDIRECT_FIRST_PAGE_ALL_TASKS = "redirect:../../tasks/all/0";
-	private static final int ROWS_COUNT_PER_PAGE = 3;
+	private static final int ROWS_COUNT_PER_PAGE = 10;
 	private static final String ALLOWED_FILE_EXTENSIONS = ".png .jpeg .jpg .bmp";
 	private static final String MY_OPEN_TASK_TABLE_NAME = "MY OPEN TASKS";
 	private static final String FILTERED_TASK_TABLE_NAME = "FILTERED TASKS";
@@ -283,8 +283,7 @@ public class TaskController {
 			model.addAttribute("currentPage", pageNumber);
 			model.addAttribute("issueTypes", this.taskIssueDao.getAll());
 
-			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber,
-					ROWS_COUNT_PER_PAGE);
+			List<TaskBasicViewDto> tasks = this.taskDao.getByCurrentPageNumberAndTaskPerPage(pageNumber, ROWS_COUNT_PER_PAGE);
 			model.addAttribute("tasks", tasks);
 
 			return "show-all-tasks";

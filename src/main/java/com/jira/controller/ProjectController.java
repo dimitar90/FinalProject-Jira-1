@@ -37,7 +37,7 @@ import com.jira.model.User;
 public class ProjectController {
 	private static final String TABLE_NAME = "Tasks for this project";
 
-	private static final int RECORDS_PER_PAGE = 3;
+	private static final int RECORDS_PER_PAGE = 5;
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -193,7 +193,6 @@ public class ProjectController {
 			model.addAttribute("exception", e);
 			return "error";
 		}
-
 	}
 
 	@RequestMapping(value = "/projectId/{id}", method = RequestMethod.GET)
@@ -257,7 +256,7 @@ public class ProjectController {
 				noOfPages++;
 			}
 
-			model.addAttribute("currRecordPage", RECORDS_PER_PAGE);
+			model.addAttribute("currentRowsOfPage", RECORDS_PER_PAGE);
 			model.addAttribute("projectCount", projectCount);
 			model.addAttribute("noOfPages", noOfPages);
 			model.addAttribute("currentPage", currPage);

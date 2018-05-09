@@ -115,7 +115,6 @@
 				          ['Task', ${ issues.get("Task") }],
 				          ['Improvement',    ${ issues.get("Improvement") }]
 				        ]);
-				
 				        var options = {
 				          pieHole: 0.4,
 				        };

@@ -422,7 +422,7 @@ public class UserDao implements IUserDao {
 	}
 
 	public void resetToken(User user) throws DatabaseException {
-		String sql = " UPDATE users SET reset_token = null WHERE email = ?";
+		String sql = "UPDATE users SET reset_token = null WHERE email = ?";
 		try {
 			PreparedStatement ps = this.manager.getConnection().prepareStatement(sql);
 			ps.setString(1, user.getEmail());

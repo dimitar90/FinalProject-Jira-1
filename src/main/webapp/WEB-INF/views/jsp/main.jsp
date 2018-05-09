@@ -2,8 +2,12 @@
 	pageEncoding="UTF-8"%>
 
 <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-<jsp:include page="nav-bar-main.jsp"></jsp:include>
- <link rel="shortcut icon" href="http://designshack.net/favicon.ico">
+<c:if test= '${not empty sessionScope.user}'>
+			<jsp:include page="nav-bar-main.jsp"></jsp:include>
+	</c:if>
+	<c:if test= '${empty sessionScope.user}'>
+			<jsp:include page="navigation-bar.jsp"></jsp:include>
+</c:if> <link rel="shortcut icon" href="http://designshack.net/favicon.ico">
   <link rel="icon" href="http://designshack.net/favicon.ico">
   <link rel="stylesheet" type="text/css" media="all" href="css/test1.css">
   <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script> 

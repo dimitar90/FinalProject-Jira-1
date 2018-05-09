@@ -18,7 +18,7 @@ public class EmailUtil {
 	private static final String SENDER_EMAIL = "ittalentsjira@gmail.com";
 	private static final String SENDER_PASS = "ittalentsjira123";
 	public static final String SUBJECT_TEXT_FORGOTTEN_PASSWORD = "Jira FORGOTTEN PASSWORD";
-	public static final String FORGOTTEN_PASSWORD_EMAIL_TEXT = "To reset your password click the link below change password http://localhost:8080/Jira/resetPassword/%s";
+	public static final String FORGOTTEN_PASSWORD_EMAIL_TEXT = "To %s reset your password click the link below change password http://localhost:8080/Jira/resetPassword/%s";
 
 	public void sendEmail(String receiverEmail, String subjectText, String msg) {
 
