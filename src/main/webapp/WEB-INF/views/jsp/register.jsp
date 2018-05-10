@@ -9,17 +9,7 @@
 	<c:if test= '${empty sessionScope.user}'>
 			<jsp:include page="navigation-bar.jsp"></jsp:include>
 </c:if>
- <%-- <head>
-
-    <link rel="stylesheet" href="<c:url value= "/css/style.css"/>">
-<link rel="stylesheet" type="text/css" href="<c:url value="/css/table.css" />">
-<link rel="stylesheet" type="text/css" href="<c:url value="/css/register.css"/>">
-
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-</head>
- --%>
+ 
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">

@@ -35,9 +35,7 @@
 			<h1>Jira profile</h1>
 			<nav id="profiletabs">
 			<ul class="clearfix">
-			<!-- 	<li><a href="#bio" class="">Bio</a></li>
-				<li><a href="#activity">Activity</a></li>
-				<li><a href="#friends">Friends</a></li> -->
+	
 				<li><a href="#settings" class="sel">Personal info</a></li>
 			</ul>
 			</nav> 

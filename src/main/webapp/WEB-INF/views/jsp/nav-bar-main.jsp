@@ -69,41 +69,7 @@
 </head>
 <body>
 
-<!-- 	<div class="search-container">
 
-		<form action="searchBtn" method="post">
-			<input id="projectInput" type="text" list="projects" name="project"
-				placeholder="Search.." required>
-			<button type="submit">
-				<i class="fa fa-search"></i>
-			</button>
-		</form>
-	<div id="searchResult"></div>
-	</div>
-</div> -->
-
-<body>
-	<!-- <script>
-$(document).ready(function() {
-    $(function() {
-        $("#search").autocomplete({     
-            source : function(request, response) {
-              $.ajax({
-                   url : "searchAutoComplete",
-                   type : "GET",
-                   data : {
-                          term : request.term
-                   },
-                   dataType : "json",
-                   success : function(data) {
-                         response(data);
-                   }
-            });
-         }
-     });
-  });
-});
-</script> -->
 	<script>
 		document.getElementById("projectInput").addEventListener("keyup",function() {
 						var prefix = this.value;

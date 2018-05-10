@@ -1,4 +1,4 @@
-package com.jira.utils;
+package com.jira.util;
 
 import java.util.Properties;
 

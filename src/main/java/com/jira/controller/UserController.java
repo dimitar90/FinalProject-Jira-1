@@ -33,7 +33,7 @@ import com.jira.dto.UserDto;
 import com.jira.exception.UserDataException;
 import com.jira.manager.UserManager;
 import com.jira.model.User;
-import com.jira.utils.EmailUtil;
+import com.jira.util.EmailUtil;
 
 @Controller
 public class UserController {
@@ -56,20 +56,6 @@ public class UserController {
 
 	@Autowired
 	ServletContext context;
-
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public String test(Model model) {
-		try {
-		Map<String,Integer> categories = projectCategoryDao.getCategoriesForChart();
-		
-		return "projects-chart";
-		}catch (Exception e) {
-			e.printStackTrace();
-			model.addAttribute("exception", e);
-			return "error";
-		}
-
-	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	public String getRegisterPage() {

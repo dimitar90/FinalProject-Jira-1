@@ -55,59 +55,5 @@
 </head>
 <body>
 
-<!-- 	<div class="search-container">
 
-		<form action="searchBtn" method="post">
-			<input id="projectInput" type="text" list="projects" name="project"
-				placeholder="Search.." required>
-			<button type="submit">
-				<i class="fa fa-search"></i>
-			</button>
-		</form>
-	<div id="searchResult"></div>
-	</div>
-</div> -->
-
-<body>
-	<!-- <script>
-$(document).ready(function() {
-    $(function() {
-        $("#search").autocomplete({     
-            source : function(request, response) {
-              $.ajax({
-                   url : "searchAutoComplete",
-                   type : "GET",
-                   data : {
-                          term : request.term
-                   },
-                   dataType : "json",
-                   success : function(data) {
-                         response(data);
-                   }
-            });
-         }
-     });
-  });
-});
-</script> -->
-	<!-- <script>
-		document.getElementById("projectInput").addEventListener("keyup",function() {
-						var prefix = this.value;
-						console.log(prefix);
-						var xhr = new XMLHttpRequest();
-							xhr.open("GET", "./searchProjects?prefix=" + prefix, true);
-							xhr.send(null);
-							xhr.addEventListener(
-											'load', function() {
-												var projects = JSON
-														.parse(xhr.responseText);
-												var html = '';
-												for (var index = 0; index < projects.length; index++) {
-													html += "<p> " + projects[index] + " </p>";
-												}
-												document.getElementById('searchResult').innerHTML = html;
-											});
-						});
-	</script>
- -->
 </html>
